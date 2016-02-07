@@ -2,8 +2,6 @@ package edu.gymneureut.informatik.rattenschach;
 
 import edu.gymneureut.informatik.rattenschach.figures.*;
 
-import java.io.IOException;
-
 /**
  * Created by green on 2/5/2016.
  */
@@ -21,10 +19,15 @@ public class TerminalObserver implements Observer {
         System.out.println();
         printTurn(turn);
         try {
-            System.in.read();
-        } catch (IOException e) {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
+//        try {
+//            System.in.read();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
     }
 
     private void printField() {

@@ -12,6 +12,11 @@ public class RandomController implements Controller {
 
     @Override
     public Turn pickMove(Map<Field, Figure> field, List<Turn> turns) {
+        for (Turn turn : turns) {
+            if (turn.getStatus() == Turn.TurnStatus.offersRemis) {
+                turns.remove(turn);
+            }
+        }
         return turns.get((int) (Math.random() * (double) turns.size()));
     }
 
@@ -38,5 +43,10 @@ public class RandomController implements Controller {
         System.out.println("Won Games: " + gamesWon);
         System.out.println("Lost Games: " + gamesLost);
         System.out.println("Patt or Remis: " + gamesPatt);
+//        try {
+//            Thread.sleep(5000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
     }
 }
