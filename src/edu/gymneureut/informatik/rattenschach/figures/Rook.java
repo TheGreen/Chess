@@ -12,9 +12,13 @@ import java.util.Map;
 /**
  * Created by green on 2/2/2016.
  */
-public class Rook extends Figure {
+public class Rook extends Figure implements Cloneable {
     public Rook(Player owner, Field position, Map<Field, Figure> field) {
         super(owner, position, field);
+    }
+
+    public Rook() {
+
     }
 
     public List<Move> getPossibleMoves() {
@@ -29,7 +33,12 @@ public class Rook extends Figure {
         return moves;
     }
 
-    public Rook copyFigure() {
-        return new Rook(owner, position, field);
+//    public Rook copyFigure() {
+//        return new Rook(owner, position, field);
+//    }
+
+    @Override
+    public Figure clone() {
+        return cloneTo(new Rook());
     }
 }

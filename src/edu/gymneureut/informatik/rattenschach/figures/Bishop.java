@@ -12,10 +12,14 @@ import java.util.Map;
 /**
  * Created by green on 2/2/2016.
  */
-public class Bishop extends Figure {
+public class Bishop extends Figure implements Cloneable {
 
     public Bishop(Player owner, Field position, Map<Field, Figure> field) {
         super(owner, position, field);
+    }
+
+    public Bishop() {
+
     }
 
     public List<Move> getPossibleMoves() {
@@ -30,8 +34,14 @@ public class Bishop extends Figure {
         return moves;
     }
 
-    public Bishop copyFigure() {
-        return new Bishop(owner, position, field);
+//    public Bishop copyFigure() {
+//        return new Bishop(owner, position, field);
+//    }
+
+    @Override
+    public Figure clone() {
+        return cloneTo(new Bishop());
     }
+
 
 }

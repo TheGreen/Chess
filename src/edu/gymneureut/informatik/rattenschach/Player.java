@@ -6,7 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-public class Player {
+public class Player implements Cloneable {
     Game game;
     List<Figure> figures;
     List<Figure> capturedFigures;
@@ -16,6 +16,9 @@ public class Player {
     private int color;
     private Player opponent;
 
+    public Player() {
+
+    }
     public Player(boolean isWhite, Controller controller, Game game, long timeLimit, long timeIncrement) {
         this.controller = controller;
         this.remainingTime = timeLimit;
@@ -68,26 +71,44 @@ public class Player {
         this.timeIncrement = timeIncrement;
     }
 
-    public Player copyPlayer() {
-        List<Figure> figuresCopy = new LinkedList<>();
+    @Override
+    public Player clone() {
+        Player cloned = new Player();
+        cloned.figures = new LinkedList<>();
         for (Figure figure : figures) {
-            figuresCopy.add(figure.copyFigure());
+            cloned.figures.add(figure.clone());
         }
-        List<Figure> capturedFiguresCopy = new LinkedList<>();
-        for (Figure capturedFigure : capturedFigures) {
-            capturedFiguresCopy.add(capturedFigure.copyFigure());
+        cloned.capturedFigures = new LinkedList<>();
+        for (Figure figure : capturedFigures) {
+            cloned.capturedFigures.add(figure.clone());
         }
-        Player playerCopy = new Player(color, opponent, game, figuresCopy,
-                capturedFiguresCopy, controller, remainingTime, timeIncrement);
-
-        for (Figure figure : figuresCopy) {
-            figure.setOwner(playerCopy);
-        }
-        for (Figure figure : capturedFiguresCopy) {
-            figure.setOwner(playerCopy);
-        }
-        return playerCopy;
+        cloned.controller = controller;
+        cloned.remainingTime = remainingTime;
+        cloned.timeIncrement = timeIncrement;
+        cloned.color = color;
+        return cloned;
     }
+
+//    public Player copyPlayer() {
+//        List<Figure> figuresCopy = new LinkedList<>();
+//        for (Figure figure : figures) {
+//            figuresCopy.add(figure.copyFigure());
+//        }
+//        List<Figure> capturedFiguresCopy = new LinkedList<>();
+//        for (Figure capturedFigure : capturedFigures) {
+//            capturedFiguresCopy.add(capturedFigure.copyFigure());
+//        }
+//        Player playerCopy = new Player(color, opponent, game, figuresCopy,
+//                capturedFiguresCopy, controller, remainingTime, timeIncrement);
+//
+//        for (Figure figure : figuresCopy) {
+//            figure.setOwner(playerCopy);
+//        }
+//        for (Figure figure : capturedFiguresCopy) {
+//            figure.setOwner(playerCopy);
+//        }
+//        return playerCopy;
+//    }
 
     public boolean isAbleToCaptureKing() {
         List<Move> moves = new LinkedList<>();
@@ -142,6 +163,12 @@ public class Player {
         for (Move move : moves) {
             turns.add(new Turn(move, Turn.TurnStatus.normallyRunning));
         }
+//        if (kingSideCastlingPossible()) {
+//            turns.add(kingSideCastling);
+//        }
+//        if (queenSideCastlingPossible()) {
+//            turns.add(queenSideCastling);
+//        }
         turns.add(new Turn(null, Turn.TurnStatus.offersRemis));
         Turn turn = measureChooseTime(field, turns);
         if (remainingTime < 0) {
@@ -150,6 +177,14 @@ public class Player {
         remainingTime += timeIncrement;
         return turn;
     }
+
+//    private boolean queenSideCastlingPossible() {
+//        return false;
+//    }
+//
+//    private boolean kingSideCastlingPossible() {
+//        return false;
+//    }
 
     private Turn measureChooseTime(Map<Field, Figure> field, List<Turn> turns) {
         long time = System.nanoTime();
@@ -185,5 +220,17 @@ public class Player {
 
     public void setOpponent(Player opponent) {
         this.opponent = opponent;
+    }
+
+    public void setGameClone(Game cloned) {
+        this.game = cloned;
+        this.opponent = (game.getWhite() == this) ? game.getBlack() : game.getWhite();
+        for (Figure figure : figures) {
+            figure.setField(game.getField());
+            game.getField().replace(figure.getPosition(), figure);
+        }
+        for (Figure figure : capturedFigures) {
+            figure.setField(game.getField());
+        }
     }
 }

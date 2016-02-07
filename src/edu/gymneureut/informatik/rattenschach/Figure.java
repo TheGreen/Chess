@@ -5,16 +5,16 @@ import java.util.List;
 import java.util.Map;
 
 
-public abstract class Figure {
+public abstract class Figure implements Cloneable {
     public static final Figure EMPTY = new Figure() {
         @Override
-        public List<Move> getPossibleMoves() {
-            return null;
+        public Figure clone() {
+            return Figure.EMPTY;
         }
 
         @Override
-        public Figure copyFigure() {
-            return this;
+        public List<Move> getPossibleMoves() {
+            return null;
         }
     };
     protected Player owner;
@@ -22,11 +22,11 @@ public abstract class Figure {
     protected Map<Field, Figure> field;
     protected boolean captured = false;
     protected boolean hasMoved = false;
-    private String name;
 
     public Figure() {
 
     }
+
 
     public Figure(Player owner, Field position, Map<Field, Figure> field) {
         this.owner = owner;
@@ -36,7 +36,22 @@ public abstract class Figure {
 
     public abstract List<Move> getPossibleMoves();
 
-    public abstract Figure copyFigure();
+//    public abstract Figure copyFigure();
+
+    public abstract Figure clone();
+
+    protected Figure cloneTo(Figure figure) {
+        return figure.setAll(owner, position, field, captured, hasMoved);
+    }
+
+    private Figure setAll(Player owner, Field position, Map<Field, Figure> field, boolean captured, boolean hasMoved) {
+        this.owner = owner;
+        this.position = position;
+        this.field = field;
+        this.captured = captured;
+        this.hasMoved = hasMoved;
+        return this;
+    }
 
     public Player getOwner() {
         return owner;
@@ -98,4 +113,7 @@ public abstract class Figure {
     }
 
 
+    public void setField(Map<Field, Figure> field) {
+        this.field = field;
+    }
 }

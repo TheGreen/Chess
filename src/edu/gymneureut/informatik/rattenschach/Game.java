@@ -1,10 +1,11 @@
 package edu.gymneureut.informatik.rattenschach;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-public class Game {
+public class Game implements Cloneable {
     long totalTime;
     private Player white;
     private Player black;
@@ -12,6 +13,9 @@ public class Game {
     private Map<Field, Figure> field;
     private List<Observer> observers;
     private GameStatus status = GameStatus.running;
+
+    public Game() {
+    }
 
     public Game(Controller controllerWhite, Controller controllerBlack, List<Observer> observers) {
         field = new HashMap<>();
@@ -39,6 +43,21 @@ public class Game {
         this.status = status;
     }
 
+    @Override
+    public Game clone() {
+        Game cloned = new Game();
+        cloned.field = new HashMap<>();
+        initiateField(cloned.field);
+        cloned.white = white.clone();
+        cloned.black = black.clone();
+        cloned.white.setGameClone(cloned);
+        cloned.black.setGameClone(cloned);
+        cloned.currentPlayer = (currentPlayer == white) ? cloned.white : cloned.black;
+        cloned.observers = new LinkedList<>();
+        cloned.status = status;
+        return cloned;
+    }
+
     public GameStatus getStatus() {
         return status;
     }
@@ -61,25 +80,25 @@ public class Game {
         }
     }
 
-    public Game copyGame() {
-        Player whiteCopy = white.copyPlayer();
-        Player blackCopy = black.copyPlayer();
-        whiteCopy.setOpponent(blackCopy);
-        blackCopy.setOpponent(whiteCopy);
-        Map<Field, Figure> fieldCopy = new HashMap<>();
-        initiateField(fieldCopy);
-        for (Figure figure : whiteCopy.getFigures()) {
-            field.replace(figure.getPosition(), figure);
-        }
-        for (Figure figure : blackCopy.getFigures()) {
-            field.replace(figure.getPosition(), figure);
-        }
-        Game gameCopy = new Game(whiteCopy, blackCopy, (currentPlayer == white) ? whiteCopy : blackCopy,
-                fieldCopy, totalTime, status);
-        whiteCopy.setGame(gameCopy);
-        blackCopy.setGame(gameCopy);
-        return gameCopy;
-    }
+//    public Game copyGame() {
+//        Player whiteCopy = white.copyPlayer();
+//        Player blackCopy = black.copyPlayer();
+//        whiteCopy.setOpponent(blackCopy);
+//        blackCopy.setOpponent(whiteCopy);
+//        Map<Field, Figure> fieldCopy = new HashMap<>();
+//        initiateField(fieldCopy);
+//        for (Figure figure : whiteCopy.getFigures()) {
+//            field.replace(figure.getPosition(), figure);
+//        }
+//        for (Figure figure : blackCopy.getFigures()) {
+//            field.replace(figure.getPosition(), figure);
+//        }
+//        Game gameCopy = new Game(whiteCopy, blackCopy, (currentPlayer == white) ? whiteCopy : blackCopy,
+//                fieldCopy, totalTime, status);
+//        whiteCopy.setGame(gameCopy);
+//        blackCopy.setGame(gameCopy);
+//        return gameCopy;
+//    }
 
     private boolean act() {
         Turn turn = currentPlayer.move(this);
@@ -130,6 +149,7 @@ public class Game {
     public Player getCurrentPlayer() {
         return currentPlayer;
     }
+
 
     public enum GameStatus {
         running, whiteWon, blackWon, remis, patt, remisOffered

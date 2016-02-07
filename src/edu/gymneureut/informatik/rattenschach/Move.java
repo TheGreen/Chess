@@ -34,15 +34,15 @@ public class Move {
     }
 
     public Game testMove(Game game) {
-        Game tempGame = game.copyGame();
-        copyMove(tempGame).execute(tempGame);
-        return tempGame;
+        Game clonedGame = game.clone();
+        cloneWith(clonedGame).execute(clonedGame);
+        return clonedGame;
     }
 
-    private Move copyMove(Game tempGame) {
-        return new Move(tempGame.getField().get(origin),
+    private Move cloneWith(Game clonedGame) {
+        return new Move(clonedGame.getField().get(origin),
                 origin, destination, captures,
-                tempGame.getField().get(destination));
+                clonedGame.getField().get(destination));
     }
 
     public boolean getCaptures() {

@@ -12,9 +12,13 @@ import java.util.Map;
 /**
  * Created by green on 2/2/2016.
  */
-public class Queen extends Figure {
+public class Queen extends Figure implements Cloneable {
     public Queen(Player owner, Field position, Map<Field, Figure> field) {
         super(owner, position, field);
+    }
+
+    public Queen() {
+
     }
 
     public List<Move> getPossibleMoves() {
@@ -33,7 +37,12 @@ public class Queen extends Figure {
         return moves;
     }
 
-    public Queen copyFigure() {
-        return new Queen(owner, position, field);
+//    public Queen copyFigure() {
+//        return new Queen(owner, position, field);
+//    }
+
+    @Override
+    public Figure clone() {
+        return cloneTo(new Queen());
     }
 }

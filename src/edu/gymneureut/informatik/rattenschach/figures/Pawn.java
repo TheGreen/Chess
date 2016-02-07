@@ -12,12 +12,16 @@ import java.util.Map;
 /**
  * Created by green on 2/2/2016.
  */
-public class Pawn extends Figure {
+public class Pawn extends Figure implements Cloneable {
     private int direction;
 
     public Pawn(Player owner, Field position, Map<Field, Figure> field) {
         super(owner, position, field);
         direction = (owner.getColor() == 1) ? 1 : -1;
+    }
+
+    public Pawn() {
+
     }
 
 
@@ -57,7 +61,12 @@ public class Pawn extends Figure {
         return moves;
     }
 
-    public Pawn copyFigure() {
-        return new Pawn(owner, position, field);
+//    public Pawn copyFigure() {
+//        return new Pawn(owner, position, field);
+//    }
+
+    @Override
+    public Figure clone() {
+        return cloneTo(new Pawn());
     }
 }
