@@ -13,11 +13,11 @@ import java.util.Map;
  * Created by green on 2/2/2016.
  */
 public class Pawn extends Figure {
-    private boolean hasMoved = false;
     private int direction;
 
     public Pawn(Player owner, Field position, Map<Field, Figure> field) {
         super(owner, position, field);
+        direction = (owner.getColor() == 1) ? 1 : -1;
     }
 
 
@@ -27,7 +27,7 @@ public class Pawn extends Figure {
             return moves;
         }
         Field tempPosition = new Field(position.getLine(), position.getRow());
-        tempPosition.setRow(tempPosition.getRow() + 1 * direction);
+        tempPosition.setRow(tempPosition.getRow() + direction);
         Figure resultFigure = field.get(tempPosition);
         if (resultFigure == Figure.EMPTY) {
             moves.add(new Move(this, position, tempPosition, false, resultFigure));
@@ -40,15 +40,19 @@ public class Pawn extends Figure {
                 moves.add(new Move(this, position, tempPosition, false, resultFigure));
             }
         }
-        tempPosition = new Field(position.getLine() + 1 * direction, position.getRow() + 1);
-        Figure captureFigure = field.get(tempPosition);
-        if (captureFigure != Figure.EMPTY && captureFigure.getOwner() != this.owner) {
-            moves.add(new Move(this, position, tempPosition, true, captureFigure));
+        if (position.getLine() > 1) {
+            tempPosition = new Field(position.getLine() - 1, position.getRow() + direction);
+            Figure captureFigure = field.get(tempPosition);
+            if (captureFigure != Figure.EMPTY && captureFigure.getOwner() != this.owner) {
+                moves.add(new Move(this, position, tempPosition, true, captureFigure));
+            }
         }
-        tempPosition = new Field(position.getLine() + 1 * direction, position.getRow() - 1);
-        captureFigure = field.get(tempPosition);
-        if (captureFigure != Figure.EMPTY && captureFigure.getOwner() != this.owner) {
-            moves.add(new Move(this, position, tempPosition, true, captureFigure));
+        if (position.getLine() < 8) {
+            tempPosition = new Field(position.getLine() + 1, position.getRow() + direction);
+            Figure captureFigure = field.get(tempPosition);
+            if (captureFigure != Figure.EMPTY && captureFigure.getOwner() != this.owner) {
+                moves.add(new Move(this, position, tempPosition, true, captureFigure));
+            }
         }
         return moves;
     }

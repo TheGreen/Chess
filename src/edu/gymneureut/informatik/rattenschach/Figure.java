@@ -6,12 +6,6 @@ import java.util.Map;
 
 
 public abstract class Figure {
-    protected Player owner;
-    protected Field position;
-    protected Map<Field, Figure> field;
-    protected boolean captured = false;
-    private boolean hasMoved = false;
-
     public static final Figure EMPTY = new Figure() {
         @Override
         public List<Move> getPossibleMoves() {
@@ -23,6 +17,12 @@ public abstract class Figure {
             return this;
         }
     };
+    protected Player owner;
+    protected Field position;
+    protected Map<Field, Figure> field;
+    protected boolean captured = false;
+    protected boolean hasMoved = false;
+    private String name;
 
     public Figure() {
 
@@ -50,7 +50,7 @@ public abstract class Figure {
         captured = true;
     }
 
-    public void setUncaptured() {
+    public void setNotCaptured() {
         captured = false;
     }
 
@@ -60,8 +60,10 @@ public abstract class Figure {
         boolean directionUnfinished = true;
         LinkedList<Move> moves = new LinkedList<>();
         while (directionUnfinished) {
-            if (tempPosition.getLine() + 1 >= 8
-                    || tempPosition.getRow() + 1 >= 8
+            if (tempPosition.getLine() + lineChange > 8
+                    || tempPosition.getRow() + rowChange > 8
+                    || tempPosition.getLine() + lineChange < 1
+                    || tempPosition.getRow() + rowChange < 1
                     || (maxDistance != -1 && walkedDistance >= maxDistance)) {
                 directionUnfinished = false;
             } else {
@@ -73,8 +75,11 @@ public abstract class Figure {
                 Figure resultFigure = field.get(tempPosition);
                 if (resultFigure == Figure.EMPTY) {
                     moves.add(new Move(this, position, tempPosition, false, resultFigure));
-                } else if (resultFigure.getOwner() != this.getOwner()) {
+                } else if (resultFigure.getOwner() == this.getOwner().getOpponent()) {
                     moves.add(new Move(this, position, tempPosition, true, resultFigure));
+                    directionUnfinished = false;
+                } else if (resultFigure.getOwner() == this.getOwner()) {
+                    directionUnfinished = false;
                 }
             }
         }
@@ -91,4 +96,6 @@ public abstract class Figure {
     public Field getPosition() {
         return position;
     }
+
+
 }

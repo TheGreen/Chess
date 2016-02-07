@@ -12,7 +12,7 @@ public class RandomController implements Controller {
 
     @Override
     public Turn pickMove(Map<Field, Figure> field, List<Turn> turns) {
-        return turns.get((int) (Math.random() * (double) turns.size() + 1.));
+        return turns.get((int) (Math.random() * (double) turns.size()));
     }
 
     @Override
@@ -31,5 +31,12 @@ public class RandomController implements Controller {
     public void isPatt() {
         numberOfGames += 1;
         gamesPatt += 1;
+    }
+
+    public void print() {
+        System.out.println("Total Games: " + numberOfGames);
+        System.out.println("Won Games: " + gamesWon);
+        System.out.println("Lost Games: " + gamesLost);
+        System.out.println("Patt or Remis: " + gamesPatt);
     }
 }

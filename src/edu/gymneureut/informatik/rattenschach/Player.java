@@ -1,29 +1,20 @@
 package edu.gymneureut.informatik.rattenschach;
 
-import edu.gymneureut.informatik.rattenschach.figures.King;
-import edu.gymneureut.informatik.rattenschach.figures.Pawn;
+import edu.gymneureut.informatik.rattenschach.figures.*;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-
-/**
- * Created by green on 2/2/2016.
- */
 public class Player {
-    private int color;
-    private Player opponent;
-
     Game game;
-
     List<Figure> figures;
     List<Figure> capturedFigures;
-
     Controller controller;
-
     long remainingTime; //nanoseconds
     long timeIncrement; //nanoseconds
+    private int color;
+    private Player opponent;
 
     public Player(boolean isWhite, Controller controller, Game game, long timeLimit, long timeIncrement) {
         this.controller = controller;
@@ -33,14 +24,35 @@ public class Player {
         figures = new LinkedList<>();
         capturedFigures = new LinkedList<>();
 
+        int upperRow;
+        int lowerRow;
         if (isWhite) {
             this.color = 1;
-            for (int i = 1; i < 8; i++) {
-                figures.add(new Pawn())
-            }
-
+            upperRow = 2;
+            lowerRow = 1;
+        } else {
+            this.color = 0;
+            upperRow = 7;
+            lowerRow = 8;
         }
-        //TODO Figuren hinzufuegen
+        for (int i = 1; i <= 8; i++) {
+            figures.add(new Pawn(this, new Field(i, upperRow), game.getField()));
+        }
+        figures.add(new Rook(this, new Field(1, lowerRow), game.getField()));
+        figures.add(new Rook(this, new Field(8, lowerRow), game.getField()));
+
+        figures.add(new Knight(this, new Field(2, lowerRow), game.getField()));
+        figures.add(new Knight(this, new Field(7, lowerRow), game.getField()));
+
+        figures.add(new Bishop(this, new Field(3, lowerRow), game.getField()));
+        figures.add(new Bishop(this, new Field(6, lowerRow), game.getField()));
+
+        figures.add(new Queen(this, new Field(4, lowerRow), game.getField()));
+        figures.add(new King(this, new Field(5, lowerRow), game.getField()));
+
+        for (Figure figure : figures) {
+            game.getField().replace(figure.getPosition(), figure);
+        }
     }
 
     public Player(int color, Player opponent, Game game, List<Figure> figures,
@@ -151,15 +163,27 @@ public class Player {
         capturedFigures.add(captured);
     }
 
-    public void setOpponent(Player opponent) {
-        this.opponent = opponent;
-    }
-
     public List<Figure> getFigures() {
         return figures;
     }
 
     public void setGame(Game game) {
         this.game = game;
+    }
+
+    public Controller getController() {
+        return controller;
+    }
+
+    public int getColor() {
+        return color;
+    }
+
+    public Player getOpponent() {
+        return opponent;
+    }
+
+    public void setOpponent(Player opponent) {
+        this.opponent = opponent;
     }
 }

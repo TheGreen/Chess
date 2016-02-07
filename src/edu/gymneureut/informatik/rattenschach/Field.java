@@ -14,8 +14,33 @@ public class Field {
         updateColor();
     }
 
+    public static boolean isValid(int line, int row) {
+        return !(line < 1 || line > 8 || row < 1 || row > 8);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Field field = (Field) o;
+
+        if (getLine() != field.getLine()) return false;
+        if (getRow() != field.getRow()) return false;
+        return color == field.color;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = getLine();
+        result = 31 * result + getRow();
+        result = 31 * result + (color ? 1 : 0);
+        return result;
+    }
+
     private void updateColor() {
-        this.color = (line + row % 2) == 0; //true is black
+        this.color = (line + row % 2) == 0; //zero is black
     }
 
     public int getLine() {
@@ -36,8 +61,8 @@ public class Field {
         updateColor();
     }
 
-    public static boolean isValid(int line, int row) {
-        return !(line < 1 || line > 8 || row < 1 || row > 8);
+    public String getName() {
+        return new Row().getName(row) + new Line().getName(line);
     }
 
     public class Line {

@@ -52,4 +52,16 @@ public class Move {
     public Object getCapturedFigure() {
         return capturedFigure;
     }
+
+    public Figure getFigure() {
+        return figure;
+    }
+
+    public Field getOrigin() {
+        return origin;
+    }
+
+    public Field getDestination() {
+        return destination;
+    }
 }

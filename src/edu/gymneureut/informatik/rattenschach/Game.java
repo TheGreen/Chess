@@ -1,28 +1,36 @@
 package edu.gymneureut.informatik.rattenschach;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Game {
+    long totalTime;
     private Player white;
     private Player black;
-
     private Player currentPlayer = white;
-
     private Map<Field, Figure> field;
-
-    int totalTime;
+    private List<Observer> observers;
     private GameStatus status = GameStatus.running;
 
-    public GameStatus getStatus() {
-        return status;
-    }
-
-    public Game(Controller controllerWhite, Controller controllerBlack) {
+    public Game(Controller controllerWhite, Controller controllerBlack, List<Observer> observers) {
+        field = new HashMap<>();
+        initiateField(field);
+        this.observers = observers;
+        totalTime = 1000000000000l;
+        white = new Player(true, controllerWhite, this, totalTime, 100000000);
+        black = new Player(false, controllerWhite, this, totalTime, 100000000);
+        white.setOpponent(black);
+        black.setOpponent(white);
+        currentPlayer = white;
+        status = GameStatus.running;
+        for (Observer observer : observers) {
+            observer.startGame(this);
+        }
     }
 
     public Game(Player white, Player black, Player currentPlayer,
-                Map<Field, Figure> field, int totalTime, GameStatus status) {
+                Map<Field, Figure> field, long totalTime, GameStatus status) {
         this.white = white;
         this.black = black;
         this.currentPlayer = currentPlayer;
@@ -31,10 +39,25 @@ public class Game {
         this.status = status;
     }
 
-    private void play() {
-        while (gameRunning) {
+    public GameStatus getStatus() {
+        return status;
+    }
+
+    public void play() {
+        while (status == GameStatus.running
+                || status == GameStatus.remisOffered) {
             act();
-            checkGameRunning();
+        }
+
+        if (status == GameStatus.whiteWon) {
+            white.getController().hasWon();
+            black.getController().hasLost();
+        } else if (status == GameStatus.blackWon) {
+            black.getController().hasWon();
+            white.getController().hasLost();
+        } else if (status == GameStatus.remis || status == GameStatus.patt) {
+            white.getController().isPatt();
+            black.getController().isPatt();
         }
     }
 
@@ -52,20 +75,10 @@ public class Game {
             field.replace(figure.getPosition(), figure);
         }
         Game gameCopy = new Game(whiteCopy, blackCopy, (currentPlayer == white) ? whiteCopy : blackCopy,
-                fieldCopy, totalTime, gameRunning);
+                fieldCopy, totalTime, status);
         whiteCopy.setGame(gameCopy);
         blackCopy.setGame(gameCopy);
         return gameCopy;
-    }
-
-    /**
-     * Checks if the game has finished, game ends when either of the following conditionsis met:
-     * -   Remis/Patt
-     */
-    private void checkGameRunning() {
-//        if () {
-//            gameRunning = false;
-//        }
     }
 
     private boolean act() {
@@ -78,9 +91,18 @@ public class Game {
             }
         } else if (turn.getStatus() == Turn.TurnStatus.offersRemis) {
             status = GameStatus.remisOffered;
+        } else if (turn.getStatus() == Turn.TurnStatus.acceptsRemis) {
+            status = GameStatus.patt;
+        } else if (turn.getStatus() == Turn.TurnStatus.deniesRemis) {
+            status = GameStatus.running;
         } else if (turn.getStatus() == Turn.TurnStatus.normallyRunning) {
             turn.getMove().execute(this);
         }
+
+        for (Observer observer : observers) {
+            observer.nextTurn(turn);
+        }
+
         currentPlayer = (currentPlayer == white) ? black : white;
         return false;
     }
@@ -103,6 +125,10 @@ public class Game {
 
     public Player getBlack() {
         return black;
+    }
+
+    public Player getCurrentPlayer() {
+        return currentPlayer;
     }
 
     public enum GameStatus {
