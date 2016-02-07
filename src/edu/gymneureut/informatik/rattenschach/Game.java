@@ -123,7 +123,23 @@ public class Game implements Cloneable {
         }
 
         currentPlayer = (currentPlayer == white) ? black : white;
+
+        checkGame();
         return false;
+    }
+
+    private void checkGame() {
+        int figureCounter = 0;
+        for (int i = 1; i < 8; i++) {
+            for (int j = 1; j < 8; j++) {
+                if (field.get(new Field(i, j)) != Figure.EMPTY) {
+                    figureCounter += 1;
+                }
+            }
+        }
+        if (figureCounter > 32) {
+            throw new IllegalStateException("Too many figures on Field: " + figureCounter);
+        }
     }
 
     private void initiateField(Map<Field, Figure> field) {

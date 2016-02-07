@@ -19,7 +19,7 @@ public class TerminalObserver implements Observer {
         System.out.println();
         printTurn(turn);
         try {
-            Thread.sleep(100);
+            Thread.sleep(150);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
