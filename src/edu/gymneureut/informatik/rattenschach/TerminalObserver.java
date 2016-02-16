@@ -18,28 +18,29 @@ public class TerminalObserver implements Observer {
         printField();
         System.out.println();
         printTurn(turn);
-        try {
-            Thread.sleep(150);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
 //        try {
-//            System.in.read();
-//        } catch (IOException e) {
+//            Thread.sleep(10);
+////            System.in.read();
+//        } catch (InterruptedException e) {
 //            e.printStackTrace();
+////        }catch (IOException e) {
+////            e.printStackTrace();
 //        }
     }
 
     private void printField() {
         for (int i = 8; i >= 1; i--) {
-            System.out.println(" -----------------------------------------");
+            System.out.println("  -----------------------------------------");
+            System.out.print(Field.Line.getName(i) + " |");
             for (int j = 1; j <= 8; j++) {
-                System.out.print(" | "
-                        + getShortFigureName(game.getField().get(new Field(j, i))));
+                System.out.print(" "
+                        + getShortFigureName(game.getField().get(new Field(j, i)))
+                        + " |");
             }
-            System.out.print(" | \n");
+            System.out.print("\n");
         }
-        System.out.println(" -----------------------------------------");
+        System.out.println("  -----------------------------------------");
+        System.out.println("     A    B    C    D    E    F    G    H  ");
     }
 
     private String getShortFigureName(Figure figure) {

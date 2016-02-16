@@ -15,27 +15,17 @@ public class Field {
     }
 
     public static boolean isValid(int line, int row) {
-        return !(line < 1 || line > 8 || row < 1 || row > 8);
+        return !(line < 1 && line > 8 && row < 1 && row > 8);
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Field field = (Field) o;
-
-        if (getLine() != field.getLine()) return false;
-        if (getRow() != field.getRow()) return false;
-        return color == field.color;
-
+        return o instanceof Field && (this.hashCode() == o.hashCode());
     }
 
     @Override
     public int hashCode() {
-        int result = getLine();
-        result = 31 * result + getRow();
-        result = 31 * result + (color ? 1 : 0);
+        int result = line + 8 * (row - 1);
         return result;
     }
 
@@ -65,7 +55,8 @@ public class Field {
         return new Row().getName(row) + new Line().getName(line);
     }
 
-    public class Line {
+
+    public static class Line {
         public static final int ONE = 1;
         public static final int TWO = 2;
         public static final int THREE = 3;
@@ -75,7 +66,7 @@ public class Field {
         public static final int SEVEN = 7;
         public static final int EIGHT = 8;
 
-        public String getName(int input) {
+        public static String getName(int input) {
             switch (input) {
                 case 1:
                     return "1";
@@ -99,7 +90,7 @@ public class Field {
         }
     }
 
-    public class Row {
+    public static class Row {
         public static final int A = 1;
         public static final int B = 2;
         public static final int C = 3;

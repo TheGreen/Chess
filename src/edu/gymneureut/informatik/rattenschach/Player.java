@@ -89,6 +89,16 @@ public class Player implements Cloneable {
         return cloned;
     }
 
+    public void finishClone(Game game) {
+        this.game = game;
+        for (Figure figure : figures) {
+            figure.setField(game.getField());
+        }
+        for (Figure figure : capturedFigures) {
+            figure.setField(game.getField());
+        }
+    }
+
 //    public Player copyPlayer() {
 //        List<Figure> figuresCopy = new LinkedList<>();
 //        for (Figure figure : figures) {
@@ -141,16 +151,20 @@ public class Player implements Cloneable {
         for (Figure figure : figures) {
             moves.addAll(figure.getPossibleMoves());
         }
+        List<Move> illegalMoves = new LinkedList<>();
         for (Move move : moves) {
             if (this == game.getWhite()) {
                 if (move.testMove(game).getBlack().isAbleToCaptureKing()) {
-                    moves.remove(move);
+                    illegalMoves.add(move);
                 }
             } else {
                 if (move.testMove(game).getWhite().isAbleToCaptureKing()) {
-                    moves.remove(move);
+                    illegalMoves.add(move);
                 }
             }
+        }
+        for (Move move : illegalMoves) {
+            moves.remove(illegalMoves);
         }
         if (moves.size() == 0) {
             if (opponent.isAbleToCaptureKing()) {

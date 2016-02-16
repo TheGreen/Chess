@@ -10,7 +10,6 @@ public class Move {
 
     boolean captures;
     Figure captured;
-    private Object capturedFigure;
 
     public Move(Figure figure, Field origin, Field destination, boolean captures, Figure captured) {
         this.figure = figure;
@@ -23,6 +22,7 @@ public class Move {
     public void execute(Game game) {
         game.getField().replace(origin, Figure.EMPTY);
         game.getField().replace(destination, figure);
+        figure.setPosition(destination);
         if (captures) {
             if (figure.getOwner() == game.getBlack()) {
                 game.getWhite().captureFigure(captured);
@@ -49,8 +49,8 @@ public class Move {
         return captures;
     }
 
-    public Object getCapturedFigure() {
-        return capturedFigure;
+    public Figure getCapturedFigure() {
+        return captured;
     }
 
     public Figure getFigure() {

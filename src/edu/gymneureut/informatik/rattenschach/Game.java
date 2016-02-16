@@ -13,19 +13,25 @@ public class Game implements Cloneable {
     private Map<Field, Figure> field;
     private List<Observer> observers;
     private GameStatus status = GameStatus.running;
+    private List<Figure> livingFigures;
+    private List<Figure> capturedFigures;
 
     public Game() {
     }
 
     public Game(Controller controllerWhite, Controller controllerBlack, List<Observer> observers) {
         field = new HashMap<>();
-        initiateField(field);
+        initializeField(field);
         this.observers = observers;
         totalTime = 1000000000000l;
         white = new Player(true, controllerWhite, this, totalTime, 100000000);
         black = new Player(false, controllerWhite, this, totalTime, 100000000);
         white.setOpponent(black);
         black.setOpponent(white);
+        livingFigures = new LinkedList<>();
+        livingFigures.addAll(white.getFigures());
+        livingFigures.addAll(black.getFigures());
+        capturedFigures = new LinkedList<>();
         currentPlayer = white;
         status = GameStatus.running;
         for (Observer observer : observers) {
@@ -33,21 +39,11 @@ public class Game implements Cloneable {
         }
     }
 
-    public Game(Player white, Player black, Player currentPlayer,
-                Map<Field, Figure> field, long totalTime, GameStatus status) {
-        this.white = white;
-        this.black = black;
-        this.currentPlayer = currentPlayer;
-        this.field = field;
-        this.totalTime = totalTime;
-        this.status = status;
-    }
-
     @Override
     public Game clone() {
         Game cloned = new Game();
         cloned.field = new HashMap<>();
-        initiateField(cloned.field);
+        initializeField(cloned.field);
         cloned.white = white.clone();
         cloned.black = black.clone();
         cloned.white.setGameClone(cloned);
@@ -80,28 +76,12 @@ public class Game implements Cloneable {
         }
     }
 
-//    public Game copyGame() {
-//        Player whiteCopy = white.copyPlayer();
-//        Player blackCopy = black.copyPlayer();
-//        whiteCopy.setOpponent(blackCopy);
-//        blackCopy.setOpponent(whiteCopy);
-//        Map<Field, Figure> fieldCopy = new HashMap<>();
-//        initiateField(fieldCopy);
-//        for (Figure figure : whiteCopy.getFigures()) {
-//            field.replace(figure.getPosition(), figure);
-//        }
-//        for (Figure figure : blackCopy.getFigures()) {
-//            field.replace(figure.getPosition(), figure);
-//        }
-//        Game gameCopy = new Game(whiteCopy, blackCopy, (currentPlayer == white) ? whiteCopy : blackCopy,
-//                fieldCopy, totalTime, status);
-//        whiteCopy.setGame(gameCopy);
-//        blackCopy.setGame(gameCopy);
-//        return gameCopy;
-//    }
-
     private boolean act() {
         Turn turn = currentPlayer.move(this);
+        if (turn.getMove().captures) {
+            livingFigures.remove(turn.getMove().getCapturedFigure());
+            capturedFigures.add(turn.getMove().getCapturedFigure());
+        }
         if (turn.getStatus() == Turn.TurnStatus.hasLost) {
             if (currentPlayer == white) {
                 status = GameStatus.blackWon;
@@ -129,20 +109,24 @@ public class Game implements Cloneable {
     }
 
     private void checkGame() {
-        int figureCounter = 0;
+        List<Figure> seenFigures = new LinkedList<>();
         for (int i = 1; i < 8; i++) {
             for (int j = 1; j < 8; j++) {
-                if (field.get(new Field(i, j)) != Figure.EMPTY) {
-                    figureCounter += 1;
+                Figure currentFigure = field.get(new Field(i, j));
+                if (currentFigure != Figure.EMPTY && seenFigures.contains(currentFigure)) {
+                    throw new IllegalStateException("Duplicate Figure"
+                            + i + j
+                            + currentFigure.getDetails());
+                }
+                seenFigures.add(currentFigure);
+                if (currentFigure != Figure.EMPTY && !livingFigures.contains(currentFigure)) {
+                    throw new IllegalStateException("Figure not a living figure" + i + j);
                 }
             }
         }
-        if (figureCounter > 32) {
-            throw new IllegalStateException("Too many figures on Field: " + figureCounter);
-        }
     }
 
-    private void initiateField(Map<Field, Figure> field) {
+    private void initializeField(Map<Field, Figure> field) {
         for (int i = 1; i <= 8; i += 1) {
             for (int j = 1; j <= 8; j += 1) {
                 field.put(new Field(i, j), Figure.EMPTY);

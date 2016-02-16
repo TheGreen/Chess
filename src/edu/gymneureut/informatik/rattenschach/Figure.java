@@ -112,8 +112,15 @@ public abstract class Figure implements Cloneable {
         return position;
     }
 
+    public void setPosition(Field position) {
+        this.position = position;
+    }
 
     public void setField(Map<Field, Figure> field) {
         this.field = field;
+    }
+
+    public String getDetails() {
+        return null;
     }
 }
