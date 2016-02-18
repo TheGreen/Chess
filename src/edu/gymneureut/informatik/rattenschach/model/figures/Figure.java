@@ -1,4 +1,8 @@
-package edu.gymneureut.informatik.rattenschach;
+package edu.gymneureut.informatik.rattenschach.model.figures;
+
+import edu.gymneureut.informatik.rattenschach.model.Field;
+import edu.gymneureut.informatik.rattenschach.model.Player;
+import edu.gymneureut.informatik.rattenschach.model.turns.Move;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -71,22 +75,22 @@ public abstract class Figure implements Cloneable {
 
     protected LinkedList<Move> getMoves(int lineChange, int rowChange, Field position, int maxDistance) {
         int walkedDistance = 0;
-        Field tempPosition = new Field(position.getLine(), position.getRow());
+        Field tempPosition = new Field(position.getFile(), position.getRank());
         boolean directionUnfinished = true;
         LinkedList<Move> moves = new LinkedList<>();
         while (directionUnfinished) {
-            if (tempPosition.getLine() + lineChange > 8
-                    || tempPosition.getRow() + rowChange > 8
-                    || tempPosition.getLine() + lineChange < 1
-                    || tempPosition.getRow() + rowChange < 1
+            if (tempPosition.getFile() + lineChange > 8
+                    || tempPosition.getRank() + rowChange > 8
+                    || tempPosition.getFile() + lineChange < 1
+                    || tempPosition.getRank() + rowChange < 1
                     || (maxDistance != -1 && walkedDistance >= maxDistance)) {
                 directionUnfinished = false;
             } else {
                 if (maxDistance != -1) {
                     walkedDistance += 1;
                 }
-                tempPosition = new Field(tempPosition.getLine() + lineChange,
-                        tempPosition.getRow() + rowChange);
+                tempPosition = new Field(tempPosition.getFile() + lineChange,
+                        tempPosition.getRank() + rowChange);
                 Figure resultFigure = field.get(tempPosition);
                 if (resultFigure == Figure.EMPTY) {
                     moves.add(new Move(this, position, tempPosition, false, resultFigure));
@@ -122,5 +126,13 @@ public abstract class Figure implements Cloneable {
 
     public String getDetails() {
         return null;
+    }
+
+    public void setHasMoved(boolean hasMoved) {
+        this.hasMoved = hasMoved;
+    }
+
+    public boolean hasMoved() {
+        return hasMoved;
     }
 }

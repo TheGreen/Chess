@@ -1,9 +1,8 @@
-package edu.gymneureut.informatik.rattenschach.figures;
+package edu.gymneureut.informatik.rattenschach.model.figures;
 
-import edu.gymneureut.informatik.rattenschach.Field;
-import edu.gymneureut.informatik.rattenschach.Figure;
-import edu.gymneureut.informatik.rattenschach.Move;
-import edu.gymneureut.informatik.rattenschach.Player;
+import edu.gymneureut.informatik.rattenschach.model.Field;
+import edu.gymneureut.informatik.rattenschach.model.Player;
+import edu.gymneureut.informatik.rattenschach.model.turns.Move;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -30,29 +29,29 @@ public class Pawn extends Figure implements Cloneable {
         if (captured) {
             return moves;
         }
-        Field tempPosition = new Field(position.getLine(), position.getRow());
-        tempPosition.setRow(tempPosition.getRow() + direction);
+        Field tempPosition = new Field(position.getFile(), position.getRank());
+        tempPosition.setRank(tempPosition.getRank() + direction);
         Figure resultFigure = field.get(tempPosition);
         if (resultFigure == Figure.EMPTY) {
             moves.add(new Move(this, position, tempPosition, false, resultFigure));
         }
         if (!hasMoved && resultFigure == Figure.EMPTY) {
-            tempPosition = new Field(position.getLine(), position.getRow());
-            tempPosition.setRow(tempPosition.getRow() + 2 * direction);
+            tempPosition = new Field(position.getFile(), position.getRank());
+            tempPosition.setRank(tempPosition.getRank() + 2 * direction);
             resultFigure = field.get(tempPosition);
             if (resultFigure == Figure.EMPTY) {
                 moves.add(new Move(this, position, tempPosition, false, resultFigure));
             }
         }
-        if (position.getLine() > 1) {
-            tempPosition = new Field(position.getLine() - 1, position.getRow() + direction);
+        if (position.getFile() > 1) {
+            tempPosition = new Field(position.getFile() - 1, position.getRank() + direction);
             Figure captureFigure = field.get(tempPosition);
             if (captureFigure != Figure.EMPTY && captureFigure.getOwner() != this.owner) {
                 moves.add(new Move(this, position, tempPosition, true, captureFigure));
             }
         }
-        if (position.getLine() < 8) {
-            tempPosition = new Field(position.getLine() + 1, position.getRow() + direction);
+        if (position.getFile() < 8) {
+            tempPosition = new Field(position.getFile() + 1, position.getRank() + direction);
             Figure captureFigure = field.get(tempPosition);
             if (captureFigure != Figure.EMPTY && captureFigure.getOwner() != this.owner) {
                 moves.add(new Move(this, position, tempPosition, true, captureFigure));

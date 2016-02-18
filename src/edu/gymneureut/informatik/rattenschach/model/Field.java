@@ -1,21 +1,21 @@
-package edu.gymneureut.informatik.rattenschach;
+package edu.gymneureut.informatik.rattenschach.model;
 
 public class Field {
-    private int line;
-    private int row;
+    private int file;
+    private int rank;
     private boolean color;
 
-    public Field(int line, int row) {
-        if (!isValid(line, row)) {
+    public Field(int file, int rank) {
+        if (!isValid(file, rank)) {
             throw new IllegalArgumentException();
         }
-        this.line = line;
-        this.row = row;
+        this.file = file;
+        this.rank = rank;
         updateColor();
     }
 
-    public static boolean isValid(int line, int row) {
-        return !(line < 1 && line > 8 && row < 1 && row > 8);
+    public static boolean isValid(int file, int rank) {
+        return !(file < 1 && file > 8 && rank < 1 && rank > 8);
     }
 
     @Override
@@ -25,38 +25,38 @@ public class Field {
 
     @Override
     public int hashCode() {
-        int result = line + 8 * (row - 1);
+        int result = file + 8 * (rank - 1);
         return result;
     }
 
     private void updateColor() {
-        this.color = (line + row % 2) == 0; //zero is black
+        this.color = (file + rank % 2) == 0; //zero is black
     }
 
-    public int getLine() {
-        return line;
+    public int getFile() {
+        return file;
     }
 
-    public void setLine(int line) {
-        this.line = line;
+    public void setFile(int file) {
+        this.file = file;
         updateColor();
     }
 
-    public int getRow() {
-        return row;
+    public int getRank() {
+        return rank;
     }
 
-    public void setRow(int row) {
-        this.row = row;
+    public void setRank(int rank) {
+        this.rank = rank;
         updateColor();
     }
 
     public String getName() {
-        return new Row().getName(row) + new Line().getName(line);
+        return new Rank().getName(rank) + new File().getName(file);
     }
 
 
-    public static class Line {
+    public static class File {
         public static final int ONE = 1;
         public static final int TWO = 2;
         public static final int THREE = 3;
@@ -90,7 +90,7 @@ public class Field {
         }
     }
 
-    public static class Row {
+    public static class Rank {
         public static final int A = 1;
         public static final int B = 2;
         public static final int C = 3;
@@ -100,7 +100,7 @@ public class Field {
         public static final int G = 7;
         public static final int H = 8;
 
-        public String getName(int input) {
+        public static String getName(int input) {
             switch (input) {
                 case 1:
                     return "A";

@@ -1,4 +1,9 @@
-package edu.gymneureut.informatik.rattenschach;
+package edu.gymneureut.informatik.rattenschach.model;
+
+import edu.gymneureut.informatik.rattenschach.control.Controller;
+import edu.gymneureut.informatik.rattenschach.control.Observer;
+import edu.gymneureut.informatik.rattenschach.model.figures.Figure;
+import edu.gymneureut.informatik.rattenschach.model.turns.Turn;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -58,6 +63,10 @@ public class Game implements Cloneable {
         return status;
     }
 
+    public void setStatus(GameStatus status) {
+        this.status = status;
+    }
+
     public void play() {
         while (status == GameStatus.running
                 || status == GameStatus.remisOffered) {
@@ -78,25 +87,7 @@ public class Game implements Cloneable {
 
     private boolean act() {
         Turn turn = currentPlayer.move(this);
-        if (turn.getMove().captures) {
-            livingFigures.remove(turn.getMove().getCapturedFigure());
-            capturedFigures.add(turn.getMove().getCapturedFigure());
-        }
-        if (turn.getStatus() == Turn.TurnStatus.hasLost) {
-            if (currentPlayer == white) {
-                status = GameStatus.blackWon;
-            } else {
-                status = GameStatus.whiteWon;
-            }
-        } else if (turn.getStatus() == Turn.TurnStatus.offersRemis) {
-            status = GameStatus.remisOffered;
-        } else if (turn.getStatus() == Turn.TurnStatus.acceptsRemis) {
-            status = GameStatus.patt;
-        } else if (turn.getStatus() == Turn.TurnStatus.deniesRemis) {
-            status = GameStatus.running;
-        } else if (turn.getStatus() == Turn.TurnStatus.normallyRunning) {
-            turn.getMove().execute(this);
-        }
+        turn.execute(this);
 
         for (Observer observer : observers) {
             observer.nextTurn(turn);
@@ -148,6 +139,11 @@ public class Game implements Cloneable {
 
     public Player getCurrentPlayer() {
         return currentPlayer;
+    }
+
+    public void captureFigure(Figure captured) {
+        livingFigures.remove(captured);
+        capturedFigures.add(captured);
     }
 
 

@@ -1,4 +1,6 @@
-package edu.gymneureut.informatik.rattenschach;
+package edu.gymneureut.informatik.rattenschach.control;
+
+import edu.gymneureut.informatik.rattenschach.model.Game;
 
 import java.util.LinkedList;
 

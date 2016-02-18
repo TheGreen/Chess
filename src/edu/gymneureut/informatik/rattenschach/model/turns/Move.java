@@ -1,9 +1,13 @@
-package edu.gymneureut.informatik.rattenschach;
+package edu.gymneureut.informatik.rattenschach.model.turns;
+
+import edu.gymneureut.informatik.rattenschach.model.Field;
+import edu.gymneureut.informatik.rattenschach.model.Game;
+import edu.gymneureut.informatik.rattenschach.model.figures.Figure;
 
 /**
- * Created by green on 2/2/2016.
+ * Created by green on 2/17/2016.
  */
-public class Move {
+public class Move extends Turn {
     Figure figure;
     Field origin;
     Field destination;
@@ -12,6 +16,7 @@ public class Move {
     Figure captured;
 
     public Move(Figure figure, Field origin, Field destination, boolean captures, Figure captured) {
+        super(figure.getOwner());
         this.figure = figure;
         this.origin = origin;
         this.destination = destination;
@@ -19,10 +24,12 @@ public class Move {
         this.captured = captured;
     }
 
+    @Override
     public void execute(Game game) {
         game.getField().replace(origin, Figure.EMPTY);
         game.getField().replace(destination, figure);
         figure.setPosition(destination);
+        figure.setHasMoved(true);
         if (captures) {
             if (figure.getOwner() == game.getBlack()) {
                 game.getWhite().captureFigure(captured);
@@ -30,6 +37,7 @@ public class Move {
                 game.getBlack().captureFigure(captured);
             }
             captured.setCaptured();
+            game.captureFigure(captured);
         }
     }
 
@@ -37,6 +45,10 @@ public class Move {
         Game clonedGame = game.clone();
         cloneWith(clonedGame).execute(clonedGame);
         return clonedGame;
+    }
+
+    public boolean isLegal(Game game) {
+        return !testMove(game).getCurrentPlayer().getOpponent().isAbleToCaptureKing();
     }
 
     private Move cloneWith(Game clonedGame) {

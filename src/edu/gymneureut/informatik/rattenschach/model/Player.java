@@ -1,6 +1,11 @@
-package edu.gymneureut.informatik.rattenschach;
+package edu.gymneureut.informatik.rattenschach.model;
 
-import edu.gymneureut.informatik.rattenschach.figures.*;
+import edu.gymneureut.informatik.rattenschach.control.Controller;
+import edu.gymneureut.informatik.rattenschach.model.figures.*;
+import edu.gymneureut.informatik.rattenschach.model.turns.Move;
+import edu.gymneureut.informatik.rattenschach.model.turns.Notification;
+import edu.gymneureut.informatik.rattenschach.model.turns.RemisNotification;
+import edu.gymneureut.informatik.rattenschach.model.turns.Turn;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -136,69 +141,54 @@ public class Player implements Cloneable {
     public Turn move(Game game) {
         if (game.getStatus() == Game.GameStatus.remisOffered) {
             List<Turn> turns = new LinkedList<>();
-            turns.add(new Turn(null, Turn.TurnStatus.acceptsRemis));
-            turns.add(new Turn(null, Turn.TurnStatus.deniesRemis));
+            turns.add(new RemisNotification(this, RemisNotification.Type.accepts));
+            turns.add(new RemisNotification(this, RemisNotification.Type.denies));
 
             Turn turn = measureChooseTime(game.getField(), turns);
             if (remainingTime < 0) {
-                return new Turn(null, Turn.TurnStatus.hasLost);
+                return new Notification(this, Notification.Type.hasLost);
             }
             remainingTime += timeIncrement;
             return turn;
         }
         Map<Field, Figure> field = game.getField();
-        List<Move> moves = new LinkedList<>();
+        List<Turn> turns = new LinkedList<>();
         for (Figure figure : figures) {
-            moves.addAll(figure.getPossibleMoves());
+            turns.addAll(figure.getPossibleMoves());
         }
         List<Move> illegalMoves = new LinkedList<>();
-        for (Move move : moves) {
-            if (this == game.getWhite()) {
-                if (move.testMove(game).getBlack().isAbleToCaptureKing()) {
-                    illegalMoves.add(move);
-                }
-            } else {
-                if (move.testMove(game).getWhite().isAbleToCaptureKing()) {
-                    illegalMoves.add(move);
+        for (Turn turn : turns) {
+            if (turn instanceof Move) {
+                Move move = (Move) turn;
+                if (this == game.getWhite()) {
+                    if (move.testMove(game).getBlack().isAbleToCaptureKing()) {
+                        illegalMoves.add(move);
+                    }
+                } else {
+                    if (move.testMove(game).getWhite().isAbleToCaptureKing()) {
+                        illegalMoves.add(move);
+                    }
                 }
             }
         }
         for (Move move : illegalMoves) {
-            moves.remove(illegalMoves);
+            turns.remove(illegalMoves);
         }
-        if (moves.size() == 0) {
+        if (turns.size() == 0) {
             if (opponent.isAbleToCaptureKing()) {
-                return new Turn(null, Turn.TurnStatus.hasLost);
+                return new Notification(this, Notification.Type.hasLost);
             } else {
-                return new Turn(null, Turn.TurnStatus.isPatt);
+                return new Notification(this, Notification.Type.isPatt);
             }
         }
-        List<Turn> turns = new LinkedList<>();
-        for (Move move : moves) {
-            turns.add(new Turn(move, Turn.TurnStatus.normallyRunning));
-        }
-//        if (kingSideCastlingPossible()) {
-//            turns.add(kingSideCastling);
-//        }
-//        if (queenSideCastlingPossible()) {
-//            turns.add(queenSideCastling);
-//        }
-        turns.add(new Turn(null, Turn.TurnStatus.offersRemis));
+        turns.add(new RemisNotification(this, RemisNotification.Type.offers));
         Turn turn = measureChooseTime(field, turns);
         if (remainingTime < 0) {
-            return new Turn(null, Turn.TurnStatus.hasLost);
+            return new Notification(this, Notification.Type.hasLost);
         }
         remainingTime += timeIncrement;
         return turn;
     }
-
-//    private boolean queenSideCastlingPossible() {
-//        return false;
-//    }
-//
-//    private boolean kingSideCastlingPossible() {
-//        return false;
-//    }
 
     private Turn measureChooseTime(Map<Field, Figure> field, List<Turn> turns) {
         long time = System.nanoTime();

@@ -1,4 +1,9 @@
-package edu.gymneureut.informatik.rattenschach;
+package edu.gymneureut.informatik.rattenschach.control;
+
+import edu.gymneureut.informatik.rattenschach.model.Field;
+import edu.gymneureut.informatik.rattenschach.model.figures.Figure;
+import edu.gymneureut.informatik.rattenschach.model.turns.RemisNotification;
+import edu.gymneureut.informatik.rattenschach.model.turns.Turn;
 
 import java.util.List;
 import java.util.Map;
@@ -13,7 +18,8 @@ public class RandomController implements Controller {
     @Override
     public Turn pickMove(Map<Field, Figure> field, List<Turn> turns) {
         for (Turn turn : turns) {
-            if (turn.getStatus() == Turn.TurnStatus.offersRemis) {
+            if (turn instanceof RemisNotification
+                    && ((RemisNotification) turn).getType() == RemisNotification.Type.offers) {
                 turns.remove(turn);
             }
         }
@@ -42,7 +48,7 @@ public class RandomController implements Controller {
         System.out.println("Total Games: " + numberOfGames);
         System.out.println("Won Games: " + gamesWon);
         System.out.println("Lost Games: " + gamesLost);
-        System.out.println("Patt or Remis: " + gamesPatt);
+        System.out.println("Patt or RemisNotification: " + gamesPatt);
 //        try {
 //            Thread.sleep(5000);
 //        } catch (InterruptedException e) {

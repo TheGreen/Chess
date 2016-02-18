@@ -1,9 +1,8 @@
-package edu.gymneureut.informatik.rattenschach.figures;
+package edu.gymneureut.informatik.rattenschach.model.figures;
 
-import edu.gymneureut.informatik.rattenschach.Field;
-import edu.gymneureut.informatik.rattenschach.Figure;
-import edu.gymneureut.informatik.rattenschach.Move;
-import edu.gymneureut.informatik.rattenschach.Player;
+import edu.gymneureut.informatik.rattenschach.model.Field;
+import edu.gymneureut.informatik.rattenschach.model.Player;
+import edu.gymneureut.informatik.rattenschach.model.turns.Move;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -32,10 +31,6 @@ public class Rook extends Figure implements Cloneable {
         moves.addAll(getMoves(0, -1, position, -1));
         return moves;
     }
-
-//    public Rook copyFigure() {
-//        return new Rook(owner, position, field);
-//    }
 
     @Override
     public Figure clone() {
