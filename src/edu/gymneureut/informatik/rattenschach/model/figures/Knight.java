@@ -16,7 +16,7 @@ public class Knight extends Figure implements Cloneable {
         super(owner, position, field);
     }
 
-    public Knight() {
+    private Knight() {
 
     }
 

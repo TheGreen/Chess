@@ -6,30 +6,30 @@ import edu.gymneureut.informatik.rattenschach.model.Player;
 /**
  * Created by green on 2/17/2016.
  */
-public class RemisNotification extends Turn {
-    private Type type;
+public class DrawNotification extends Notification {
+    private final DrawType drawType;
 
-    public RemisNotification(Player executor, Type type) {
+    public DrawNotification(Player executor, DrawType drawType) {
         super(executor);
-        this.type = type;
+        this.drawType = drawType;
     }
 
     @Override
     public void execute(Game game) {
-        if (type == Type.offers) {
+        if (drawType == DrawType.offers) {
             game.setStatus(Game.GameStatus.remisOffered);
-        } else if (type == Type.accepts) {
-            game.setStatus(Game.GameStatus.remis);
-        } else if (type == Type.denies) {
+        } else if (drawType == DrawType.accepts) {
+            game.setStatus(Game.GameStatus.draw);
+        } else if (drawType == DrawType.denies) {
             game.setStatus(Game.GameStatus.running);
         }
     }
 
-    public Type getType() {
-        return type;
+    public DrawType getDrawType() {
+        return drawType;
     }
 
-    public enum Type {
+    public enum DrawType {
         offers, accepts, denies
     }
 }

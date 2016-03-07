@@ -16,7 +16,7 @@ public class Rook extends Figure implements Cloneable {
         super(owner, position, field);
     }
 
-    public Rook() {
+    private Rook() {
 
     }
 

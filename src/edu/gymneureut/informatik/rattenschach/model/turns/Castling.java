@@ -14,11 +14,11 @@ import java.util.List;
  * Created by green on 2/17/2016.
  */
 public class Castling extends Turn {
-    private Type type;
-    private King king;
-    private Rook rook;
+    private final Type type;
+    private final King king;
+    private final Rook rook;
 
-    protected Castling(Player executor, Type type, King king, Rook rook) {
+    private Castling(Player executor, Type type, King king, Rook rook) {
         super(executor);
         this.type = type;
         this.king = king;
@@ -75,6 +75,10 @@ public class Castling extends Turn {
             new Move(king, king.getPosition(), new Field(7, 1), false, null).execute(game);
             new Move(rook, rook.getPosition(), new Field(6, 1), false, null).execute(game);
         }
+    }
+
+    public King getKing() {
+        return king;
     }
 
     public enum Type {

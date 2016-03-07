@@ -8,12 +8,11 @@ import edu.gymneureut.informatik.rattenschach.model.figures.Figure;
  * Created by green on 2/17/2016.
  */
 public class Move extends Turn {
+    final Field origin;
+    final Field destination;
+    final boolean captures;
+    final Figure captured;
     Figure figure;
-    Field origin;
-    Field destination;
-
-    boolean captures;
-    Figure captured;
 
     public Move(Figure figure, Field origin, Field destination, boolean captures, Figure captured) {
         super(figure.getOwner());
@@ -51,10 +50,10 @@ public class Move extends Turn {
         return !testMove(game).getCurrentPlayer().getOpponent().isAbleToCaptureKing();
     }
 
-    private Move cloneWith(Game clonedGame) {
-        return new Move(clonedGame.getField().get(origin),
+    Move cloneWith(Game clonedGame) {
+        return new Move(clonedGame.getField().get(figure.getPosition()),
                 origin, destination, captures,
-                clonedGame.getField().get(destination));
+                clonedGame.getField().get(captured.getPosition()));
     }
 
     public boolean getCaptures() {
@@ -67,6 +66,10 @@ public class Move extends Turn {
 
     public Figure getFigure() {
         return figure;
+    }
+
+    void setFigure(Figure figure) {
+        this.figure = figure;
     }
 
     public Field getOrigin() {

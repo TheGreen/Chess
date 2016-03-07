@@ -1,4 +1,4 @@
-package edu.gymneureut.informatik.rattenschach.control;
+package edu.gymneureut.informatik.rattenschach.control.observer;
 
 import edu.gymneureut.informatik.rattenschach.model.Game;
 import edu.gymneureut.informatik.rattenschach.model.turns.Turn;

@@ -1,8 +1,8 @@
-package edu.gymneureut.informatik.rattenschach.control;
+package edu.gymneureut.informatik.rattenschach.control.controller;
 
 import edu.gymneureut.informatik.rattenschach.model.Field;
 import edu.gymneureut.informatik.rattenschach.model.figures.Figure;
-import edu.gymneureut.informatik.rattenschach.model.turns.RemisNotification;
+import edu.gymneureut.informatik.rattenschach.model.turns.DrawNotification;
 import edu.gymneureut.informatik.rattenschach.model.turns.Turn;
 
 import java.util.List;
@@ -10,16 +10,17 @@ import java.util.Map;
 
 
 public class RandomController implements Controller {
-    int numberOfGames;
-    int gamesWon;
-    int gamesLost;
-    int gamesPatt;
+    private int numberOfGames;
+    private int gamesWon;
+    private int gamesLost;
+    private int gamesDraw;
+    private int gamesStalemate;
 
     @Override
     public Turn pickMove(Map<Field, Figure> field, List<Turn> turns) {
         for (Turn turn : turns) {
-            if (turn instanceof RemisNotification
-                    && ((RemisNotification) turn).getType() == RemisNotification.Type.offers) {
+            if (turn instanceof DrawNotification
+                    && ((DrawNotification) turn).getDrawType() == DrawNotification.DrawType.offers) {
                 turns.remove(turn);
             }
         }
@@ -39,16 +40,23 @@ public class RandomController implements Controller {
     }
 
     @Override
-    public void isPatt() {
+    public void isStalemate() {
         numberOfGames += 1;
-        gamesPatt += 1;
+        gamesStalemate += 1;
+    }
+
+    @Override
+    public void isDraw() {
+        numberOfGames += 1;
+        gamesDraw += 1;
     }
 
     public void print() {
         System.out.println("Total Games: " + numberOfGames);
         System.out.println("Won Games: " + gamesWon);
         System.out.println("Lost Games: " + gamesLost);
-        System.out.println("Patt or RemisNotification: " + gamesPatt);
+        System.out.println("Draw: " + gamesDraw);
+        System.out.println("Stalemate: " + gamesStalemate);
 //        try {
 //            Thread.sleep(5000);
 //        } catch (InterruptedException e) {

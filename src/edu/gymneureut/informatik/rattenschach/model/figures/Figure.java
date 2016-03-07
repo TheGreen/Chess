@@ -17,34 +17,37 @@ public abstract class Figure implements Cloneable {
         }
 
         @Override
-        public List<Move> getPossibleMoves() {
+        public String getDetails() {
             return null;
         }
+
+        @Override
+        public List<Move> getPossibleMoves() {
+            return new LinkedList<>();
+        }
     };
-    protected Player owner;
-    protected Field position;
-    protected Map<Field, Figure> field;
-    protected boolean captured = false;
-    protected boolean hasMoved = false;
-
-    public Figure() {
-
-    }
+    Player owner;
+    Field position;
+    Map<Field, Figure> field;
+    boolean captured = false;
+    boolean hasMoved = false;
 
 
-    public Figure(Player owner, Field position, Map<Field, Figure> field) {
+    Figure(Player owner, Field position, Map<Field, Figure> field) {
         this.owner = owner;
         this.position = position;
         this.field = field;
     }
 
-    public abstract List<Move> getPossibleMoves();
+    Figure() {
 
-//    public abstract Figure copyFigure();
+    }
+
+    public abstract List<Move> getPossibleMoves();
 
     public abstract Figure clone();
 
-    protected Figure cloneTo(Figure figure) {
+    Figure cloneTo(Figure figure) {
         return figure.setAll(owner, position, field, captured, hasMoved);
     }
 
@@ -73,7 +76,7 @@ public abstract class Figure implements Cloneable {
         captured = false;
     }
 
-    protected LinkedList<Move> getMoves(int lineChange, int rowChange, Field position, int maxDistance) {
+    LinkedList<Move> getMoves(int lineChange, int rowChange, Field position, int maxDistance) {
         int walkedDistance = 0;
         Field tempPosition = new Field(position.getFile(), position.getRank());
         boolean directionUnfinished = true;
@@ -124,9 +127,7 @@ public abstract class Figure implements Cloneable {
         this.field = field;
     }
 
-    public String getDetails() {
-        return null;
-    }
+    public abstract String getDetails();
 
     public void setHasMoved(boolean hasMoved) {
         this.hasMoved = hasMoved;

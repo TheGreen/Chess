@@ -16,7 +16,7 @@ public class Queen extends Figure implements Cloneable {
         super(owner, position, field);
     }
 
-    public Queen() {
+    private Queen() {
 
     }
 

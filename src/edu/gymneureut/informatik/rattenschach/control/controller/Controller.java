@@ -1,4 +1,4 @@
-package edu.gymneureut.informatik.rattenschach.control;
+package edu.gymneureut.informatik.rattenschach.control.controller;
 
 import edu.gymneureut.informatik.rattenschach.model.Field;
 import edu.gymneureut.informatik.rattenschach.model.figures.Figure;
@@ -17,5 +17,7 @@ public interface Controller {
 
     void hasLost();
 
-    void isPatt();
+    void isStalemate();
+
+    void isDraw();
 }

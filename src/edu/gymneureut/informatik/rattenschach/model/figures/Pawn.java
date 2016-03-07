@@ -3,6 +3,7 @@ package edu.gymneureut.informatik.rattenschach.model.figures;
 import edu.gymneureut.informatik.rattenschach.model.Field;
 import edu.gymneureut.informatik.rattenschach.model.Player;
 import edu.gymneureut.informatik.rattenschach.model.turns.Move;
+import edu.gymneureut.informatik.rattenschach.model.turns.Promotion;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -19,8 +20,8 @@ public class Pawn extends Figure implements Cloneable {
         direction = (owner.getColor() == 1) ? 1 : -1;
     }
 
-    public Pawn() {
-
+    private Pawn() {
+        super();
     }
 
 
@@ -33,7 +34,19 @@ public class Pawn extends Figure implements Cloneable {
         tempPosition.setRank(tempPosition.getRank() + direction);
         Figure resultFigure = field.get(tempPosition);
         if (resultFigure == Figure.EMPTY) {
-            moves.add(new Move(this, position, tempPosition, false, resultFigure));
+            if (tempPosition.getRank() < 8
+                    || tempPosition.getRank() > 1) {
+                moves.add(new Move(this, position, tempPosition, false, resultFigure));
+            } else {
+                moves.add(new Promotion(this, position, tempPosition, false, resultFigure,
+                        new Queen(this.owner, position, field)));
+                moves.add(new Promotion(this, position, tempPosition, false, resultFigure,
+                        new Knight(this.owner, position, field)));
+                moves.add(new Promotion(this, position, tempPosition, false, resultFigure,
+                        new Rook(this.owner, position, field)));
+                moves.add(new Promotion(this, position, tempPosition, false, resultFigure,
+                        new Bishop(this.owner, position, field)));
+            }
         }
         if (!hasMoved && resultFigure == Figure.EMPTY) {
             tempPosition = new Field(position.getFile(), position.getRank());
@@ -45,9 +58,21 @@ public class Pawn extends Figure implements Cloneable {
         }
         if (position.getFile() > 1) {
             tempPosition = new Field(position.getFile() - 1, position.getRank() + direction);
-            Figure captureFigure = field.get(tempPosition);
-            if (captureFigure != Figure.EMPTY && captureFigure.getOwner() != this.owner) {
-                moves.add(new Move(this, position, tempPosition, true, captureFigure));
+            Figure capturedFigure = field.get(tempPosition);
+            if (capturedFigure != Figure.EMPTY && capturedFigure.getOwner() != this.owner) {
+                if (tempPosition.getRank() < 8
+                        || tempPosition.getRank() > 1) {
+                    moves.add(new Move(this, position, tempPosition, true, capturedFigure));
+                } else {
+                    moves.add(new Promotion(this, position, tempPosition, true, capturedFigure,
+                            new Queen(this.owner, position, field)));
+                    moves.add(new Promotion(this, position, tempPosition, true, capturedFigure,
+                            new Rook(this.owner, position, field)));
+                    moves.add(new Promotion(this, position, tempPosition, true, capturedFigure,
+                            new Knight(this.owner, position, field)));
+                    moves.add(new Promotion(this, position, tempPosition, true, capturedFigure,
+                            new Bishop(this.owner, position, field)));
+                }
             }
         }
         if (position.getFile() < 8) {
@@ -59,10 +84,6 @@ public class Pawn extends Figure implements Cloneable {
         }
         return moves;
     }
-
-//    public Pawn copyFigure() {
-//        return new Pawn(owner, position, field);
-//    }
 
     @Override
     public Figure clone() {

@@ -17,9 +17,10 @@ public class Bishop extends Figure implements Cloneable {
         super(owner, position, field);
     }
 
-    public Bishop() {
-
+    private Bishop() {
+        super();
     }
+
 
     public List<Move> getPossibleMoves() {
         List<Move> moves = new LinkedList<>();

@@ -14,8 +14,37 @@ public class Field {
         updateColor();
     }
 
-    public static boolean isValid(int file, int rank) {
-        return !(file < 1 && file > 8 && rank < 1 && rank > 8);
+    private static boolean isValid(int file, int rank) {
+        if (file < 1) {
+            return false;
+        } else if (file > 8) {
+            return false;
+        } else if (rank < 1) {
+            return false;
+        } else return rank <= 8;
+    }
+
+    public static Field parseField(String field) {
+        switch (field.charAt(0)) {
+            case 'A':
+                return new Field(1, Integer.parseInt(field.substring(1, 2)));
+            case 'B':
+                return new Field(2, Integer.parseInt(field.substring(1, 2)));
+            case 'C':
+                return new Field(3, Integer.parseInt(field.substring(1, 2)));
+            case 'D':
+                return new Field(4, Integer.parseInt(field.substring(1, 2)));
+            case 'E':
+                return new Field(5, Integer.parseInt(field.substring(1, 2)));
+            case 'F':
+                return new Field(6, Integer.parseInt(field.substring(1, 2)));
+            case 'G':
+                return new Field(7, Integer.parseInt(field.substring(1, 2)));
+            case 'H':
+                return new Field(8, Integer.parseInt(field.substring(1, 2)));
+            default:
+                return null;
+        }
     }
 
     @Override
@@ -25,8 +54,7 @@ public class Field {
 
     @Override
     public int hashCode() {
-        int result = file + 8 * (rank - 1);
-        return result;
+        return file + 8 * (rank - 1);
     }
 
     private void updateColor() {
@@ -52,7 +80,7 @@ public class Field {
     }
 
     public String getName() {
-        return new Rank().getName(rank) + new File().getName(file);
+        return Rank.getName(rank) + File.getName(file);
     }
 
 

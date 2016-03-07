@@ -1,10 +1,10 @@
 package edu.gymneureut.informatik.rattenschach.model;
 
-import edu.gymneureut.informatik.rattenschach.control.Controller;
+import edu.gymneureut.informatik.rattenschach.control.controller.Controller;
 import edu.gymneureut.informatik.rattenschach.model.figures.*;
+import edu.gymneureut.informatik.rattenschach.model.turns.DrawNotification;
 import edu.gymneureut.informatik.rattenschach.model.turns.Move;
 import edu.gymneureut.informatik.rattenschach.model.turns.Notification;
-import edu.gymneureut.informatik.rattenschach.model.turns.RemisNotification;
 import edu.gymneureut.informatik.rattenschach.model.turns.Turn;
 
 import java.util.LinkedList;
@@ -12,16 +12,16 @@ import java.util.List;
 import java.util.Map;
 
 public class Player implements Cloneable {
-    Game game;
-    List<Figure> figures;
-    List<Figure> capturedFigures;
-    Controller controller;
-    long remainingTime; //nanoseconds
-    long timeIncrement; //nanoseconds
+    private Game game;
+    private List<Figure> figures;
+    private List<Figure> capturedFigures;
+    private Controller controller;
+    private long remainingTime; //nanoseconds
+    private long timeIncrement; //nanoseconds
     private int color;
     private Player opponent;
 
-    public Player() {
+    private Player() {
 
     }
     public Player(boolean isWhite, Controller controller, Game game, long timeLimit, long timeIncrement) {
@@ -141,8 +141,8 @@ public class Player implements Cloneable {
     public Turn move(Game game) {
         if (game.getStatus() == Game.GameStatus.remisOffered) {
             List<Turn> turns = new LinkedList<>();
-            turns.add(new RemisNotification(this, RemisNotification.Type.accepts));
-            turns.add(new RemisNotification(this, RemisNotification.Type.denies));
+            turns.add(new DrawNotification(this, DrawNotification.DrawType.accepts));
+            turns.add(new DrawNotification(this, DrawNotification.DrawType.denies));
 
             Turn turn = measureChooseTime(game.getField(), turns);
             if (remainingTime < 0) {
@@ -172,16 +172,16 @@ public class Player implements Cloneable {
             }
         }
         for (Move move : illegalMoves) {
-            turns.remove(illegalMoves);
+            turns.remove(move);
         }
         if (turns.size() == 0) {
             if (opponent.isAbleToCaptureKing()) {
                 return new Notification(this, Notification.Type.hasLost);
             } else {
-                return new Notification(this, Notification.Type.isPatt);
+                return new Notification(this, Notification.Type.isStalemate);
             }
         }
-        turns.add(new RemisNotification(this, RemisNotification.Type.offers));
+        turns.add(new DrawNotification(this, DrawNotification.DrawType.offers));
         Turn turn = measureChooseTime(field, turns);
         if (remainingTime < 0) {
             return new Notification(this, Notification.Type.hasLost);
@@ -236,5 +236,9 @@ public class Player implements Cloneable {
         for (Figure figure : capturedFigures) {
             figure.setField(game.getField());
         }
+    }
+
+    public List<Figure> getCapturedFigures() {
+        return capturedFigures;
     }
 }

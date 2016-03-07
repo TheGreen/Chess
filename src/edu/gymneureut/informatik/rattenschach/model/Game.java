@@ -1,8 +1,9 @@
 package edu.gymneureut.informatik.rattenschach.model;
 
-import edu.gymneureut.informatik.rattenschach.control.Controller;
-import edu.gymneureut.informatik.rattenschach.control.Observer;
+import edu.gymneureut.informatik.rattenschach.control.controller.Controller;
+import edu.gymneureut.informatik.rattenschach.control.observer.Observer;
 import edu.gymneureut.informatik.rattenschach.model.figures.Figure;
+import edu.gymneureut.informatik.rattenschach.model.figures.Pawn;
 import edu.gymneureut.informatik.rattenschach.model.turns.Turn;
 
 import java.util.HashMap;
@@ -11,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 public class Game implements Cloneable {
-    long totalTime;
+    private long totalTime;
     private Player white;
     private Player black;
     private Player currentPlayer = white;
@@ -21,7 +22,7 @@ public class Game implements Cloneable {
     private List<Figure> livingFigures;
     private List<Figure> capturedFigures;
 
-    public Game() {
+    private Game() {
     }
 
     public Game(Controller controllerWhite, Controller controllerBlack, List<Observer> observers) {
@@ -30,7 +31,7 @@ public class Game implements Cloneable {
         this.observers = observers;
         totalTime = 1000000000000l;
         white = new Player(true, controllerWhite, this, totalTime, 100000000);
-        black = new Player(false, controllerWhite, this, totalTime, 100000000);
+        black = new Player(false, controllerBlack, this, totalTime, 100000000);
         white.setOpponent(black);
         black.setOpponent(white);
         livingFigures = new LinkedList<>();
@@ -56,7 +57,28 @@ public class Game implements Cloneable {
         cloned.currentPlayer = (currentPlayer == white) ? cloned.white : cloned.black;
         cloned.observers = new LinkedList<>();
         cloned.status = status;
+        cloned.livingFigures = cloneLivingFigures(cloned);
+        cloned.capturedFigures = cloneCapturedFigures(cloned);
         return cloned;
+    }
+
+    private List<Figure> cloneLivingFigures(Game clonedGame) {
+        List<Figure> clonedLivingFigures = new LinkedList<>();
+        for (Figure figure : livingFigures) {
+            clonedLivingFigures.add(clonedGame.getField().get(figure.getPosition()));
+        }
+        return clonedLivingFigures;
+    }
+
+    private List<Figure> cloneCapturedFigures(Game clonedGame) {
+        List<Figure> clonedCapturedFigures = new LinkedList<>();
+        for (Figure figure : clonedGame.getWhite().getCapturedFigures()) {
+            clonedCapturedFigures.add(figure);
+        }
+        for (Figure figure : clonedGame.getBlack().getCapturedFigures()) {
+            clonedCapturedFigures.add(figure);
+        }
+        return clonedCapturedFigures;
     }
 
     public GameStatus getStatus() {
@@ -79,13 +101,16 @@ public class Game implements Cloneable {
         } else if (status == GameStatus.blackWon) {
             black.getController().hasWon();
             white.getController().hasLost();
-        } else if (status == GameStatus.remis || status == GameStatus.patt) {
-            white.getController().isPatt();
-            black.getController().isPatt();
+        } else if (status == GameStatus.draw) {
+            white.getController().isDraw();
+            black.getController().isDraw();
+        } else if (status == GameStatus.stalemate) {
+            white.getController().isStalemate();
+            black.getController().isStalemate();
         }
     }
 
-    private boolean act() {
+    private void act() {
         Turn turn = currentPlayer.move(this);
         turn.execute(this);
 
@@ -96,7 +121,6 @@ public class Game implements Cloneable {
         currentPlayer = (currentPlayer == white) ? black : white;
 
         checkGame();
-        return false;
     }
 
     private void checkGame() {
@@ -146,8 +170,13 @@ public class Game implements Cloneable {
         capturedFigures.add(captured);
     }
 
+    public void promote(Pawn pawn, Figure replacement) {
+        livingFigures.remove(pawn);
+        livingFigures.add(replacement);
+    }
+
 
     public enum GameStatus {
-        running, whiteWon, blackWon, remis, patt, remisOffered
+        running, whiteWon, blackWon, draw, stalemate, remisOffered
     }
 }

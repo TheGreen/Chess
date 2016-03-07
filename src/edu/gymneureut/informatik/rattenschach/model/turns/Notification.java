@@ -14,6 +14,10 @@ public class Notification extends Turn {
         this.type = type;
     }
 
+    Notification(Player executor) {
+        super(executor);
+    }
+
     @Override
     public void execute(Game game) {
         if (type == Type.hasLost) {
@@ -22,8 +26,8 @@ public class Notification extends Turn {
             } else if (executor == game.getBlack()) {
                 game.setStatus(Game.GameStatus.whiteWon);
             }
-        } else if (type == Type.isPatt) {
-            game.setStatus(Game.GameStatus.patt);
+        } else if (type == Type.isStalemate) {
+            game.setStatus(Game.GameStatus.stalemate);
         }
     }
 
@@ -32,6 +36,6 @@ public class Notification extends Turn {
     }
 
     public enum Type {
-        hasLost, isPatt
+        hasLost, isStalemate
     }
 }

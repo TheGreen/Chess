@@ -16,7 +16,7 @@ public class King extends Figure implements Cloneable {
         super(owner, position, field);
     }
 
-    public King() {
+    private King() {
     }
 
     public List<Move> getPossibleMoves() {
