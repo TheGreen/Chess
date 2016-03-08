@@ -14,7 +14,10 @@ import java.util.Map;
 import java.util.Scanner;
 
 /**
- * Created by green on 2/18/2016.
+ * The <tt>TerminalCombination</tt> class.
+ *
+ * @author Jan Christian Gruenhage, Alex Klug
+ * @version 0.1
  */
 public class TerminalCombination implements Controller, Observer {
     private final TerminalObserver observer;
@@ -59,18 +62,23 @@ public class TerminalCombination implements Controller, Observer {
             return pickMove(field, turns);
         } else {
             Figure chosenFigure = figures.get(Integer.parseInt(input) - 1);
-            List<Move> availableMoves = new LinkedList<>();
+            List<Turn> availableTurns = new LinkedList<>();
             for (Turn turn : turns) {
                 if (turn instanceof Move && ((Move) turn).getFigure() == chosenFigure) {
-                    availableMoves.add((Move) turn);
+                    availableTurns.add(turn);
+                } else if (turn instanceof Castling &&
+                        (((Castling) turn).getKing() == chosenFigure
+                                || ((Castling) turn).getRook() == chosenFigure)) {
+                    availableTurns.add(turn);
+
                 }
             }
             System.out.println("Choose your Move:");
-            for (int i = 1; i <= availableMoves.size(); i++) {
-                System.out.println(i + ". " + availableMoves.get(i - 1).toString());
+            for (int i = 1; i <= availableTurns.size(); i++) {
+                System.out.println(i + ". " + availableTurns.get(i - 1).toString());
             }
             input = scanner.next();
-            return availableMoves.get(Integer.parseInt(input) - 1);
+            return availableTurns.get(Integer.parseInt(input) - 1);
         }
     }
 

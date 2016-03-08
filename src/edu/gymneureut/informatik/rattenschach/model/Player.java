@@ -162,6 +162,8 @@ public class Player implements Cloneable {
         for (Figure figure : figures) {
             turns.addAll(figure.getPossibleMoves());
         }
+
+
         List<Move> illegalMoves = new LinkedList<>();
         for (Turn turn : turns) {
             if (turn instanceof Move) {

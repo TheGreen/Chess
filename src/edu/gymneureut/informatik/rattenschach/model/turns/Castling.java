@@ -80,8 +80,20 @@ public class Castling extends Turn {
         }
     }
 
+    @Override
+    public String toString() {
+        return ""
+                + ((type == Type.queenside) ? "Queenside" : "Kingside")
+                + " Castling for "
+                + ((king.getOwner().getColor() == 1) ? "White" : "Black");
+    }
+
     public King getKing() {
         return king;
+    }
+
+    public Rook getRook() {
+        return rook;
     }
 
     public enum Type {

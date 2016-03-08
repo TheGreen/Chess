@@ -2,6 +2,7 @@ package edu.gymneureut.informatik.rattenschach.model.figures;
 
 import edu.gymneureut.informatik.rattenschach.model.Field;
 import edu.gymneureut.informatik.rattenschach.model.Player;
+import edu.gymneureut.informatik.rattenschach.model.turns.Castling;
 import edu.gymneureut.informatik.rattenschach.model.turns.Move;
 
 import java.util.LinkedList;
@@ -23,7 +24,7 @@ public class King extends Figure implements Cloneable {
     }
 
     public List<Move> getPossibleMoves() {
-        LinkedList<Move> moves = new LinkedList<>();
+        List<Move> moves = new LinkedList<>();
         moves.addAll(getMoves(1, 1, position, 1));
         moves.addAll(getMoves(1, -1, position, 1));
         moves.addAll(getMoves(-1, 1, position, 1));
@@ -33,6 +34,12 @@ public class King extends Figure implements Cloneable {
         moves.addAll(getMoves(0, 1, position, 1));
         moves.addAll(getMoves(0, -1, position, 1));
         return moves;
+    }
+
+    public List<Castling> getPossibleCastlings() {
+        List<Castling> castlings = new LinkedList<>();
+        //TODO implementation
+        return castlings;
     }
 
 //    public King copyFigure() {
