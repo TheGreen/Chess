@@ -1,5 +1,11 @@
 package edu.gymneureut.informatik.rattenschach.model;
 
+/**
+ * The <tt>Field</tt> class.
+ *
+ * @author Jan Christian Gruenhage, Alex Klug
+ * @version 0.1
+ */
 public class Field {
     private int file;
     private int rank;
@@ -80,7 +86,7 @@ public class Field {
     }
 
     public String getName() {
-        return Rank.getName(rank) + File.getName(file);
+        return File.getName(file) + Rank.getName(rank);
     }
 
 
@@ -93,40 +99,6 @@ public class Field {
         public static final int SIX = 6;
         public static final int SEVEN = 7;
         public static final int EIGHT = 8;
-
-        public static String getName(int input) {
-            switch (input) {
-                case 1:
-                    return "1";
-                case 2:
-                    return "2";
-                case 3:
-                    return "3";
-                case 4:
-                    return "4";
-                case 5:
-                    return "5";
-                case 6:
-                    return "6";
-                case 7:
-                    return "7";
-                case 8:
-                    return "8";
-                default:
-                    return "ERROR";
-            }
-        }
-    }
-
-    public static class Rank {
-        public static final int A = 1;
-        public static final int B = 2;
-        public static final int C = 3;
-        public static final int D = 4;
-        public static final int E = 5;
-        public static final int F = 6;
-        public static final int G = 7;
-        public static final int H = 8;
 
         public static String getName(int input) {
             switch (input) {
@@ -146,6 +118,40 @@ public class Field {
                     return "G";
                 case 8:
                     return "H";
+                default:
+                    return "ERROR";
+            }
+        }
+    }
+
+    public static class Rank {
+        public static final int A = 1;
+        public static final int B = 2;
+        public static final int C = 3;
+        public static final int D = 4;
+        public static final int E = 5;
+        public static final int F = 6;
+        public static final int G = 7;
+        public static final int H = 8;
+
+        public static String getName(int input) {
+            switch (input) {
+                case 1:
+                    return "1";
+                case 2:
+                    return "2";
+                case 3:
+                    return "3";
+                case 4:
+                    return "4";
+                case 5:
+                    return "5";
+                case 6:
+                    return "6";
+                case 7:
+                    return "7";
+                case 8:
+                    return "8";
                 default:
                     return "ERROR";
             }

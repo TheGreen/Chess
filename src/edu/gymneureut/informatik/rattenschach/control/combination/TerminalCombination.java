@@ -6,7 +6,6 @@ import edu.gymneureut.informatik.rattenschach.control.observer.TerminalObserver;
 import edu.gymneureut.informatik.rattenschach.model.Field;
 import edu.gymneureut.informatik.rattenschach.model.Game;
 import edu.gymneureut.informatik.rattenschach.model.figures.Figure;
-import edu.gymneureut.informatik.rattenschach.model.figures.Pawn;
 import edu.gymneureut.informatik.rattenschach.model.turns.*;
 
 import java.util.LinkedList;
@@ -27,7 +26,7 @@ public class TerminalCombination implements Controller, Observer {
     @Override
     public Turn pickMove(Map<Field, Figure> field, List<Turn> turns) {
         Scanner scanner = new Scanner(System.in);
-        System.out.print("Choose your next Turn: \n");
+        System.out.print("Choose a figure to move: \n");
         List<Figure> figures = new LinkedList<>();
         for (Turn turn : turns) {
             if (turn instanceof Move) {
@@ -46,6 +45,7 @@ public class TerminalCombination implements Controller, Observer {
                     + TerminalObserver.getFigureName(figures.get(i - 1))
                     + " at " + figures.get(i - 1).getPosition().getName());
         }
+        System.out.println("Alternatively, you could offer draw:");
         System.out.println((figures.size() + 1) + ". Draw");
         String input = scanner.next();
         if (input.equals("" + (figures.size() + 1))) {
@@ -57,39 +57,21 @@ public class TerminalCombination implements Controller, Observer {
             }
             System.out.println("Error, offering draw is not available.");
             return pickMove(field, turns);
-
-        }
-
-
-        Field origin = Field.parseField(input.split(";")[0]);
-        Field destination = Field.parseField(input.split(";")[1]);
-        if (field.get(origin) instanceof Pawn
-                && (destination.getRank() == 1 || destination.getRank() == 8)) {
-            List<Promotion> promotions = new LinkedList<>();
-            for (Turn turn : turns) {
-                if (turn instanceof Promotion) {
-                    promotions.add((Promotion) turn);
-                }
-            }
-            Promotion chosen = choosePromotion(promotions);
-            if (chosen != null) {
-                return chosen;
-            } else {
-                return pickMove(field, turns);
-            }
         } else {
-            List<Move> moves = new LinkedList<>();
+            Figure chosenFigure = figures.get(Integer.parseInt(input) - 1);
+            List<Move> availableMoves = new LinkedList<>();
             for (Turn turn : turns) {
-                if (turn instanceof Move) {
-                    Move move = (Move) turn;
-                    if (origin == move.getOrigin() && destination == move.getDestination()) {
-                        return move;
-                    }
+                if (turn instanceof Move && ((Move) turn).getFigure() == chosenFigure) {
+                    availableMoves.add((Move) turn);
                 }
             }
+            System.out.println("Choose your Move:");
+            for (int i = 1; i <= availableMoves.size(); i++) {
+                System.out.println(i + ". " + availableMoves.get(i - 1).toString());
+            }
+            input = scanner.next();
+            return availableMoves.get(Integer.parseInt(input) - 1);
         }
-
-        return null;
     }
 
     private Promotion choosePromotion(List<Promotion> promotions) {

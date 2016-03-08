@@ -5,7 +5,10 @@ import edu.gymneureut.informatik.rattenschach.model.Game;
 import edu.gymneureut.informatik.rattenschach.model.figures.Figure;
 
 /**
- * Created by green on 2/17/2016.
+ * The <tt>Move</tt> class.
+ *
+ * @author Jan Christian Gruenhage, Alex Klug
+ * @version 0.1
  */
 public class Move extends Turn {
     final Field origin;
@@ -78,5 +81,15 @@ public class Move extends Turn {
 
     public Field getDestination() {
         return destination;
+    }
+
+    @Override
+    public String toString() {
+        return "" + figure.getName()
+                + " from "
+                + origin.getName()
+                + " to "
+                + destination.getName()
+                + ((captures) ? " capturing " + captured.getName() : "");
     }
 }

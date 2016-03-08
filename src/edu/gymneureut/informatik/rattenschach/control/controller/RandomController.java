@@ -8,7 +8,12 @@ import edu.gymneureut.informatik.rattenschach.model.turns.Turn;
 import java.util.List;
 import java.util.Map;
 
-
+/**
+ * The <tt>RandomController</tt> class.
+ *
+ * @author Jan Christian Gruenhage, Alex Klug
+ * @version 0.1
+ */
 public class RandomController implements Controller {
     private int numberOfGames;
     private int gamesWon;

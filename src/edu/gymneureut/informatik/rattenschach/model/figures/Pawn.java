@@ -10,7 +10,10 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by green on 2/2/2016.
+ * The <tt>Pawn</tt> class.
+ *
+ * @author Jan Christian Gruenhage, Alex Klug
+ * @version 0.1
  */
 public class Pawn extends Figure implements Cloneable {
     private int direction;
@@ -88,5 +91,10 @@ public class Pawn extends Figure implements Cloneable {
     @Override
     public Figure clone() {
         return cloneTo(new Pawn());
+    }
+
+    @Override
+    public String getName() {
+        return "Pawn";
     }
 }

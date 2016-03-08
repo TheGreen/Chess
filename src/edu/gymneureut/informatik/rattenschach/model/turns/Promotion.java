@@ -5,7 +5,10 @@ import edu.gymneureut.informatik.rattenschach.model.Game;
 import edu.gymneureut.informatik.rattenschach.model.figures.Figure;
 
 /**
- * Created by green on 2/18/2016.
+ * The <tt>Promotion</tt> class.
+ *
+ * @author Jan Christian Gruenhage, Alex Klug
+ * @version 0.1
  */
 public class Promotion extends Move {
     private final Figure replacement;

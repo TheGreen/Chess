@@ -11,7 +11,10 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Created by green on 2/17/2016.
+ * The <tt>Castling</tt> class.
+ *
+ * @author Jan Christian Gruenhage, Alex Klug
+ * @version 0.1
  */
 public class Castling extends Turn {
     private final Type type;

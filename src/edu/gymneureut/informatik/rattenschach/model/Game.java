@@ -11,6 +11,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * The <tt>Game</tt> class.
+ *
+ * @author Jan Christian Gruenhage, Alex Klug
+ * @version 0.1
+ */
 public class Game implements Cloneable {
     private long totalTime;
     private Player white;
@@ -131,7 +137,7 @@ public class Game implements Cloneable {
                 if (currentFigure != Figure.EMPTY && seenFigures.contains(currentFigure)) {
                     throw new IllegalStateException("Duplicate Figure"
                             + i + j
-                            + currentFigure.getDetails());
+                            + currentFigure.getName());
                 }
                 seenFigures.add(currentFigure);
                 if (currentFigure != Figure.EMPTY && !livingFigures.contains(currentFigure)) {

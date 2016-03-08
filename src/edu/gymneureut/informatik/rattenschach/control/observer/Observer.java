@@ -4,7 +4,10 @@ import edu.gymneureut.informatik.rattenschach.model.Game;
 import edu.gymneureut.informatik.rattenschach.model.turns.Turn;
 
 /**
- * Created by green on 2/4/2016.
+ * The <tt>Observer</tt> interface.
+ *
+ * @author Jan Christian Gruenhage, Alex Klug
+ * @version 0.1
  */
 public interface Observer {
     void startGame(Game game);

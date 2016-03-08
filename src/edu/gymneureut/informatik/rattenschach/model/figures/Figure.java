@@ -8,7 +8,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-
+/**
+ * The <tt>Figure</tt> class.
+ *
+ * @author Jan Christian Gruenhage, Alex Klug
+ * @version 0.1
+ */
 public abstract class Figure implements Cloneable {
     public static final Figure EMPTY = new Figure() {
         @Override
@@ -17,7 +22,7 @@ public abstract class Figure implements Cloneable {
         }
 
         @Override
-        public String getDetails() {
+        public String getName() {
             return null;
         }
 
@@ -127,7 +132,7 @@ public abstract class Figure implements Cloneable {
         this.field = field;
     }
 
-    public abstract String getDetails();
+    public abstract String getName();
 
     public void setHasMoved(boolean hasMoved) {
         this.hasMoved = hasMoved;

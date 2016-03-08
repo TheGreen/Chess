@@ -4,7 +4,10 @@ import edu.gymneureut.informatik.rattenschach.model.Game;
 import edu.gymneureut.informatik.rattenschach.model.Player;
 
 /**
- * Created by green on 2/17/2016.
+ * The abstract <tt>Turn</tt> class.
+ *
+ * @author Jan Christian Gruenhage, Alex Klug
+ * @version 0.1
  */
 public abstract class Turn {
     final Player executor;

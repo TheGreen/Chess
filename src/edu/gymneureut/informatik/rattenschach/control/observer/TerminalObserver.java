@@ -9,7 +9,10 @@ import edu.gymneureut.informatik.rattenschach.model.turns.Notification;
 import edu.gymneureut.informatik.rattenschach.model.turns.Turn;
 
 /**
- * Created by green on 2/5/2016.
+ * The <tt>TerminalObserver</tt> class.
+ *
+ * @author Jan Christian Gruenhage, Alex Klug
+ * @version 0.1
  */
 public class TerminalObserver implements Observer {
     private Game game;
@@ -83,7 +86,7 @@ public class TerminalObserver implements Observer {
             System.out.print("\n");
         }
         System.out.println("  -----------------------------------------");
-        System.out.println("     1    2    3    4    5    6    7    8  ");
+        System.out.println("     A    B    C    D    E    F    G    H  ");
     }
 
     private void printTurn(Turn turn) {

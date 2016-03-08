@@ -8,7 +8,10 @@ import edu.gymneureut.informatik.rattenschach.model.Game;
 import java.util.LinkedList;
 
 /**
- * Created by green on 2/4/2016.
+ * The <tt>Main</tt> class.
+ *
+ * @author Jan Christian Gruenhage, Alex Klug
+ * @version 0.1
  */
 class Main {
     public static void main(String[] args) {
