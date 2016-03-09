@@ -20,12 +20,14 @@ public class Castling extends Turn {
     private final Type type;
     private final King king;
     private final Rook rook;
+    private int baseline;
 
-    private Castling(Player executor, Type type, King king, Rook rook) {
+    private Castling(Player executor, Type type, King king, Rook rook, int baseline) {
         super(executor);
         this.type = type;
         this.king = king;
         this.rook = rook;
+        this.baseline = baseline;
     }
 
     public static List<Castling> possibleCastlings(Game game) {
@@ -49,22 +51,23 @@ public class Castling extends Turn {
                 }
             }
         }
+        int baseline = (player.getColor() == 0) ? 8 : 1;
         if (queensideRook != null
                 && !queensideRook.hasMoved()
-                && game.getField().get(new Field(2, 1)) == Figure.EMPTY
-                && game.getField().get(new Field(3, 1)) == Figure.EMPTY
-                && game.getField().get(new Field(4, 1)) == Figure.EMPTY
-                && new Move(king, king.getPosition(), new Field(3, 1), false, null).isLegal(game)
-                && new Move(king, king.getPosition(), new Field(4, 1), false, null).isLegal(game)) {
-            castlings.add(new Castling(game.getCurrentPlayer(), Type.queenside, king, queensideRook));
+                && game.getField().get(new Field(2, baseline)) == Figure.EMPTY
+                && game.getField().get(new Field(3, baseline)) == Figure.EMPTY
+                && game.getField().get(new Field(4, baseline)) == Figure.EMPTY
+                && new Move(king, king.getPosition(), new Field(3, baseline), false, Figure.EMPTY).isLegal(game)
+                && new Move(king, king.getPosition(), new Field(4, baseline), false, Figure.EMPTY).isLegal(game)) {
+            castlings.add(new Castling(game.getCurrentPlayer(), Type.queenside, king, queensideRook, baseline));
         }
         if (kingsideRook != null
                 && !kingsideRook.hasMoved()
-                && game.getField().get(new Field(6, 1)) == Figure.EMPTY
-                && game.getField().get(new Field(7, 1)) == Figure.EMPTY
-                && new Move(king, king.getPosition(), new Field(6, 1), false, null).isLegal(game)
-                && new Move(king, king.getPosition(), new Field(7, 1), false, null).isLegal(game)) {
-            castlings.add(new Castling(game.getCurrentPlayer(), Type.kingside, king, kingsideRook));
+                && game.getField().get(new Field(6, baseline)) == Figure.EMPTY
+                && game.getField().get(new Field(7, baseline)) == Figure.EMPTY
+                && new Move(king, king.getPosition(), new Field(6, baseline), false, Figure.EMPTY).isLegal(game)
+                && new Move(king, king.getPosition(), new Field(7, baseline), false, Figure.EMPTY).isLegal(game)) {
+            castlings.add(new Castling(game.getCurrentPlayer(), Type.kingside, king, kingsideRook, baseline));
         }
         return castlings;
     }
@@ -72,11 +75,11 @@ public class Castling extends Turn {
     @Override
     public void execute(Game game) {
         if (type == Type.queenside) {
-            new Move(king, king.getPosition(), new Field(3, 1), false, null).execute(game);
-            new Move(rook, rook.getPosition(), new Field(4, 1), false, null).execute(game);
+            new Move(king, king.getPosition(), new Field(3, baseline), false, null).execute(game);
+            new Move(rook, rook.getPosition(), new Field(4, baseline), false, null).execute(game);
         } else if (type == Type.kingside) {
-            new Move(king, king.getPosition(), new Field(7, 1), false, null).execute(game);
-            new Move(rook, rook.getPosition(), new Field(6, 1), false, null).execute(game);
+            new Move(king, king.getPosition(), new Field(7, baseline), false, null).execute(game);
+            new Move(rook, rook.getPosition(), new Field(6, baseline), false, null).execute(game);
         }
     }
 
