@@ -2,10 +2,7 @@ package edu.gymneureut.informatik.rattenschach.model;
 
 import edu.gymneureut.informatik.rattenschach.control.controller.Controller;
 import edu.gymneureut.informatik.rattenschach.model.figures.*;
-import edu.gymneureut.informatik.rattenschach.model.turns.DrawNotification;
-import edu.gymneureut.informatik.rattenschach.model.turns.Move;
-import edu.gymneureut.informatik.rattenschach.model.turns.Notification;
-import edu.gymneureut.informatik.rattenschach.model.turns.Turn;
+import edu.gymneureut.informatik.rattenschach.model.turns.*;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -162,8 +159,6 @@ public class Player implements Cloneable {
         for (Figure figure : figures) {
             turns.addAll(figure.getPossibleMoves());
         }
-
-
         List<Move> illegalMoves = new LinkedList<>();
         for (Turn turn : turns) {
             if (turn instanceof Move) {
@@ -190,6 +185,7 @@ public class Player implements Cloneable {
             }
         }
         turns.add(new DrawNotification(this, DrawNotification.DrawType.offers));
+        turns.addAll(Castling.possibleCastlings(game));
         Turn turn = measureChooseTime(field, turns);
         if (remainingTime < 0) {
             return new Notification(this, Notification.Type.hasLost);
