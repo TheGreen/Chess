@@ -1,10 +1,19 @@
-package edu.gymneureut.informatik.rattenschach;
+package edu.gymneureut.informatik.rattenschach.model.figures;
+
+import edu.gymneureut.informatik.rattenschach.model.Field;
+import edu.gymneureut.informatik.rattenschach.model.Player;
+import edu.gymneureut.informatik.rattenschach.model.turns.Move;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-
+/**
+ * The <tt>Figure</tt> class.
+ *
+ * @author Jan Christian Gruenhage, Alex Klug
+ * @version 0.1
+ */
 public abstract class Figure implements Cloneable {
     public static final Figure EMPTY = new Figure() {
         @Override
@@ -13,34 +22,37 @@ public abstract class Figure implements Cloneable {
         }
 
         @Override
-        public List<Move> getPossibleMoves() {
+        public String getName() {
             return null;
         }
+
+        @Override
+        public List<Move> getPossibleMoves() {
+            return new LinkedList<>();
+        }
     };
-    protected Player owner;
-    protected Field position;
-    protected Map<Field, Figure> field;
-    protected boolean captured = false;
-    protected boolean hasMoved = false;
-
-    public Figure() {
-
-    }
+    Player owner;
+    Field position;
+    Map<Field, Figure> field;
+    boolean captured = false;
+    boolean hasMoved = false;
 
 
-    public Figure(Player owner, Field position, Map<Field, Figure> field) {
+    Figure(Player owner, Field position, Map<Field, Figure> field) {
         this.owner = owner;
         this.position = position;
         this.field = field;
     }
 
-    public abstract List<Move> getPossibleMoves();
+    Figure() {
 
-//    public abstract Figure copyFigure();
+    }
+
+    public abstract List<Move> getPossibleMoves();
 
     public abstract Figure clone();
 
-    protected Figure cloneTo(Figure figure) {
+    Figure cloneTo(Figure figure) {
         return figure.setAll(owner, position, field, captured, hasMoved);
     }
 
@@ -69,24 +81,24 @@ public abstract class Figure implements Cloneable {
         captured = false;
     }
 
-    protected LinkedList<Move> getMoves(int lineChange, int rowChange, Field position, int maxDistance) {
+    LinkedList<Move> getMoves(int lineChange, int rowChange, Field position, int maxDistance) {
         int walkedDistance = 0;
-        Field tempPosition = new Field(position.getLine(), position.getRow());
+        Field tempPosition = new Field(position.getFile(), position.getRank());
         boolean directionUnfinished = true;
         LinkedList<Move> moves = new LinkedList<>();
         while (directionUnfinished) {
-            if (tempPosition.getLine() + lineChange > 8
-                    || tempPosition.getRow() + rowChange > 8
-                    || tempPosition.getLine() + lineChange < 1
-                    || tempPosition.getRow() + rowChange < 1
+            if (tempPosition.getFile() + lineChange > 8
+                    || tempPosition.getRank() + rowChange > 8
+                    || tempPosition.getFile() + lineChange < 1
+                    || tempPosition.getRank() + rowChange < 1
                     || (maxDistance != -1 && walkedDistance >= maxDistance)) {
                 directionUnfinished = false;
             } else {
                 if (maxDistance != -1) {
                     walkedDistance += 1;
                 }
-                tempPosition = new Field(tempPosition.getLine() + lineChange,
-                        tempPosition.getRow() + rowChange);
+                tempPosition = new Field(tempPosition.getFile() + lineChange,
+                        tempPosition.getRank() + rowChange);
                 Figure resultFigure = field.get(tempPosition);
                 if (resultFigure == Figure.EMPTY) {
                     moves.add(new Move(this, position, tempPosition, false, resultFigure));
@@ -112,8 +124,21 @@ public abstract class Figure implements Cloneable {
         return position;
     }
 
+    public void setPosition(Field position) {
+        this.position = position;
+    }
 
     public void setField(Map<Field, Figure> field) {
         this.field = field;
+    }
+
+    public abstract String getName();
+
+    public void setHasMoved(boolean hasMoved) {
+        this.hasMoved = hasMoved;
+    }
+
+    public boolean hasMoved() {
+        return hasMoved;
     }
 }

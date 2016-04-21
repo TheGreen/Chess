@@ -1,22 +1,30 @@
-package edu.gymneureut.informatik.rattenschach;
+package edu.gymneureut.informatik.rattenschach.model;
 
-import edu.gymneureut.informatik.rattenschach.figures.*;
+import edu.gymneureut.informatik.rattenschach.control.controller.Controller;
+import edu.gymneureut.informatik.rattenschach.model.figures.*;
+import edu.gymneureut.informatik.rattenschach.model.turns.*;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * The <tt>Player</tt> class.
+ *
+ * @author Jan Christian Gruenhage, Alex Klug
+ * @version 0.1
+ */
 public class Player implements Cloneable {
-    Game game;
-    List<Figure> figures;
-    List<Figure> capturedFigures;
-    Controller controller;
-    long remainingTime; //nanoseconds
-    long timeIncrement; //nanoseconds
+    private Game game;
+    private List<Figure> figures;
+    private List<Figure> capturedFigures;
+    private Controller controller;
+    private long remainingTime; //nanoseconds
+    private long timeIncrement; //nanoseconds
     private int color;
     private Player opponent;
 
-    public Player() {
+    private Player() {
 
     }
     public Player(boolean isWhite, Controller controller, Game game, long timeLimit, long timeIncrement) {
@@ -89,6 +97,16 @@ public class Player implements Cloneable {
         return cloned;
     }
 
+    public void finishClone(Game game) {
+        this.game = game;
+        for (Figure figure : figures) {
+            figure.setField(game.getField());
+        }
+        for (Figure figure : capturedFigures) {
+            figure.setField(game.getField());
+        }
+    }
+
 //    public Player copyPlayer() {
 //        List<Figure> figuresCopy = new LinkedList<>();
 //        for (Figure figure : figures) {
@@ -126,65 +144,55 @@ public class Player implements Cloneable {
     public Turn move(Game game) {
         if (game.getStatus() == Game.GameStatus.remisOffered) {
             List<Turn> turns = new LinkedList<>();
-            turns.add(new Turn(null, Turn.TurnStatus.acceptsRemis));
-            turns.add(new Turn(null, Turn.TurnStatus.deniesRemis));
+            turns.add(new DrawNotification(this, DrawNotification.DrawType.accepts));
+            turns.add(new DrawNotification(this, DrawNotification.DrawType.denies));
 
             Turn turn = measureChooseTime(game.getField(), turns);
             if (remainingTime < 0) {
-                return new Turn(null, Turn.TurnStatus.hasLost);
+                return new Notification(this, Notification.Type.hasLost);
             }
             remainingTime += timeIncrement;
             return turn;
         }
         Map<Field, Figure> field = game.getField();
-        List<Move> moves = new LinkedList<>();
-        for (Figure figure : figures) {
-            moves.addAll(figure.getPossibleMoves());
-        }
-        for (Move move : moves) {
-            if (this == game.getWhite()) {
-                if (move.testMove(game).getBlack().isAbleToCaptureKing()) {
-                    moves.remove(move);
-                }
-            } else {
-                if (move.testMove(game).getWhite().isAbleToCaptureKing()) {
-                    moves.remove(move);
-                }
-            }
-        }
-        if (moves.size() == 0) {
-            if (opponent.isAbleToCaptureKing()) {
-                return new Turn(null, Turn.TurnStatus.hasLost);
-            } else {
-                return new Turn(null, Turn.TurnStatus.isPatt);
-            }
-        }
         List<Turn> turns = new LinkedList<>();
-        for (Move move : moves) {
-            turns.add(new Turn(move, Turn.TurnStatus.normallyRunning));
+        for (Figure figure : figures) {
+            turns.addAll(figure.getPossibleMoves());
         }
-//        if (kingSideCastlingPossible()) {
-//            turns.add(kingSideCastling);
-//        }
-//        if (queenSideCastlingPossible()) {
-//            turns.add(queenSideCastling);
-//        }
-        turns.add(new Turn(null, Turn.TurnStatus.offersRemis));
+        List<Move> illegalMoves = new LinkedList<>();
+        for (Turn turn : turns) {
+            if (turn instanceof Move) {
+                Move move = (Move) turn;
+                if (this == game.getWhite()) {
+                    if (move.testMove(game).getBlack().isAbleToCaptureKing()) {
+                        illegalMoves.add(move);
+                    }
+                } else {
+                    if (move.testMove(game).getWhite().isAbleToCaptureKing()) {
+                        illegalMoves.add(move);
+                    }
+                }
+            }
+        }
+        for (Move move : illegalMoves) {
+            turns.remove(move);
+        }
+        if (turns.size() == 0) {
+            if (opponent.isAbleToCaptureKing()) {
+                return new Notification(this, Notification.Type.hasLost);
+            } else {
+                return new Notification(this, Notification.Type.isStalemate);
+            }
+        }
+        turns.add(new DrawNotification(this, DrawNotification.DrawType.offers));
+        turns.addAll(Castling.possibleCastlings(game));
         Turn turn = measureChooseTime(field, turns);
         if (remainingTime < 0) {
-            return new Turn(null, Turn.TurnStatus.hasLost);
+            return new Notification(this, Notification.Type.hasLost);
         }
         remainingTime += timeIncrement;
         return turn;
     }
-
-//    private boolean queenSideCastlingPossible() {
-//        return false;
-//    }
-//
-//    private boolean kingSideCastlingPossible() {
-//        return false;
-//    }
 
     private Turn measureChooseTime(Map<Field, Figure> field, List<Turn> turns) {
         long time = System.nanoTime();
@@ -232,5 +240,9 @@ public class Player implements Cloneable {
         for (Figure figure : capturedFigures) {
             figure.setField(game.getField());
         }
+    }
+
+    public List<Figure> getCapturedFigures() {
+        return capturedFigures;
     }
 }

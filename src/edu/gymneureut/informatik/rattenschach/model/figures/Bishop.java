@@ -1,16 +1,18 @@
-package edu.gymneureut.informatik.rattenschach.figures;
+package edu.gymneureut.informatik.rattenschach.model.figures;
 
-import edu.gymneureut.informatik.rattenschach.Field;
-import edu.gymneureut.informatik.rattenschach.Figure;
-import edu.gymneureut.informatik.rattenschach.Move;
-import edu.gymneureut.informatik.rattenschach.Player;
+import edu.gymneureut.informatik.rattenschach.model.Field;
+import edu.gymneureut.informatik.rattenschach.model.Player;
+import edu.gymneureut.informatik.rattenschach.model.turns.Move;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 /**
- * Created by green on 2/2/2016.
+ * The <tt>Bishop</tt> class.
+ *
+ * @author Jan Christian Gruenhage, Alex Klug
+ * @version 0.1
  */
 public class Bishop extends Figure implements Cloneable {
 
@@ -18,9 +20,10 @@ public class Bishop extends Figure implements Cloneable {
         super(owner, position, field);
     }
 
-    public Bishop() {
-
+    private Bishop() {
+        super();
     }
+
 
     public List<Move> getPossibleMoves() {
         List<Move> moves = new LinkedList<>();
@@ -41,6 +44,11 @@ public class Bishop extends Figure implements Cloneable {
     @Override
     public Figure clone() {
         return cloneTo(new Bishop());
+    }
+
+    @Override
+    public String getName() {
+        return "Bishop";
     }
 
 

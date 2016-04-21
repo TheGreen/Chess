@@ -1,27 +1,29 @@
-package edu.gymneureut.informatik.rattenschach.figures;
+package edu.gymneureut.informatik.rattenschach.model.figures;
 
-import edu.gymneureut.informatik.rattenschach.Field;
-import edu.gymneureut.informatik.rattenschach.Figure;
-import edu.gymneureut.informatik.rattenschach.Move;
-import edu.gymneureut.informatik.rattenschach.Player;
+import edu.gymneureut.informatik.rattenschach.model.Field;
+import edu.gymneureut.informatik.rattenschach.model.Player;
+import edu.gymneureut.informatik.rattenschach.model.turns.Move;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 /**
- * Created by green on 2/2/2016.
+ * The <tt>King</tt> class.
+ *
+ * @author Jan Christian Gruenhage, Alex Klug
+ * @version 0.1
  */
 public class King extends Figure implements Cloneable {
     public King(Player owner, Field position, Map<Field, Figure> field) {
         super(owner, position, field);
     }
 
-    public King() {
+    private King() {
     }
 
     public List<Move> getPossibleMoves() {
-        LinkedList<Move> moves = new LinkedList<>();
+        List<Move> moves = new LinkedList<>();
         moves.addAll(getMoves(1, 1, position, 1));
         moves.addAll(getMoves(1, -1, position, 1));
         moves.addAll(getMoves(-1, 1, position, 1));
@@ -40,5 +42,10 @@ public class King extends Figure implements Cloneable {
     @Override
     public Figure clone() {
         return cloneTo(new King());
+    }
+
+    @Override
+    public String getName() {
+        return "King";
     }
 }
