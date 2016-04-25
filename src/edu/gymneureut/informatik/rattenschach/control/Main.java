@@ -1,6 +1,7 @@
 package edu.gymneureut.informatik.rattenschach.control;
 
 import edu.gymneureut.informatik.rattenschach.control.combination.TerminalCombination;
+import edu.gymneureut.informatik.rattenschach.control.controller.Controller;
 import edu.gymneureut.informatik.rattenschach.control.controller.RandomController;
 import edu.gymneureut.informatik.rattenschach.control.observer.Observer;
 import edu.gymneureut.informatik.rattenschach.control.observer.TerminalObserver;
@@ -16,19 +17,39 @@ import java.util.LinkedList;
  */
 class Main {
     public static void main(String[] args) {
-        RandomController randomOne = new RandomController();
-        RandomController randomTwo = new RandomController();
-        TerminalObserver observer = new TerminalObserver();
-        LinkedList<Observer> three = new LinkedList<>();
-        three.add(observer);
+        Controller controllerOne;
+        Controller controllerTwo;
+        Observer observer;
+        switch (args[0]) {
+            /*
+            Benchmark:
+            Lets two random controllers play against each other.
+             */
+            case "benchmark":
+                controllerOne = new RandomController();
+                controllerTwo = new RandomController();
+                observer = new TerminalObserver();
+                break;
+            /*
+            Default:
+            Play vs a random controller in Terminal
+             */
+            default:
+                controllerOne = new RandomController();
+                controllerTwo = new TerminalCombination();
+                observer = (Observer) controllerTwo;
+                break;
+
+        }
+        LinkedList<Observer> observers = new LinkedList<>();
+        observers.add(observer);
 
         for (int i = 0; i < 10000; i++) {
             if (i % 2 == 0) {
-                new Game(randomOne, randomTwo, three).play();
+                new Game(controllerOne, controllerTwo, observers).play();
             } else {
-                new Game(randomTwo, randomOne, three).play();
+                new Game(controllerTwo, controllerOne, observers).play();
             }
-            randomOne.print();
         }
     }
 }

@@ -55,17 +55,4 @@ public class RandomController implements Controller {
         numberOfGames += 1;
         gamesDraw += 1;
     }
-
-    public void print() {
-        System.out.println("Total Games: " + numberOfGames);
-        System.out.println("Won Games: " + gamesWon);
-        System.out.println("Lost Games: " + gamesLost);
-        System.out.println("Draw: " + gamesDraw);
-        System.out.println("Stalemate: " + gamesStalemate);
-//        try {
-//            Thread.sleep(5000);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
-    }
 }
