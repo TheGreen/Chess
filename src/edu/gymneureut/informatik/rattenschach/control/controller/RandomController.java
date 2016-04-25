@@ -15,11 +15,6 @@ import java.util.Map;
  * @version 0.1
  */
 public class RandomController implements Controller {
-    private int numberOfGames;
-    private int gamesWon;
-    private int gamesLost;
-    private int gamesDraw;
-    private int gamesStalemate;
 
     @Override
     public Turn pickMove(Map<Field, Figure> field, List<Turn> turns) {
@@ -34,25 +29,17 @@ public class RandomController implements Controller {
 
     @Override
     public void hasWon() {
-        numberOfGames += 1;
-        gamesWon += 1;
     }
 
     @Override
     public void hasLost() {
-        numberOfGames += 1;
-        gamesLost += 1;
     }
 
     @Override
     public void isStalemate() {
-        numberOfGames += 1;
-        gamesStalemate += 1;
     }
 
     @Override
     public void isDraw() {
-        numberOfGames += 1;
-        gamesDraw += 1;
     }
 }
