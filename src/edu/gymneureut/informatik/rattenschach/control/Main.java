@@ -3,6 +3,7 @@ package edu.gymneureut.informatik.rattenschach.control;
 import edu.gymneureut.informatik.rattenschach.control.combination.TerminalCombination;
 import edu.gymneureut.informatik.rattenschach.control.controller.RandomController;
 import edu.gymneureut.informatik.rattenschach.control.observer.Observer;
+import edu.gymneureut.informatik.rattenschach.control.observer.TerminalObserver;
 import edu.gymneureut.informatik.rattenschach.model.Game;
 
 import java.util.LinkedList;
@@ -15,18 +16,19 @@ import java.util.LinkedList;
  */
 class Main {
     public static void main(String[] args) {
-        RandomController random = new RandomController();
-        TerminalCombination combo = new TerminalCombination();
+        RandomController randomOne = new RandomController();
+        RandomController randomTwo = new RandomController();
+        TerminalObserver observer = new TerminalObserver();
         LinkedList<Observer> three = new LinkedList<>();
-        three.add(combo);
+        three.add(observer);
 
         for (int i = 0; i < 10000; i++) {
             if (i % 2 == 0) {
-                new Game(random, combo, three).play();
+                new Game(randomOne, randomTwo, three).play();
             } else {
-                new Game(combo, random, three).play();
+                new Game(randomTwo, randomOne, three).play();
             }
-            random.print();
+            randomOne.print();
         }
     }
 }
