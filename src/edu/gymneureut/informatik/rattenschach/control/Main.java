@@ -20,6 +20,10 @@ class Main {
         Controller controllerOne;
         Controller controllerTwo;
         Observer observer;
+        if (args.length == 0) {
+            args = new String[1];
+            args[0] = "default";
+        }
         switch (args[0]) {
             /*
             Benchmark:
