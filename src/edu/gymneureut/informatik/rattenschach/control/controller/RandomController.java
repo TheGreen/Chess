@@ -5,6 +5,7 @@ import edu.gymneureut.informatik.rattenschach.model.figures.Figure;
 import edu.gymneureut.informatik.rattenschach.model.turns.DrawNotification;
 import edu.gymneureut.informatik.rattenschach.model.turns.Turn;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -18,11 +19,15 @@ public class RandomController implements Controller {
 
     @Override
     public Turn pickMove(Map<Field, Figure> field, List<Turn> turns) {
+        List<DrawNotification> notifications = new LinkedList<>();
         for (Turn turn : turns) {
             if (turn instanceof DrawNotification
                     && ((DrawNotification) turn).getDrawType() == DrawNotification.DrawType.offers) {
-                turns.remove(turn);
+                notifications.add((DrawNotification) turn);
             }
+        }
+        for (DrawNotification notification : notifications) {
+            turns.remove(notification);
         }
         return turns.get((int) (Math.random() * (double) turns.size()));
     }
