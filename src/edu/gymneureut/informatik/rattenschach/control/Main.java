@@ -2,6 +2,7 @@ package edu.gymneureut.informatik.rattenschach.control;
 
 import edu.gymneureut.informatik.rattenschach.control.combination.TerminalCombination;
 import edu.gymneureut.informatik.rattenschach.control.controller.Controller;
+import edu.gymneureut.informatik.rattenschach.control.controller.RandomCaptureController;
 import edu.gymneureut.informatik.rattenschach.control.controller.RandomController;
 import edu.gymneureut.informatik.rattenschach.control.observer.Observer;
 import edu.gymneureut.informatik.rattenschach.control.observer.TerminalObserver;
@@ -28,10 +29,16 @@ class Main {
             /*
             Benchmark:
             Lets two random controllers play against each other.
+            capture: if the random controller can capture something, it does that
              */
             case "benchmark":
                 controllerOne = new RandomController();
                 controllerTwo = new RandomController();
+                observer = new TerminalObserver();
+                break;
+            case "benchmark_capture":
+                controllerOne = new RandomCaptureController();
+                controllerTwo = new RandomCaptureController();
                 observer = new TerminalObserver();
                 break;
             /*
