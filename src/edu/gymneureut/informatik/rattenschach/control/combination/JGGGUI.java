@@ -8,6 +8,7 @@ import edu.gymneureut.informatik.rattenschach.model.Game;
 import edu.gymneureut.informatik.rattenschach.model.figures.Figure;
 import edu.gymneureut.informatik.rattenschach.model.turns.Turn;
 
+import java.awt.*;
 import java.util.List;
 import java.util.Map;
 
@@ -18,6 +19,14 @@ import java.util.Map;
  * @version 0.1
  */
 public class JGGGUI extends GameGrid implements Controller, Observer {
+
+    private JGGGUI() {
+        super(8, 8, 120, Color.RED, false);
+    }
+
+    public static void main(String[] args) {
+        new JGGGUI().show();
+    }
 
     @Override
     public Turn pickMove(Map<Field, Figure> field, List<Turn> turns) {
