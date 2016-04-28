@@ -1,4 +1,4 @@
-package edu.gymneureut.informatik.rattenschach.control.combination;
+package edu.gymneureut.informatik.rattenschach.control.combination.JGGGUI;
 
 import ch.aplu.jgamegrid.GameGrid;
 import ch.aplu.jgamegrid.Location;
@@ -6,7 +6,7 @@ import edu.gymneureut.informatik.rattenschach.control.controller.Controller;
 import edu.gymneureut.informatik.rattenschach.control.observer.Observer;
 import edu.gymneureut.informatik.rattenschach.model.Field;
 import edu.gymneureut.informatik.rattenschach.model.Game;
-import edu.gymneureut.informatik.rattenschach.model.figures.Figure;
+import edu.gymneureut.informatik.rattenschach.model.figures.*;
 import edu.gymneureut.informatik.rattenschach.model.turns.Turn;
 
 import java.awt.*;
@@ -20,13 +20,16 @@ import java.util.Map;
  * @version 0.1
  */
 public class JGGGUI extends GameGrid implements Controller, Observer {
+    private Game game;
 
     private JGGGUI() {
         super(8, 8, 120, false);
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
                 if ((i + j) % 2 == 0) {
-                    super.getBg().fillCell(new Location(i, j), Color.white);
+                    super.getBg().fillCell(new Location(i, j), new Color(0xFF, 0xCE, 0x9E));
+                } else {
+                    super.getBg().fillCell(new Location(i, j), new Color(0xD1, 0x8B, 0x47));
                 }
             }
         }
@@ -37,7 +40,26 @@ public class JGGGUI extends GameGrid implements Controller, Observer {
     }
 
     private Location fieldToLocation(Field field) {
-        return new Location(field.getFile(), field.getRank());
+        return new Location(field.getFile(), 8 - field.getRank());
+    }
+
+    private void updateFieldView() {
+        List<Figure> livingFigures = game.getLivingFigures();
+        for (Figure figure : livingFigures) {
+            if (figure instanceof Bishop) {
+
+            } else if (figure instanceof King) {
+
+            } else if (figure instanceof Knight) {
+
+            } else if (figure instanceof Pawn) {
+
+            } else if (figure instanceof Queen) {
+
+            } else if (figure instanceof Rook) {
+
+            }
+        }
     }
 
     @Override
@@ -67,7 +89,7 @@ public class JGGGUI extends GameGrid implements Controller, Observer {
 
     @Override
     public void startGame(Game game) {
-
+        this.game = game;
     }
 
     @Override

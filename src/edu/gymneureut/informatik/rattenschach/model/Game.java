@@ -181,6 +181,10 @@ public class Game implements Cloneable {
         livingFigures.add(replacement);
     }
 
+    public List<Figure> getLivingFigures() {
+        return livingFigures;
+    }
+
 
     public enum GameStatus {
         running, whiteWon, blackWon, draw, stalemate, remisOffered
