@@ -1,12 +1,13 @@
-package edu.gymneureut.informatik.rattenschach.control.combination.JGGGUI;
+package edu.gymneureut.informatik.rattenschach.control.combination;
 
+import ch.aplu.jgamegrid.Actor;
 import ch.aplu.jgamegrid.GameGrid;
 import ch.aplu.jgamegrid.Location;
 import edu.gymneureut.informatik.rattenschach.control.controller.Controller;
 import edu.gymneureut.informatik.rattenschach.control.observer.Observer;
 import edu.gymneureut.informatik.rattenschach.model.Field;
 import edu.gymneureut.informatik.rattenschach.model.Game;
-import edu.gymneureut.informatik.rattenschach.model.figures.Figure;
+import edu.gymneureut.informatik.rattenschach.model.figures.*;
 import edu.gymneureut.informatik.rattenschach.model.turns.*;
 
 import java.awt.*;
@@ -128,6 +129,41 @@ public class JGGGUI extends GameGrid implements Controller, Observer {
             Thread.sleep(1500);
         } catch (InterruptedException e) {
             e.printStackTrace();
+        }
+    }
+
+    /**
+     * Created by jcgruenhage on 4/28/16.
+     */
+    private static class FigureActor extends Actor {
+        private Figure figure;
+
+        public FigureActor(Figure figure) {
+            super(
+                    (figure instanceof Bishop)
+                            ? (figure.getOwner().getColor() == 1)
+                            ? "sprites/bishop_white.png" : "sprites/bishop_black.png"
+                            : (figure instanceof King)
+                            ? (figure.getOwner().getColor() == 1)
+                            ? "sprites/king_white.png" : "sprites/king_black.png"
+                            : (figure instanceof Knight)
+                            ? (figure.getOwner().getColor() == 1)
+                            ? "sprites/knight_white.png" : "sprites/knight_black.png"
+                            : (figure instanceof Pawn)
+                            ? (figure.getOwner().getColor() == 1)
+                            ? "sprites/pawn_white.png" : "sprites/pawn_black.png"
+                            : (figure instanceof Queen)
+                            ? (figure.getOwner().getColor() == 1)
+                            ? "sprites/queen_white.png" : "sprites/queen_black.png"
+                            : (figure instanceof Rook)
+                            ? (figure.getOwner().getColor() == 1)
+                            ? "sprites/rook_white.png" : "sprites/rook_black.png"
+                            : "sprites/error.png");
+            this.figure = figure;
+        }
+
+        public Figure getFigure() {
+            return figure;
         }
     }
 }

@@ -1,6 +1,6 @@
 package edu.gymneureut.informatik.rattenschach.control;
 
-import edu.gymneureut.informatik.rattenschach.control.combination.JGGGUI.JGGGUI;
+import edu.gymneureut.informatik.rattenschach.control.combination.JGGGUI;
 import edu.gymneureut.informatik.rattenschach.control.combination.TerminalCombination;
 import edu.gymneureut.informatik.rattenschach.control.controller.Controller;
 import edu.gymneureut.informatik.rattenschach.control.controller.RandomCaptureController;
