@@ -7,8 +7,7 @@ import edu.gymneureut.informatik.rattenschach.control.observer.Observer;
 import edu.gymneureut.informatik.rattenschach.model.Field;
 import edu.gymneureut.informatik.rattenschach.model.Game;
 import edu.gymneureut.informatik.rattenschach.model.figures.Figure;
-import edu.gymneureut.informatik.rattenschach.model.turns.Move;
-import edu.gymneureut.informatik.rattenschach.model.turns.Turn;
+import edu.gymneureut.informatik.rattenschach.model.turns.*;
 
 import java.awt.*;
 import java.util.List;
@@ -54,13 +53,29 @@ public class JGGGUI extends GameGrid implements Controller, Observer {
     }
 
     private void updateFieldView(Turn turn) {
-        if (turn instanceof Move) {
+        if (turn instanceof Promotion) {
+            Promotion promotion = (Promotion) turn;
+            if (promotion.getCaptures()) {
+                super.removeActorsAt(fieldToLocation(promotion.getDestination()));
+            }
+            super.removeActorsAt(fieldToLocation(promotion.getOrigin()));
+            super.addActor(new FigureActor(promotion.getReplacement()), fieldToLocation(promotion.getDestination()));
+        } else if (turn instanceof Move) {
             Move move = (Move) turn;
             if (move.getCaptures()) {
                 super.removeActorsAt(fieldToLocation(move.getDestination()));
             }
             super.removeActorsAt(fieldToLocation(move.getOrigin()));
             super.addActor(new FigureActor(move.getFigure()), fieldToLocation(move.getDestination()));
+        } else if (turn instanceof Castling) {
+            //TODO: Missing Implementation
+            System.out.println("TODO:Missing Implementation at JGGGUI.updateFieldView(Turn turn)");
+        } else if (turn instanceof DrawNotification) {
+            //TODO: Missing Implementation
+            System.out.println("TODO:Missing Implementation at JGGGUI.updateFieldView(Turn turn)");
+        } else if (turn instanceof Notification) {
+            //TODO: Missing Implementation
+            System.out.println("TODO:Missing Implementation at JGGGUI.updateFieldView(Turn turn)");
         }
     }
 
