@@ -1,5 +1,6 @@
 package edu.gymneureut.informatik.rattenschach.control;
 
+import edu.gymneureut.informatik.rattenschach.control.combination.JGGGUI.JGGGUI;
 import edu.gymneureut.informatik.rattenschach.control.combination.TerminalCombination;
 import edu.gymneureut.informatik.rattenschach.control.controller.Controller;
 import edu.gymneureut.informatik.rattenschach.control.controller.RandomCaptureController;
@@ -42,8 +43,36 @@ class Main {
                 observer = new TerminalObserver();
                 break;
             /*
+            JGGGUI:
+
+            ****WORK IN PROGRESS****
+            *
+            Play vs a random capture controller in a GUI
+
+                    ****WORK IN PROGRESS****
+            */
+            case "jgggui":
+                controllerOne = new RandomController();
+                controllerTwo = new JGGGUI();
+                observer = (JGGGUI) controllerTwo;
+                break;
+            /*
+            JGGGUI:
+
+            ****WORK IN PROGRESS****
+            *
+            Play vs a random capture controller in a GUI
+
+                    ****WORK IN PROGRESS****
+            */
+            case "jgggui_benchmark":
+                controllerOne = new RandomController();
+                controllerTwo = new RandomController();
+                observer = new JGGGUI();
+                break;
+            /*
             Default:
-            Play vs a random controller in Terminal
+            Play vs a random capture controller in Terminal
              */
             default:
                 controllerOne = new RandomController();
@@ -55,11 +84,18 @@ class Main {
         LinkedList<Observer> observers = new LinkedList<>();
         observers.add(observer);
 
+        Game game;
         for (int i = 0; i < 10000; i++) {
             if (i % 2 == 0) {
-                new Game(controllerOne, controllerTwo, observers).play();
+                game = new Game(controllerOne, controllerTwo, observers);
+                for (Observer obs : observers) {
+                    observer.startGame(game);
+                }
+                game.play();
             } else {
-                new Game(controllerTwo, controllerOne, observers).play();
+                game = new Game(controllerTwo, controllerOne, observers);
+                observer.startGame(game);
+                game.play();
             }
         }
     }
