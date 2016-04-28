@@ -1,6 +1,7 @@
 package edu.gymneureut.informatik.rattenschach.control.combination;
 
 import ch.aplu.jgamegrid.GameGrid;
+import ch.aplu.jgamegrid.Location;
 import edu.gymneureut.informatik.rattenschach.control.controller.Controller;
 import edu.gymneureut.informatik.rattenschach.control.observer.Observer;
 import edu.gymneureut.informatik.rattenschach.model.Field;
@@ -21,11 +22,22 @@ import java.util.Map;
 public class JGGGUI extends GameGrid implements Controller, Observer {
 
     private JGGGUI() {
-        super(8, 8, 120, Color.RED, false);
+        super(8, 8, 120, false);
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                if ((i + j) % 2 == 0) {
+                    super.getBg().fillCell(new Location(i, j), Color.white);
+                }
+            }
+        }
     }
 
     public static void main(String[] args) {
         new JGGGUI().show();
+    }
+
+    private Location fieldToLocation(Field field) {
+        return new Location(field.getFile(), field.getRank());
     }
 
     @Override
