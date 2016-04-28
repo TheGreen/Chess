@@ -7,6 +7,7 @@ import edu.gymneureut.informatik.rattenschach.control.observer.Observer;
 import edu.gymneureut.informatik.rattenschach.model.Field;
 import edu.gymneureut.informatik.rattenschach.model.Game;
 import edu.gymneureut.informatik.rattenschach.model.figures.Figure;
+import edu.gymneureut.informatik.rattenschach.model.turns.Move;
 import edu.gymneureut.informatik.rattenschach.model.turns.Turn;
 
 import java.awt.*;
@@ -52,6 +53,17 @@ public class JGGGUI extends GameGrid implements Controller, Observer {
         }
     }
 
+    private void updateFieldView(Turn turn) {
+        if (turn instanceof Move) {
+            Move move = (Move) turn;
+            if (move.getCaptures()) {
+                super.removeActorsAt(fieldToLocation(move.getDestination()));
+            }
+            super.removeActorsAt(fieldToLocation(move.getOrigin()));
+            super.addActor(new FigureActor(move.getFigure()), fieldToLocation(move.getDestination()));
+        }
+    }
+
     private void placeFigure(FigureActor figureActor) {
         super.addActor(figureActor, fieldToLocation(figureActor.getFigure().getPosition()));
     }
@@ -94,7 +106,8 @@ public class JGGGUI extends GameGrid implements Controller, Observer {
 
     @Override
     public void nextTurn(Turn turn) {
-        updateFieldView();
+        updateFieldView(turn);
+        //updateFieldView();
         try {
             Thread.sleep(1500);
         } catch (InterruptedException e) {
