@@ -6,7 +6,7 @@ import edu.gymneureut.informatik.rattenschach.control.controller.Controller;
 import edu.gymneureut.informatik.rattenschach.control.observer.Observer;
 import edu.gymneureut.informatik.rattenschach.model.Field;
 import edu.gymneureut.informatik.rattenschach.model.Game;
-import edu.gymneureut.informatik.rattenschach.model.figures.*;
+import edu.gymneureut.informatik.rattenschach.model.figures.Figure;
 import edu.gymneureut.informatik.rattenschach.model.turns.Turn;
 
 import java.awt.*;
@@ -22,7 +22,7 @@ import java.util.Map;
 public class JGGGUI extends GameGrid implements Controller, Observer {
     private Game game;
 
-    private JGGGUI() {
+    public JGGGUI() {
         super(8, 8, 120, false);
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
@@ -33,6 +33,7 @@ public class JGGGUI extends GameGrid implements Controller, Observer {
                 }
             }
         }
+        this.show();
     }
 
     public static void main(String[] args) {
@@ -40,26 +41,19 @@ public class JGGGUI extends GameGrid implements Controller, Observer {
     }
 
     private Location fieldToLocation(Field field) {
-        return new Location(field.getFile(), 8 - field.getRank());
+        return new Location(field.getFile() - 1, 8 - field.getRank());
     }
 
     private void updateFieldView() {
-        List<Figure> livingFigures = game.getLivingFigures();
+        super.removeAllActors();
+        List<edu.gymneureut.informatik.rattenschach.model.figures.Figure> livingFigures = game.getLivingFigures();
         for (Figure figure : livingFigures) {
-            if (figure instanceof Bishop) {
-
-            } else if (figure instanceof King) {
-
-            } else if (figure instanceof Knight) {
-
-            } else if (figure instanceof Pawn) {
-
-            } else if (figure instanceof Queen) {
-
-            } else if (figure instanceof Rook) {
-
-            }
+            placeFigure(new FigureActor(figure));
         }
+    }
+
+    private void placeFigure(FigureActor figureActor) {
+        super.addActor(figureActor, fieldToLocation(figureActor.getFigure().getPosition()));
     }
 
     @Override
@@ -90,10 +84,21 @@ public class JGGGUI extends GameGrid implements Controller, Observer {
     @Override
     public void startGame(Game game) {
         this.game = game;
+        updateFieldView();
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void nextTurn(Turn turn) {
-
+        updateFieldView();
+        try {
+            Thread.sleep(1500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -6,8 +6,10 @@ import edu.gymneureut.informatik.rattenschach.model.figures.*;
 /**
  * Created by jcgruenhage on 4/28/16.
  */
-public class Figure extends Actor {
-    public Figure(edu.gymneureut.informatik.rattenschach.model.figures.Figure figure) {
+public class FigureActor extends Actor {
+    private Figure figure;
+
+    public FigureActor(Figure figure) {
         super(
                 (figure instanceof Bishop)
                         ? (figure.getOwner().getColor() == 1)
@@ -28,5 +30,11 @@ public class Figure extends Actor {
                         ? (figure.getOwner().getColor() == 1)
                         ? "sprites/rook_white.png" : "sprites/rook_black.png"
                         : "sprites/error.png");
+        this.figure = figure;
+    }
+
+    public Figure getFigure() {
+        return figure;
     }
 }
+
