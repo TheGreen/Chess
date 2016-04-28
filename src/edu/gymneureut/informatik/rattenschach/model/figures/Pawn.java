@@ -15,7 +15,8 @@ import java.util.Map;
  * @author Jan Christian Gruenhage, Alex Klug
  * @version 0.1
  */
-public class Pawn extends Figure implements Cloneable {
+public class
+Pawn extends Figure implements Cloneable {
     private int direction;
 
     public Pawn(Player owner, Field position, Map<Field, Figure> field) {
@@ -38,7 +39,7 @@ public class Pawn extends Figure implements Cloneable {
         Figure resultFigure = field.get(tempPosition);
         if (resultFigure == Figure.EMPTY) {
             if (tempPosition.getRank() < 8
-                    || tempPosition.getRank() > 1) {
+                    && tempPosition.getRank() > 1) {
                 moves.add(new Move(this, position, tempPosition, false, resultFigure));
             } else {
                 moves.add(new Promotion(this, position, tempPosition, false, resultFigure,
@@ -64,7 +65,7 @@ public class Pawn extends Figure implements Cloneable {
             Figure capturedFigure = field.get(tempPosition);
             if (capturedFigure != Figure.EMPTY && capturedFigure.getOwner() != this.owner) {
                 if (tempPosition.getRank() < 8
-                        || tempPosition.getRank() > 1) {
+                        && tempPosition.getRank() > 1) {
                     moves.add(new Move(this, position, tempPosition, true, capturedFigure));
                 } else {
                     moves.add(new Promotion(this, position, tempPosition, true, capturedFigure,
