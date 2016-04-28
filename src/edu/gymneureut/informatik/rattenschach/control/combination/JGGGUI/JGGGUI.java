@@ -79,6 +79,7 @@ public class JGGGUI extends GameGrid implements Controller, Observer {
         }
     }
 
+
     private void placeFigure(FigureActor figureActor) {
         super.addActor(figureActor, fieldToLocation(figureActor.getFigure().getPosition()));
     }
