@@ -3,6 +3,7 @@ package edu.gymneureut.informatik.rattenschach.model.turns;
 import edu.gymneureut.informatik.rattenschach.model.Field;
 import edu.gymneureut.informatik.rattenschach.model.Game;
 import edu.gymneureut.informatik.rattenschach.model.figures.Figure;
+import edu.gymneureut.informatik.rattenschach.model.figures.King;
 
 /**
  * The <tt>Move</tt> class.
@@ -33,6 +34,9 @@ public class Move extends Turn {
         figure.setPosition(destination);
         figure.setHasMoved(true);
         if (captures) {
+            if (captured instanceof King) {
+                throw new IllegalStateException("Capturing King is an illegal Move and should be illegal");
+            }
             if (figure.getOwner() == game.getBlack()) {
                 game.getWhite().captureFigure(captured);
             } else {
