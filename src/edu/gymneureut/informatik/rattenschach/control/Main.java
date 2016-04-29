@@ -52,7 +52,7 @@ class Main {
                     ****WORK IN PROGRESS****
             */
             case "jgggui":
-                controllerOne = new RandomController();
+                controllerOne = new RandomCaptureController();
                 controllerTwo = new JGGGUI();
                 observer = (JGGGUI) controllerTwo;
                 break;
@@ -66,8 +66,8 @@ class Main {
                     ****WORK IN PROGRESS****
             */
             case "jgggui_benchmark":
-                controllerOne = new RandomController();
-                controllerTwo = new RandomController();
+                controllerOne = new RandomCaptureController();
+                controllerTwo = new RandomCaptureController();
                 observer = new JGGGUI();
                 break;
             /*

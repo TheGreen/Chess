@@ -24,9 +24,34 @@ public class JGGGUI extends GameGrid implements Controller, Observer {
     private Game game;
 
     public JGGGUI() {
-        super(8, 8, 120, false);
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
+        super(16, 12, 110, false);
+
+        for (int i = 0; i < 16; i++) {
+            for (int j = 0; j < 12; j++) {
+                super.getBg().fillCell(new Location(i, j), new Color(0xA4, 0x7D, 0x58));
+            }
+        }
+
+        for (int i = 4; i < 12; i++) {
+            for (int j = 2; j < 10; j++) {
+                if ((i + j) % 2 == 0) {
+                    super.getBg().fillCell(new Location(i, j), new Color(0xFF, 0xCE, 0x9E));
+                } else {
+                    super.getBg().fillCell(new Location(i, j), new Color(0xD1, 0x8B, 0x47));
+                }
+            }
+        }
+        for (int i = 1; i < 3; i++) {
+            for (int j = 2; j < 10; j++) {
+                if ((i + j) % 2 == 0) {
+                    super.getBg().fillCell(new Location(i, j), new Color(0xFF, 0xCE, 0x9E));
+                } else {
+                    super.getBg().fillCell(new Location(i, j), new Color(0xD1, 0x8B, 0x47));
+                }
+            }
+        }
+        for (int i = 13; i < 15; i++) {
+            for (int j = 2; j < 10; j++) {
                 if ((i + j) % 2 == 0) {
                     super.getBg().fillCell(new Location(i, j), new Color(0xFF, 0xCE, 0x9E));
                 } else {
@@ -42,7 +67,7 @@ public class JGGGUI extends GameGrid implements Controller, Observer {
     }
 
     private Location fieldToLocation(Field field) {
-        return new Location(field.getFile() - 1, 8 - field.getRank());
+        return new Location(field.getFile() + 3, 10 - field.getRank());
     }
 
     private void updateFieldView() {
@@ -92,12 +117,12 @@ public class JGGGUI extends GameGrid implements Controller, Observer {
 
     @Override
     public void hasWon() {
-
+        System.out.println("has won");
     }
 
     @Override
     public void hasLost() {
-
+        System.out.println("has lost");
     }
 
     @Override
@@ -126,7 +151,7 @@ public class JGGGUI extends GameGrid implements Controller, Observer {
         updateFieldView(turn);
         //updateFieldView();
         try {
-            Thread.sleep(1500);
+            Thread.sleep(500);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
