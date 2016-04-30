@@ -19,18 +19,15 @@ public class Player implements Cloneable {
     private List<Figure> figures;
     private List<Figure> capturedFigures;
     private Controller controller;
-    private long remainingTime; //nanoseconds
-    private long timeIncrement; //nanoseconds
     private int color;
     private Player opponent;
 
     private Player() {
 
     }
-    public Player(boolean isWhite, Controller controller, Game game, long timeLimit, long timeIncrement) {
+
+    public Player(boolean isWhite, Controller controller, Game game) {
         this.controller = controller;
-        this.remainingTime = timeLimit;
-        this.timeIncrement = timeIncrement;
         this.game = game;
         figures = new LinkedList<>();
         capturedFigures = new LinkedList<>();
@@ -75,8 +72,6 @@ public class Player implements Cloneable {
         this.figures = figures;
         this.capturedFigures = capturedFigures;
         this.controller = controller;
-        this.remainingTime = remainingTime;
-        this.timeIncrement = timeIncrement;
     }
 
     @Override
@@ -91,8 +86,6 @@ public class Player implements Cloneable {
             cloned.capturedFigures.add(figure.clone());
         }
         cloned.controller = controller;
-        cloned.remainingTime = remainingTime;
-        cloned.timeIncrement = timeIncrement;
         cloned.color = color;
         return cloned;
     }
@@ -147,12 +140,8 @@ public class Player implements Cloneable {
             turns.add(new DrawNotification(this, DrawNotification.DrawType.accepts));
             turns.add(new DrawNotification(this, DrawNotification.DrawType.denies));
 
-            Turn turn = measureChooseTime(game.getField(), turns);
-            if (remainingTime < 0) {
-                return new Notification(this, Notification.Type.hasLost);
-            }
-            remainingTime += timeIncrement;
-            return turn;
+
+            return controller.pickMove(game.getField(), turns);
         }
         Map<Field, Figure> field = game.getField();
         List<Turn> turns = new LinkedList<>();
@@ -186,18 +175,11 @@ public class Player implements Cloneable {
         }
         turns.add(new DrawNotification(this, DrawNotification.DrawType.offers));
         turns.addAll(Castling.possibleCastlings(game));
-        Turn turn = measureChooseTime(field, turns);
-        if (remainingTime < 0) {
-            return new Notification(this, Notification.Type.hasLost);
-        }
-        remainingTime += timeIncrement;
-        return turn;
+        return controller.pickMove(game.getField(), turns);
     }
 
     private Turn measureChooseTime(Map<Field, Figure> field, List<Turn> turns) {
-        long time = System.nanoTime();
         Turn turn = controller.pickMove(field, turns);
-        remainingTime -= System.nanoTime() - time;
         return turn;
     }
 

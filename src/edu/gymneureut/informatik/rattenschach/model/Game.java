@@ -4,6 +4,7 @@ import edu.gymneureut.informatik.rattenschach.control.controller.Controller;
 import edu.gymneureut.informatik.rattenschach.control.observer.Observer;
 import edu.gymneureut.informatik.rattenschach.model.figures.Figure;
 import edu.gymneureut.informatik.rattenschach.model.figures.Pawn;
+import edu.gymneureut.informatik.rattenschach.model.turns.Notification;
 import edu.gymneureut.informatik.rattenschach.model.turns.Turn;
 
 import java.util.HashMap;
@@ -18,6 +19,7 @@ import java.util.Map;
  * @version 0.1
  */
 public class Game implements Cloneable {
+    private Timer timer;
     private long totalTime;
     private Player white;
     private Player black;
@@ -35,9 +37,9 @@ public class Game implements Cloneable {
         field = new HashMap<>();
         initializeField(field);
         this.observers = observers;
-        totalTime = 1000000000000l;
-        white = new Player(true, controllerWhite, this, totalTime, 100000000);
-        black = new Player(false, controllerBlack, this, totalTime, 100000000);
+        timer = new Timer(1800000000000L, 15000000000L);
+        white = new Player(true, controllerWhite, this);
+        black = new Player(false, controllerBlack, this);
         white.setOpponent(black);
         black.setOpponent(white);
         livingFigures = new LinkedList<>();
@@ -50,6 +52,7 @@ public class Game implements Cloneable {
             observer.startGame(this);
         }
     }
+
 
     @Override
     public Game clone() {
@@ -87,7 +90,7 @@ public class Game implements Cloneable {
         return clonedCapturedFigures;
     }
 
-    public GameStatus getStatus() {
+    GameStatus getStatus() {
         return status;
     }
 
@@ -96,6 +99,7 @@ public class Game implements Cloneable {
     }
 
     public void play() {
+        timer.startGame();
         while (status == GameStatus.running
                 || status == GameStatus.remisOffered) {
             act();
@@ -118,6 +122,9 @@ public class Game implements Cloneable {
 
     private void act() {
         Turn turn = currentPlayer.move(this);
+        if (!switchPlayer(turn.getExecutor())) {
+            turn = new Notification(turn.getExecutor(), Notification.Type.hasLost);
+        }
         turn.execute(this);
 
         for (Observer observer : observers) {
@@ -171,6 +178,10 @@ public class Game implements Cloneable {
         return currentPlayer;
     }
 
+    public Timer getTimer() {
+        return timer;
+    }
+
     public void captureFigure(Figure captured) {
         livingFigures.remove(captured);
         capturedFigures.add(captured);
@@ -183,6 +194,10 @@ public class Game implements Cloneable {
 
     public List<Figure> getLivingFigures() {
         return livingFigures;
+    }
+
+    private boolean switchPlayer(Player player) {
+        return timer.switchPlayer(player);
     }
 
 
