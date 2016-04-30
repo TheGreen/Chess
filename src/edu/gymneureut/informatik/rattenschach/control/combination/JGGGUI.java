@@ -11,6 +11,7 @@ import edu.gymneureut.informatik.rattenschach.model.figures.*;
 import edu.gymneureut.informatik.rattenschach.model.turns.*;
 
 import java.awt.*;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -72,9 +73,45 @@ public class JGGGUI extends GameGrid implements Controller, Observer {
 
     private void updateFieldView() {
         super.removeAllActors();
-        List<edu.gymneureut.informatik.rattenschach.model.figures.Figure> livingFigures = game.getLivingFigures();
+        List<Figure> livingFigures = game.getLivingFigures();
         for (Figure figure : livingFigures) {
             placeFigure(new FigureActor(figure));
+        }
+        updateCapturedFigures();
+    }
+
+    private void updateCapturedFigures() {
+        List<Figure> capturedFigures = game.getCapturedFigures();
+        List<Figure> capturedWhiteFigures = new LinkedList<>();
+        List<Figure> capturedBlackFigures = new LinkedList<>();
+        for (Figure figure : capturedFigures) {
+            if (figure.getOwner().getColor() == 1) {
+                capturedWhiteFigures.add(figure);
+            } else {
+                capturedBlackFigures.add(figure);
+            }
+        }
+        updateCapturedFigures(capturedBlackFigures, false);
+        updateCapturedFigures(capturedWhiteFigures, true);
+    }
+
+    private void updateCapturedFigures(List<Figure> capturedFigures, boolean isWhite) {
+        int x, y;
+        if (isWhite) {
+            x = 13;
+            y = 2;
+        } else {
+            x = 1;
+            y = 2;
+        }
+        for (int i = 0; i < capturedFigures.size(); i++) {
+            Figure figure = capturedFigures.get(i);
+            super.addActor(new FigureActor(figure), new Location(x, y));
+            y += 1;
+            if (y >= 10) {
+                x += 1;
+                y = 2;
+            }
         }
     }
 
@@ -90,18 +127,22 @@ public class JGGGUI extends GameGrid implements Controller, Observer {
             Move move = (Move) turn;
             if (move.getCaptures()) {
                 super.removeActorsAt(fieldToLocation(move.getDestination()));
+                updateCapturedFigures();
             }
             super.removeActorsAt(fieldToLocation(move.getOrigin()));
             super.addActor(new FigureActor(move.getFigure()), fieldToLocation(move.getDestination()));
         } else if (turn instanceof Castling) {
             //TODO: Missing Implementation
             System.out.println("TODO:Missing Implementation at JGGGUI.updateFieldView(Turn turn)");
+            updateFieldView();
         } else if (turn instanceof DrawNotification) {
             //TODO: Missing Implementation
             System.out.println("TODO:Missing Implementation at JGGGUI.updateFieldView(Turn turn)");
+            updateFieldView();
         } else if (turn instanceof Notification) {
             //TODO: Missing Implementation
             System.out.println("TODO:Missing Implementation at JGGGUI.updateFieldView(Turn turn)");
+            updateFieldView();
         }
     }
 

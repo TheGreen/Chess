@@ -35,7 +35,7 @@ public class Game implements Cloneable {
         field = new HashMap<>();
         initializeField(field);
         this.observers = observers;
-        totalTime = 1000000000000l;
+        totalTime = 1000000000000L;
         white = new Player(true, controllerWhite, this, totalTime, 100000000);
         black = new Player(false, controllerBlack, this, totalTime, 100000000);
         white.setOpponent(black);
@@ -183,6 +183,10 @@ public class Game implements Cloneable {
 
     public List<Figure> getLivingFigures() {
         return livingFigures;
+    }
+
+    public List<Figure> getCapturedFigures() {
+        return capturedFigures;
     }
 
 
