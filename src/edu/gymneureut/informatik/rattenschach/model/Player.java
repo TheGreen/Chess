@@ -64,8 +64,7 @@ public class Player implements Cloneable {
     }
 
     public Player(int color, Player opponent, Game game, List<Figure> figures,
-                  List<Figure> capturedFigures, Controller controller,
-                  long remainingTime, long timeIncrement) {
+                  List<Figure> capturedFigures, Controller controller) {
         this.color = color;
         this.opponent = opponent;
         this.game = game;

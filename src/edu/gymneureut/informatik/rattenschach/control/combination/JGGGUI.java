@@ -104,8 +104,7 @@ public class JGGGUI extends GameGrid implements Controller, Observer {
             x = 1;
             y = 2;
         }
-        for (int i = 0; i < capturedFigures.size(); i++) {
-            Figure figure = capturedFigures.get(i);
+        for (Figure figure : capturedFigures) {
             super.addActor(new FigureActor(figure), new Location(x, y));
             y += 1;
             if (y >= 10) {
