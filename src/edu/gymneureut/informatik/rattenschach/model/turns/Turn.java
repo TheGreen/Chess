@@ -18,4 +18,7 @@ public abstract class Turn {
 
     public abstract void execute(Game game);
 
+    public Player getExecutor() {
+        return executor;
+    }
 }
