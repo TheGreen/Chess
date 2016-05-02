@@ -21,11 +21,11 @@ public class Timer {
         playerWhite = true;
     }
 
-    long getRemainingTimeWhite() {
+    public long getRemainingTimeWhite() {
         return timeWhite - (System.nanoTime() - time) + increment;
     }
 
-    long getRemainingTimeBlack() {
+    public long getRemainingTimeBlack() {
         return timeBlack - (System.nanoTime() - time) + increment;
     }
 

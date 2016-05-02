@@ -27,39 +27,10 @@ public class JGGGUI extends GameGrid implements Controller, Observer {
     public JGGGUI() {
         super(16, 12, 110, false);
 
-        for (int i = 0; i < 16; i++) {
-            for (int j = 0; j < 12; j++) {
-                super.getBg().fillCell(new Location(i, j), new Color(0xA4, 0x7D, 0x58));
-            }
-        }
+        drawBackground();
+        drawChessboard();
+        drawCaptured();
 
-        for (int i = 4; i < 12; i++) {
-            for (int j = 2; j < 10; j++) {
-                if ((i + j) % 2 == 0) {
-                    super.getBg().fillCell(new Location(i, j), new Color(0xFF, 0xCE, 0x9E));
-                } else {
-                    super.getBg().fillCell(new Location(i, j), new Color(0xD1, 0x8B, 0x47));
-                }
-            }
-        }
-        for (int i = 1; i < 3; i++) {
-            for (int j = 2; j < 10; j++) {
-                if ((i + j) % 2 == 0) {
-                    super.getBg().fillCell(new Location(i, j), new Color(0xFF, 0xCE, 0x9E));
-                } else {
-                    super.getBg().fillCell(new Location(i, j), new Color(0xD1, 0x8B, 0x47));
-                }
-            }
-        }
-        for (int i = 13; i < 15; i++) {
-            for (int j = 2; j < 10; j++) {
-                if ((i + j) % 2 == 0) {
-                    super.getBg().fillCell(new Location(i, j), new Color(0xFF, 0xCE, 0x9E));
-                } else {
-                    super.getBg().fillCell(new Location(i, j), new Color(0xD1, 0x8B, 0x47));
-                }
-            }
-        }
         this.show();
     }
 
@@ -67,20 +38,89 @@ public class JGGGUI extends GameGrid implements Controller, Observer {
         new JGGGUI().show();
     }
 
+    private void drawCaptured() {
+        drawCaptured(1);
+        drawCaptured(13);
+    }
+
+    private void drawCaptured(int n) {
+        for (int i = n; i < n + 2; i++) {
+            for (int j = 2; j < 10; j++) {
+                drawChessTile(i, j);
+            }
+        }
+    }
+
+    private void drawChessboard() {
+        for (int i = 4; i < 12; i++) {
+            for (int j = 2; j < 10; j++) {
+                drawChessTile(i, j);
+            }
+        }
+    }
+
+    private void drawChessTile(int i, int j) {
+        if ((i + j) % 2 == 1) {
+            super.getBg().fillCell(new Location(i, j), new Color(0xFF, 0xCE, 0x9E));
+        } else {
+            super.getBg().fillCell(new Location(i, j), new Color(0xD1, 0x8B, 0x47));
+        }
+    }
+
+    private void drawBackground() {
+        for (int i = 0; i < 16; i++) {
+            for (int j = 0; j < 12; j++) {
+                super.getBg().fillCell(new Location(i, j), new Color(0x65, 0x3E, 0x19));
+            }
+        }
+    }
+
     private Location fieldToLocation(Field field) {
         return new Location(field.getFile() + 3, 10 - field.getRank());
     }
 
-    private void updateFieldView() {
+    private void updateUI() {
         super.removeAllActors();
         List<Figure> livingFigures = game.getLivingFigures();
         for (Figure figure : livingFigures) {
             placeFigure(new FigureActor(figure));
         }
-        updateCapturedFigures();
+        updateUICaptured();
     }
 
-    private void updateCapturedFigures() {
+    private void updateUI(Turn turn) {
+        if (turn instanceof Promotion) {
+            Promotion promotion = (Promotion) turn;
+            if (promotion.getCaptures()) {
+                super.removeActorsAt(fieldToLocation(promotion.getDestination()));
+            }
+            super.removeActorsAt(fieldToLocation(promotion.getOrigin()));
+            super.addActor(new FigureActor(promotion.getReplacement()), fieldToLocation(promotion.getDestination()));
+        } else if (turn instanceof Move) {
+            Move move = (Move) turn;
+            if (move.getCaptures()) {
+                super.removeActorsAt(fieldToLocation(move.getDestination()));
+                updateUICaptured();
+            }
+            super.removeActorsAt(fieldToLocation(move.getOrigin()));
+            super.addActor(new FigureActor(move.getFigure()), fieldToLocation(move.getDestination()));
+        } else if (turn instanceof Castling) {
+            //TODO: Missing Implementation
+            System.out.println("TODO:Missing Implementation at JGGGUI.updateUI(Turn turn)");
+            updateUI();
+        } else if (turn instanceof DrawNotification) {
+            //TODO: Missing Implementation
+            System.out.println("TODO:Missing Implementation at JGGGUI.updateUI(Turn turn)");
+            updateUI();
+        } else if (turn instanceof Notification) {
+            //TODO: Missing Implementation
+            System.out.println("TODO:Missing Implementation at JGGGUI.updateUI(Turn turn)");
+            updateUI();
+        }
+    }
+
+
+    private void updateUICaptured() {
         List<Figure> capturedFigures = game.getCapturedFigures();
         List<Figure> capturedWhiteFigures = new LinkedList<>();
         List<Figure> capturedBlackFigures = new LinkedList<>();
@@ -91,11 +131,11 @@ public class JGGGUI extends GameGrid implements Controller, Observer {
                 capturedBlackFigures.add(figure);
             }
         }
-        updateCapturedFigures(capturedBlackFigures, false);
-        updateCapturedFigures(capturedWhiteFigures, true);
+        updateUICaptured(capturedBlackFigures, false);
+        updateUICaptured(capturedWhiteFigures, true);
     }
 
-    private void updateCapturedFigures(List<Figure> capturedFigures, boolean isWhite) {
+    private void updateUICaptured(List<Figure> capturedFigures, boolean isWhite) {
         int x, y;
         if (isWhite) {
             x = 13;
@@ -111,37 +151,6 @@ public class JGGGUI extends GameGrid implements Controller, Observer {
                 x += 1;
                 y = 2;
             }
-        }
-    }
-
-    private void updateFieldView(Turn turn) {
-        if (turn instanceof Promotion) {
-            Promotion promotion = (Promotion) turn;
-            if (promotion.getCaptures()) {
-                super.removeActorsAt(fieldToLocation(promotion.getDestination()));
-            }
-            super.removeActorsAt(fieldToLocation(promotion.getOrigin()));
-            super.addActor(new FigureActor(promotion.getReplacement()), fieldToLocation(promotion.getDestination()));
-        } else if (turn instanceof Move) {
-            Move move = (Move) turn;
-            if (move.getCaptures()) {
-                super.removeActorsAt(fieldToLocation(move.getDestination()));
-                updateCapturedFigures();
-            }
-            super.removeActorsAt(fieldToLocation(move.getOrigin()));
-            super.addActor(new FigureActor(move.getFigure()), fieldToLocation(move.getDestination()));
-        } else if (turn instanceof Castling) {
-            //TODO: Missing Implementation
-            System.out.println("TODO:Missing Implementation at JGGGUI.updateFieldView(Turn turn)");
-            updateFieldView();
-        } else if (turn instanceof DrawNotification) {
-            //TODO: Missing Implementation
-            System.out.println("TODO:Missing Implementation at JGGGUI.updateFieldView(Turn turn)");
-            updateFieldView();
-        } else if (turn instanceof Notification) {
-            //TODO: Missing Implementation
-            System.out.println("TODO:Missing Implementation at JGGGUI.updateFieldView(Turn turn)");
-            updateFieldView();
         }
     }
 
@@ -178,7 +187,7 @@ public class JGGGUI extends GameGrid implements Controller, Observer {
     @Override
     public void startGame(Game game) {
         this.game = game;
-        updateFieldView();
+        updateUI();
         try {
             Thread.sleep(500);
         } catch (InterruptedException e) {
@@ -188,10 +197,9 @@ public class JGGGUI extends GameGrid implements Controller, Observer {
 
     @Override
     public void nextTurn(Turn turn) {
-        updateFieldView(turn);
-        //updateFieldView();
+        updateUI(turn);
         try {
-            Thread.sleep(100);
+            Thread.sleep(35);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -203,7 +211,7 @@ public class JGGGUI extends GameGrid implements Controller, Observer {
     private static class FigureActor extends Actor {
         private Figure figure;
 
-        public FigureActor(Figure figure) {
+        FigureActor(Figure figure) {
             super(
                     (figure instanceof Bishop)
                             ? (figure.getOwner().getColor() == 1)
