@@ -1,3 +1,15 @@
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2016 Jan Christian Grünhage; Alex Klug
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
 package edu.gymneureut.informatik.rattenschach.model;
 
 import edu.gymneureut.informatik.rattenschach.control.controller.Controller;
@@ -6,7 +18,6 @@ import edu.gymneureut.informatik.rattenschach.model.turns.*;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * The <tt>Player</tt> class.
@@ -64,8 +75,7 @@ public class Player implements Cloneable {
     }
 
     public Player(int color, Player opponent, Game game, List<Figure> figures,
-                  List<Figure> capturedFigures, Controller controller,
-                  long remainingTime, long timeIncrement) {
+                  List<Figure> capturedFigures, Controller controller) {
         this.color = color;
         this.opponent = opponent;
         this.game = game;
@@ -100,27 +110,6 @@ public class Player implements Cloneable {
         }
     }
 
-//    public Player copyPlayer() {
-//        List<Figure> figuresCopy = new LinkedList<>();
-//        for (Figure figure : figures) {
-//            figuresCopy.add(figure.copyFigure());
-//        }
-//        List<Figure> capturedFiguresCopy = new LinkedList<>();
-//        for (Figure capturedFigure : capturedFigures) {
-//            capturedFiguresCopy.add(capturedFigure.copyFigure());
-//        }
-//        Player playerCopy = new Player(color, opponent, game, figuresCopy,
-//                capturedFiguresCopy, controller, remainingTime, timeIncrement);
-//
-//        for (Figure figure : figuresCopy) {
-//            figure.setOwner(playerCopy);
-//        }
-//        for (Figure figure : capturedFiguresCopy) {
-//            figure.setOwner(playerCopy);
-//        }
-//        return playerCopy;
-//    }
-
     public boolean isAbleToCaptureKing() {
         List<Move> moves = new LinkedList<>();
         for (Figure figure : figures) {
@@ -143,7 +132,6 @@ public class Player implements Cloneable {
 
             return controller.pickMove(game.getField(), turns);
         }
-        Map<Field, Figure> field = game.getField();
         List<Turn> turns = new LinkedList<>();
         for (Figure figure : figures) {
             turns.addAll(figure.getPossibleMoves());
@@ -152,14 +140,8 @@ public class Player implements Cloneable {
         for (Turn turn : turns) {
             if (turn instanceof Move) {
                 Move move = (Move) turn;
-                if (this == game.getWhite()) {
-                    if (move.testMove(game).getBlack().isAbleToCaptureKing()) {
-                        illegalMoves.add(move);
-                    }
-                } else {
-                    if (move.testMove(game).getWhite().isAbleToCaptureKing()) {
-                        illegalMoves.add(move);
-                    }
+                if (!((Move) turn).isLegal(game)) {
+                    illegalMoves.add(move);
                 }
             }
         }
@@ -176,11 +158,6 @@ public class Player implements Cloneable {
         turns.add(new DrawNotification(this, DrawNotification.DrawType.offers));
         turns.addAll(Castling.possibleCastlings(game));
         return controller.pickMove(game.getField(), turns);
-    }
-
-    private Turn measureChooseTime(Map<Field, Figure> field, List<Turn> turns) {
-        Turn turn = controller.pickMove(field, turns);
-        return turn;
     }
 
     public void captureFigure(Figure captured) {
