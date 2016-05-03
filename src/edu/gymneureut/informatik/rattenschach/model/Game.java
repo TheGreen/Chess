@@ -32,7 +32,6 @@ import java.util.Map;
  */
 public class Game implements Cloneable {
     private Timer timer;
-    private long totalTime;
     private Player white;
     private Player black;
     private Player currentPlayer = white;
@@ -79,8 +78,6 @@ public class Game implements Cloneable {
         cloned.status = status;
         cloned.livingFigures = cloneLivingFigures(cloned);
         cloned.capturedFigures = cloneCapturedFigures(cloned);
-        cloned.white.finishClone(cloned);
-        cloned.black.finishClone(cloned);
         return cloned;
     }
 
