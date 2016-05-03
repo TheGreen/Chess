@@ -32,6 +32,13 @@ public class Castling extends Turn {
     private final Type type;
     private final King king;
     private final Rook rook;
+
+    private Field kingOrigin;
+    private Field kingDestination;
+
+    private Field rookOrigin;
+    private Field rookDestination;
+
     private int baseline;
 
     private Castling(Player executor, Type type, King king, Rook rook, int baseline) {
@@ -40,6 +47,8 @@ public class Castling extends Turn {
         this.king = king;
         this.rook = rook;
         this.baseline = baseline;
+
+        setPositions();
     }
 
     public static List<Castling> possibleCastlings(Game game) {
@@ -84,6 +93,19 @@ public class Castling extends Turn {
         return castlings;
     }
 
+    private void setPositions() {
+        kingOrigin = king.getPosition();
+        rookOrigin = rook.getPosition();
+
+        if (type == Type.queenside) {
+            kingDestination = new Field(3, baseline);
+            rookDestination = new Field(4, baseline);
+        } else if (type == Type.kingside) {
+            kingDestination = new Field(7, baseline);
+            rookDestination = new Field(6, baseline);
+        }
+    }
+
     @Override
     public void execute(Game game) {
         if (type == Type.queenside) {
@@ -109,6 +131,22 @@ public class Castling extends Turn {
 
     public Rook getRook() {
         return rook;
+    }
+
+    public Field getKingOrigin() {
+        return kingOrigin;
+    }
+
+    public Field getKingDestination() {
+        return kingDestination;
+    }
+
+    public Field getRookOrigin() {
+        return rookOrigin;
+    }
+
+    public Field getRookDestination() {
+        return rookDestination;
     }
 
     public enum Type {

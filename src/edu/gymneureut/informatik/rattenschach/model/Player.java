@@ -18,7 +18,6 @@ import edu.gymneureut.informatik.rattenschach.model.turns.*;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * The <tt>Player</tt> class.
@@ -111,27 +110,6 @@ public class Player implements Cloneable {
         }
     }
 
-//    public Player copyPlayer() {
-//        List<Figure> figuresCopy = new LinkedList<>();
-//        for (Figure figure : figures) {
-//            figuresCopy.add(figure.copyFigure());
-//        }
-//        List<Figure> capturedFiguresCopy = new LinkedList<>();
-//        for (Figure capturedFigure : capturedFigures) {
-//            capturedFiguresCopy.add(capturedFigure.copyFigure());
-//        }
-//        Player playerCopy = new Player(color, opponent, game, figuresCopy,
-//                capturedFiguresCopy, controller, remainingTime, timeIncrement);
-//
-//        for (Figure figure : figuresCopy) {
-//            figure.setOwner(playerCopy);
-//        }
-//        for (Figure figure : capturedFiguresCopy) {
-//            figure.setOwner(playerCopy);
-//        }
-//        return playerCopy;
-//    }
-
     public boolean isAbleToCaptureKing() {
         List<Move> moves = new LinkedList<>();
         for (Figure figure : figures) {
@@ -154,7 +132,6 @@ public class Player implements Cloneable {
 
             return controller.pickMove(game.getField(), turns);
         }
-        Map<Field, Figure> field = game.getField();
         List<Turn> turns = new LinkedList<>();
         for (Figure figure : figures) {
             turns.addAll(figure.getPossibleMoves());
@@ -163,14 +140,8 @@ public class Player implements Cloneable {
         for (Turn turn : turns) {
             if (turn instanceof Move) {
                 Move move = (Move) turn;
-                if (this == game.getWhite()) {
-                    if (move.testMove(game).getBlack().isAbleToCaptureKing()) {
-                        illegalMoves.add(move);
-                    }
-                } else {
-                    if (move.testMove(game).getWhite().isAbleToCaptureKing()) {
-                        illegalMoves.add(move);
-                    }
+                if (!((Move) turn).isLegal(game)) {
+                    illegalMoves.add(move);
                 }
             }
         }
@@ -187,11 +158,6 @@ public class Player implements Cloneable {
         turns.add(new DrawNotification(this, DrawNotification.DrawType.offers));
         turns.addAll(Castling.possibleCastlings(game));
         return controller.pickMove(game.getField(), turns);
-    }
-
-    private Turn measureChooseTime(Map<Field, Figure> field, List<Turn> turns) {
-        Turn turn = controller.pickMove(field, turns);
-        return turn;
     }
 
     public void captureFigure(Figure captured) {

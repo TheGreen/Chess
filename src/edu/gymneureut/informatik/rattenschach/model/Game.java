@@ -79,6 +79,8 @@ public class Game implements Cloneable {
         cloned.status = status;
         cloned.livingFigures = cloneLivingFigures(cloned);
         cloned.capturedFigures = cloneCapturedFigures(cloned);
+        cloned.white.finishClone(cloned);
+        cloned.black.finishClone(cloned);
         return cloned;
     }
 

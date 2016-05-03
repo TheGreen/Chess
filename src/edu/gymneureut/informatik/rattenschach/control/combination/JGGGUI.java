@@ -102,33 +102,51 @@ public class JGGGUI extends GameGrid implements Controller, Observer {
 
     private void updateUI(Turn turn) {
         if (turn instanceof Promotion) {
-            Promotion promotion = (Promotion) turn;
-            if (promotion.getCaptures()) {
-                super.removeActorsAt(fieldToLocation(promotion.getDestination()));
-            }
-            super.removeActorsAt(fieldToLocation(promotion.getOrigin()));
-            super.addActor(new FigureActor(promotion.getReplacement()), fieldToLocation(promotion.getDestination()));
+            updateUI((Promotion) turn);
+
         } else if (turn instanceof Move) {
-            Move move = (Move) turn;
-            if (move.getCaptures()) {
-                super.removeActorsAt(fieldToLocation(move.getDestination()));
-                updateUICaptured();
-            }
-            super.removeActorsAt(fieldToLocation(move.getOrigin()));
-            super.addActor(new FigureActor(move.getFigure()), fieldToLocation(move.getDestination()));
+            updateUI((Move) turn);
+
         } else if (turn instanceof Castling) {
-            //TODO: Missing Implementation
-            System.out.println("TODO:Missing Implementation at JGGGUI.updateUI(Turn turn)");
-            updateUI();
+            updateUI((Castling) turn);
+
         } else if (turn instanceof DrawNotification) {
             //TODO: Missing Implementation
             System.out.println("TODO:Missing Implementation at JGGGUI.updateUI(Turn turn)");
             updateUI();
+
         } else if (turn instanceof Notification) {
             //TODO: Missing Implementation
             System.out.println("TODO:Missing Implementation at JGGGUI.updateUI(Turn turn)");
             updateUI();
         }
+    }
+
+    private void updateUI(Promotion promotion) {
+        if (promotion.getCaptures()) {
+            super.removeActorsAt(fieldToLocation(promotion.getDestination()));
+        }
+        super.removeActorsAt(fieldToLocation(promotion.getOrigin()));
+        super.addActor(new FigureActor(promotion.getReplacement()),
+                fieldToLocation(promotion.getDestination()));
+    }
+
+    private void updateUI(Move move) {
+        if (move.getCaptures()) {
+            super.removeActorsAt(fieldToLocation(move.getDestination()));
+            updateUICaptured();
+        }
+        super.removeActorsAt(fieldToLocation(move.getOrigin()));
+        super.addActor(new FigureActor(move.getFigure()), fieldToLocation(move.getDestination()));
+    }
+
+    private void updateUI(Castling castling) {
+        super.removeActorsAt(fieldToLocation(castling.getKingOrigin()));
+        super.removeActorsAt(fieldToLocation(castling.getRookOrigin()));
+        super.addActor(new FigureActor(castling.getKing()),
+                fieldToLocation(castling.getKingDestination()));
+        super.addActor(new FigureActor(castling.getRook()),
+                fieldToLocation(castling.getRookDestination()));
     }
 
 
@@ -217,9 +235,6 @@ public class JGGGUI extends GameGrid implements Controller, Observer {
         }
     }
 
-    /**
-     * Created by jcgruenhage on 4/28/16.
-     */
     private static class FigureActor extends Actor {
         private Figure figure;
 
