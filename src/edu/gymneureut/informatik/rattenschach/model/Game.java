@@ -14,8 +14,8 @@ package edu.gymneureut.informatik.rattenschach.model;
 
 import edu.gymneureut.informatik.rattenschach.control.controller.Controller;
 import edu.gymneureut.informatik.rattenschach.control.observer.Observer;
-import edu.gymneureut.informatik.rattenschach.model.figures.Figure;
-import edu.gymneureut.informatik.rattenschach.model.figures.Pawn;
+import edu.gymneureut.informatik.rattenschach.model.figures.*;
+import edu.gymneureut.informatik.rattenschach.model.turns.Move;
 import edu.gymneureut.informatik.rattenschach.model.turns.Notification;
 import edu.gymneureut.informatik.rattenschach.model.turns.Turn;
 
@@ -62,6 +62,42 @@ public class Game implements Cloneable {
         for (Observer observer : observers) {
             observer.startGame(this);
         }
+    }
+
+    private static String getShortFigureName(Figure figure) {
+        if (figure instanceof Bishop) {
+            return "B" + ((figure.getOwner().getColor() == 0) ? "b" : "w");
+        } else if (figure instanceof King) {
+            return "K" + ((figure.getOwner().getColor() == 0) ? "b" : "w");
+        } else if (figure instanceof Knight) {
+            return "N" + ((figure.getOwner().getColor() == 0) ? "b" : "w");
+        } else if (figure instanceof Pawn) {
+            return "P" + ((figure.getOwner().getColor() == 0) ? "b" : "w");
+        } else if (figure instanceof Queen) {
+            return "Q" + ((figure.getOwner().getColor() == 0) ? "b" : "w");
+        } else if (figure instanceof Rook) {
+            return "R" + ((figure.getOwner().getColor() == 0) ? "b" : "w");
+        } else {
+            return "  ";
+        }
+    }
+
+    @Override
+    public String toString() {
+        String retVal = "";
+        for (int i = 8; i >= 1; i--) {
+            retVal += "  -----------------------------------------\n";
+            retVal += Field.Rank.getName(i) + " |";
+            for (int j = 1; j <= 8; j++) {
+                retVal += " "
+                        + getShortFigureName(this.getField().get(new Field(j, i)))
+                        + " |";
+            }
+            retVal += "\n";
+        }
+        retVal += "  -----------------------------------------\n";
+        retVal += "     A    B    C    D    E    F    G    H  \n";
+        return retVal;
     }
 
     @Override
@@ -136,6 +172,10 @@ public class Game implements Cloneable {
         Turn turn = currentPlayer.move(this);
         if (!switchPlayer(turn.getExecutor())) {
             turn = new Notification(turn.getExecutor(), Notification.Type.hasLost);
+        }
+        if (turn instanceof Move) {
+            System.out.println(this.toString());
+            System.out.println(((Move) turn).testMove(this).toString());
         }
         turn.execute(this);
 
