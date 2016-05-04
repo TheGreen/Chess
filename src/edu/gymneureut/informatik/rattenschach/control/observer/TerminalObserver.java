@@ -12,7 +12,6 @@
 
 package edu.gymneureut.informatik.rattenschach.control.observer;
 
-import edu.gymneureut.informatik.rattenschach.model.Field;
 import edu.gymneureut.informatik.rattenschach.model.Game;
 import edu.gymneureut.informatik.rattenschach.model.figures.*;
 import edu.gymneureut.informatik.rattenschach.model.turns.DrawNotification;
@@ -29,24 +28,6 @@ import edu.gymneureut.informatik.rattenschach.model.turns.Turn;
 public class TerminalObserver implements Observer {
     private Game game;
     private int counter = 0;
-
-    private static String getShortFigureName(Figure figure) {
-        if (figure instanceof Bishop) {
-            return "B" + ((figure.getOwner().getColor() == 0) ? "b" : "w");
-        } else if (figure instanceof King) {
-            return "K" + ((figure.getOwner().getColor() == 0) ? "b" : "w");
-        } else if (figure instanceof Knight) {
-            return "N" + ((figure.getOwner().getColor() == 0) ? "b" : "w");
-        } else if (figure instanceof Pawn) {
-            return "P" + ((figure.getOwner().getColor() == 0) ? "b" : "w");
-        } else if (figure instanceof Queen) {
-            return "Q" + ((figure.getOwner().getColor() == 0) ? "b" : "w");
-        } else if (figure instanceof Rook) {
-            return "R" + ((figure.getOwner().getColor() == 0) ? "b" : "w");
-        } else {
-            return "  ";
-        }
-    }
 
     public static String getFigureName(Figure figure) {
         if (figure instanceof Bishop) {
@@ -87,18 +68,7 @@ public class TerminalObserver implements Observer {
     }
 
     private void printField() {
-        for (int i = 8; i >= 1; i--) {
-            System.out.println("  -----------------------------------------");
-            System.out.print(Field.Rank.getName(i) + " |");
-            for (int j = 1; j <= 8; j++) {
-                System.out.print(" "
-                        + getShortFigureName(game.getField().get(new Field(j, i)))
-                        + " |");
-            }
-            System.out.print("\n");
-        }
-        System.out.println("  -----------------------------------------");
-        System.out.println("     A    B    C    D    E    F    G    H  ");
+        System.out.println(game.toString());
     }
 
     private void printTurn(Turn turn) {
