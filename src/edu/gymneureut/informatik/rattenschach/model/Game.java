@@ -32,7 +32,6 @@ import java.util.Map;
  */
 public class Game implements Cloneable {
     private Timer timer;
-    private long totalTime;
     private Player white;
     private Player black;
     private Player currentPlayer = white;
