@@ -100,16 +100,6 @@ public class Player implements Cloneable {
         return cloned;
     }
 
-    public void finishClone(Game game) {
-        this.game = game;
-        for (Figure figure : figures) {
-            figure.setField(game.getField());
-        }
-        for (Figure figure : capturedFigures) {
-            figure.setField(game.getField());
-        }
-    }
-
     public boolean isAbleToCaptureKing() {
         List<Move> moves = new LinkedList<>();
         for (Figure figure : figures) {
@@ -140,7 +130,7 @@ public class Player implements Cloneable {
         for (Turn turn : turns) {
             if (turn instanceof Move) {
                 Move move = (Move) turn;
-                if (!((Move) turn).isLegal(game)) {
+                if (!move.isLegal(game)) {
                     illegalMoves.add(move);
                 }
             }

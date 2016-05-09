@@ -135,7 +135,10 @@ public class Game implements Cloneable {
         if (!switchPlayer(turn.getExecutor())) {
             turn = new Notification(turn.getExecutor(), Notification.Type.hasLost);
         }
+        System.out.println("Before: " + getCurrentPlayer().getOpponent().isAbleToCaptureKing());
         turn.execute(this);
+        System.out.println("After:  " + getCurrentPlayer().getOpponent().isAbleToCaptureKing());
+        System.out.println(turn.toString());
 
         for (Observer observer : observers) {
             observer.nextTurn(turn);
