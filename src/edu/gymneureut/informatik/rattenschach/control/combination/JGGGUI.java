@@ -44,6 +44,12 @@ public class JGGGUI extends GameGrid implements Controller, Observer {
         drawCaptured();
 
         this.show();
+
+        try {
+            Thread.sleep(9000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void main(String[] args) {
@@ -229,7 +235,7 @@ public class JGGGUI extends GameGrid implements Controller, Observer {
     public void nextTurn(Turn turn) {
         updateUI(turn);
         try {
-            Thread.sleep(35);
+            Thread.sleep(1000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

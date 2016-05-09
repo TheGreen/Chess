@@ -59,7 +59,7 @@ public class Move extends Turn {
         }
     }
 
-    public Game testMove(Game game) {
+    private Game testMove(Game game) {
         Game clonedGame = game.clone();
         cloneWith(clonedGame).execute(clonedGame);
         return clonedGame;

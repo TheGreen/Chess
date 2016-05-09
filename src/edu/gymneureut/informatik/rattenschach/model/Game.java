@@ -114,8 +114,6 @@ public class Game implements Cloneable {
         cloned.status = status;
         cloned.livingFigures = cloneLivingFigures(cloned);
         cloned.capturedFigures = cloneCapturedFigures(cloned);
-        cloned.white.finishClone(cloned);
-        cloned.black.finishClone(cloned);
         return cloned;
     }
 
@@ -177,7 +175,10 @@ public class Game implements Cloneable {
             System.out.println(this.toString());
             System.out.println(((Move) turn).testMove(this).toString());
         }
+        System.out.println("Before: " + getCurrentPlayer().getOpponent().isAbleToCaptureKing());
         turn.execute(this);
+        System.out.println("After:  " + getCurrentPlayer().getOpponent().isAbleToCaptureKing());
+        System.out.println(turn.toString());
 
         for (Observer observer : observers) {
             observer.nextTurn(turn);
