@@ -22,42 +22,19 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package edu.gymneureut.informatik.rattenschach.model.turns;
+package edu.gymneureut.informatik.rattenschach.control.observer;
 
 import edu.gymneureut.informatik.rattenschach.model.Game;
-import edu.gymneureut.informatik.rattenschach.model.Player;
+import edu.gymneureut.informatik.rattenschach.model.turns.Turn;
 
-/**
- * The <tt>DrawNotification
- * </tt> class.
- *
- * @author Jan Christian Gruenhage, Alex Klug
- * @version 0.1
- */
-public class DrawNotification extends Notification {
-    private final DrawType drawType;
-
-    public DrawNotification(Player executor, DrawType drawType) {
-        super(executor);
-        this.drawType = drawType;
+public class TerminalObserverSlim implements Observer {
+    @Override
+    public void startGame(Game game) {
+        System.out.println("Game has started.");
     }
 
     @Override
-    public void execute(Game game) {
-        if (drawType == DrawType.offers) {
-            game.setStatus(Game.GameStatus.drawOffered);
-        } else if (drawType == DrawType.accepts) {
-            game.setStatus(Game.GameStatus.draw);
-        } else if (drawType == DrawType.denies) {
-            game.setStatus(Game.GameStatus.running);
-        }
-    }
-
-    public DrawType getDrawType() {
-        return drawType;
-    }
-
-    public enum DrawType {
-        offers, accepts, denies
+    public void nextTurn(Turn turn) {
+        System.out.println(turn.toString());
     }
 }

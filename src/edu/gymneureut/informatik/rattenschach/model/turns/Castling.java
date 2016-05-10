@@ -10,6 +10,18 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2016 Jan Christian Grünhage; Alex Klug
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
 package edu.gymneureut.informatik.rattenschach.model.turns;
 
 import edu.gymneureut.informatik.rattenschach.model.Field;
@@ -74,20 +86,22 @@ public class Castling extends Turn {
         }
         int baseline = (player.getColor() == 0) ? 8 : 1;
         if (queensideRook != null
+                && king != null
                 && !queensideRook.hasMoved()
                 && game.getField().get(new Field(2, baseline)) == Figure.EMPTY
                 && game.getField().get(new Field(3, baseline)) == Figure.EMPTY
                 && game.getField().get(new Field(4, baseline)) == Figure.EMPTY
-                && new Move(king, king.getPosition(), new Field(3, baseline), false, Figure.EMPTY).isLegal(game)
-                && new Move(king, king.getPosition(), new Field(4, baseline), false, Figure.EMPTY).isLegal(game)) {
+                && new Move(king.getOwner(), king, king.getPosition(), new Field(3, baseline), false, Figure.EMPTY).isLegal(game)
+                && new Move(king.getOwner(), king, king.getPosition(), new Field(4, baseline), false, Figure.EMPTY).isLegal(game)) {
             castlings.add(new Castling(game.getCurrentPlayer(), Type.queenside, king, queensideRook, baseline));
         }
         if (kingsideRook != null
+                && king != null
                 && !kingsideRook.hasMoved()
                 && game.getField().get(new Field(6, baseline)) == Figure.EMPTY
                 && game.getField().get(new Field(7, baseline)) == Figure.EMPTY
-                && new Move(king, king.getPosition(), new Field(6, baseline), false, Figure.EMPTY).isLegal(game)
-                && new Move(king, king.getPosition(), new Field(7, baseline), false, Figure.EMPTY).isLegal(game)) {
+                && new Move(king.getOwner(), king, king.getPosition(), new Field(6, baseline), false, Figure.EMPTY).isLegal(game)
+                && new Move(king.getOwner(), king, king.getPosition(), new Field(7, baseline), false, Figure.EMPTY).isLegal(game)) {
             castlings.add(new Castling(game.getCurrentPlayer(), Type.kingside, king, kingsideRook, baseline));
         }
         return castlings;
@@ -109,11 +123,11 @@ public class Castling extends Turn {
     @Override
     public void execute(Game game) {
         if (type == Type.queenside) {
-            new Move(king, king.getPosition(), new Field(3, baseline), false, null).execute(game);
-            new Move(rook, rook.getPosition(), new Field(4, baseline), false, null).execute(game);
+            new Move(king.getOwner(), king, king.getPosition(), new Field(3, baseline), false, null).execute(game);
+            new Move(rook.getOwner(), rook, rook.getPosition(), new Field(4, baseline), false, null).execute(game);
         } else if (type == Type.kingside) {
-            new Move(king, king.getPosition(), new Field(7, baseline), false, null).execute(game);
-            new Move(rook, rook.getPosition(), new Field(6, baseline), false, null).execute(game);
+            new Move(king.getOwner(), king, king.getPosition(), new Field(7, baseline), false, null).execute(game);
+            new Move(rook.getOwner(), rook, rook.getPosition(), new Field(6, baseline), false, null).execute(game);
         }
     }
 
