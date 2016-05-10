@@ -10,6 +10,18 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2016 Jan Christian Grünhage; Alex Klug
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
 package edu.gymneureut.informatik.rattenschach.model.figures;
 
 import edu.gymneureut.informatik.rattenschach.model.Field;
@@ -41,63 +53,71 @@ public class Pawn extends Figure implements Cloneable {
 
 
     public List<Move> getPossibleMoves() {
+
         LinkedList<Move> moves = new LinkedList<>();
         if (captured) {
             return moves;
         }
-        Field tempPosition = new Field(position.getFile(), position.getRank());
-        tempPosition.setRank(tempPosition.getRank() + direction);
-        Figure resultFigure = field.get(tempPosition);
-        if (resultFigure == Figure.EMPTY) {
-            if (tempPosition.getRank() < 8
-                    || tempPosition.getRank() > 1) {
-                moves.add(new Move(this, position, tempPosition, false, resultFigure));
-            } else {
-                moves.add(new Promotion(this, position, tempPosition, false, resultFigure,
-                        new Queen(this.owner, position, field)));
-                moves.add(new Promotion(this, position, tempPosition, false, resultFigure,
-                        new Knight(this.owner, position, field)));
-                moves.add(new Promotion(this, position, tempPosition, false, resultFigure,
-                        new Rook(this.owner, position, field)));
-                moves.add(new Promotion(this, position, tempPosition, false, resultFigure,
-                        new Bishop(this.owner, position, field)));
+        Field destination;
+
+        //FORWARD
+
+        destination = forwardStraight(position);
+        if (field.get(destination) == EMPTY) {
+            getPossibleMoves(destination, false, moves);
+            destination = forwardStraight(forwardStraight(position));
+            if (!hasMoved && field.get(destination) == EMPTY) {
+                getPossibleMoves(destination, false, moves);
             }
         }
-        if (!hasMoved && resultFigure == Figure.EMPTY) {
-            tempPosition = new Field(position.getFile(), position.getRank());
-            tempPosition.setRank(tempPosition.getRank() + 2 * direction);
-            resultFigure = field.get(tempPosition);
-            if (resultFigure == Figure.EMPTY) {
-                moves.add(new Move(this, position, tempPosition, false, resultFigure));
-            }
-        }
+
+        //CAPTURE LEFT
+
         if (position.getFile() > 1) {
-            tempPosition = new Field(position.getFile() - 1, position.getRank() + direction);
-            Figure capturedFigure = field.get(tempPosition);
-            if (capturedFigure != Figure.EMPTY && capturedFigure.getOwner() != this.owner) {
-                if (tempPosition.getRank() < 8
-                        || tempPosition.getRank() > 1) {
-                    moves.add(new Move(this, position, tempPosition, true, capturedFigure));
-                } else {
-                    moves.add(new Promotion(this, position, tempPosition, true, capturedFigure,
-                            new Queen(this.owner, position, field)));
-                    moves.add(new Promotion(this, position, tempPosition, true, capturedFigure,
-                            new Rook(this.owner, position, field)));
-                    moves.add(new Promotion(this, position, tempPosition, true, capturedFigure,
-                            new Knight(this.owner, position, field)));
-                    moves.add(new Promotion(this, position, tempPosition, true, capturedFigure,
-                            new Bishop(this.owner, position, field)));
-                }
+            destination = forwardLeft(position);
+            if (field.get(destination) != EMPTY) {
+                getPossibleMoves(destination, true, moves);
             }
         }
+
+        //CAPTURE RIGHT
+
         if (position.getFile() < 8) {
-            tempPosition = new Field(position.getFile() + 1, position.getRank() + direction);
-            Figure captureFigure = field.get(tempPosition);
-            if (captureFigure != Figure.EMPTY && captureFigure.getOwner() != this.owner) {
-                moves.add(new Move(this, position, tempPosition, true, captureFigure));
+            destination = forwardRight(position);
+            if (field.get(destination) != EMPTY) {
+                getPossibleMoves(destination, true, moves);
             }
         }
         return moves;
+    }
+
+    private void getPossibleMoves(Field destination, boolean captures, List<Move> moves) {
+        if (destination.getRank() < 8
+                && destination.getRank() > 1) {
+            moves.add(new Move(this.getOwner(), this, position, destination, captures, field.get(destination)));
+        } else {
+            moves.add(new Promotion(this.getOwner(), this, position, destination, captures, field.get(destination),
+                    new Queen(this.owner, position, field)));
+            moves.add(new Promotion(this.getOwner(), this, position, destination, captures, field.get(destination),
+                    new Rook(this.owner, position, field)));
+            moves.add(new Promotion(this.getOwner(), this, position, destination, captures, field.get(destination),
+                    new Knight(this.owner, position, field)));
+            moves.add(new Promotion(this.getOwner(), this, position, destination, captures, field.get(destination),
+                    new Bishop(this.owner, position, field)));
+        }
+        return;
+    }
+
+    private Field forwardStraight(Field position) {
+        return new Field(position.getFile(), position.getRank() + direction);
+    }
+
+    private Field forwardRight(Field position) {
+        return new Field(position.getFile() + 1, position.getRank() + direction);
+    }
+
+    private Field forwardLeft(Field position) {
+        return new Field(position.getFile() - 1, position.getRank() + direction);
     }
 
     @Override

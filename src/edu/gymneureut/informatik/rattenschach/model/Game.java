@@ -10,12 +10,23 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2016 Jan Christian Grünhage; Alex Klug
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
 package edu.gymneureut.informatik.rattenschach.model;
 
 import edu.gymneureut.informatik.rattenschach.control.controller.Controller;
 import edu.gymneureut.informatik.rattenschach.control.observer.Observer;
 import edu.gymneureut.informatik.rattenschach.model.figures.*;
-import edu.gymneureut.informatik.rattenschach.model.turns.Move;
 import edu.gymneureut.informatik.rattenschach.model.turns.Notification;
 import edu.gymneureut.informatik.rattenschach.model.turns.Turn;
 
@@ -147,7 +158,7 @@ public class Game implements Cloneable {
     public void play() {
         timer.startGame();
         while (status == GameStatus.running
-                || status == GameStatus.remisOffered) {
+                || status == GameStatus.drawOffered) {
             act();
         }
 
@@ -171,14 +182,14 @@ public class Game implements Cloneable {
         if (!switchPlayer(turn.getExecutor())) {
             turn = new Notification(turn.getExecutor(), Notification.Type.hasLost);
         }
-        if (turn instanceof Move) {
-            System.out.println(this.toString());
-            System.out.println(((Move) turn).testMove(this).toString());
-        }
-        System.out.println("Before: " + getCurrentPlayer().getOpponent().isAbleToCaptureKing());
+//        if (turn instanceof Move) {
+//            System.out.println(this.toString());
+//            System.out.println(((Move) turn).testMove(this).toString());
+//        }
+//        System.out.println("Before: " + getCurrentPlayer().getOpponent().isAbleToCaptureKing());
         turn.execute(this);
-        System.out.println("After:  " + getCurrentPlayer().getOpponent().isAbleToCaptureKing());
-        System.out.println(turn.toString());
+//        System.out.println("After:  " + getCurrentPlayer().getOpponent().isAbleToCaptureKing());
+//        System.out.println(turn.toString());
 
         for (Observer observer : observers) {
             observer.nextTurn(turn);
@@ -201,7 +212,7 @@ public class Game implements Cloneable {
                 }
                 seenFigures.add(currentFigure);
                 if (currentFigure != Figure.EMPTY && !livingFigures.contains(currentFigure)) {
-                    throw new IllegalStateException("Figure not a living figure" + i + j);
+                    throw new IllegalStateException("Figure not a living figure" + new Field(i, j).toString());
                 }
             }
         }
@@ -240,7 +251,8 @@ public class Game implements Cloneable {
         capturedFigures.add(captured);
     }
 
-    public void promote(Pawn pawn, Figure replacement) {
+    public void promotePawn(Pawn pawn, Figure replacement) {
+
         livingFigures.remove(pawn);
         livingFigures.add(replacement);
     }
@@ -259,6 +271,6 @@ public class Game implements Cloneable {
 
 
     public enum GameStatus {
-        running, whiteWon, blackWon, draw, stalemate, remisOffered
+        running, whiteWon, blackWon, draw, stalemate, drawOffered
     }
 }
