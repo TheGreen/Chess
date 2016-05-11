@@ -22,6 +22,18 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2016 Jan Christian Grünhage; Alex Klug
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
 package edu.gymneureut.informatik.rattenschach.control.controller;
 
 import edu.gymneureut.informatik.rattenschach.control.observer.TerminalObserver;
@@ -93,11 +105,29 @@ public class TerminalController implements Controller {
                 }
             }
             System.out.println("Choose your Move:");
-            for (int i = 1; i <= availableTurns.size(); i++) {
-                System.out.println(i + ". " + availableTurns.get(i - 1).toString());
+            Turn turn = (Turn) chooseFromList(availableTurns);
+            return turn;
+        }
+    }
+
+    private Object chooseFromList(List list) {
+        for (int i = 0; i < list.size(); i++) {
+            System.out.println(i + ". " + list.get(i - 1).toString());
+        }
+        Scanner scanner = new Scanner(System.in);
+        int retVal;
+        while (true) {
+            String input = scanner.next();
+            if (input.matches("\\d*")) {
+                retVal = Integer.parseInt(input) - 1;
+                if (retVal < list.size() && retVal >= 0) {
+                    System.out.println("Input is an index out of the List.");
+                } else {
+                    return list.get(retVal);
+                }
+            } else {
+                System.out.println("Input is not a number.");
             }
-            input = scanner.next();
-            return availableTurns.get(Integer.parseInt(input) - 1);
         }
     }
 
