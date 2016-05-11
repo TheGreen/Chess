@@ -34,62 +34,10 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package edu.gymneureut.informatik.rattenschach.model.turns;
+package de.janchristiangruenhage.util.terminal.menu;
 
-import edu.gymneureut.informatik.rattenschach.model.Field;
-import edu.gymneureut.informatik.rattenschach.model.Game;
-import edu.gymneureut.informatik.rattenschach.model.Player;
-import edu.gymneureut.informatik.rattenschach.model.figures.Figure;
-import edu.gymneureut.informatik.rattenschach.model.figures.Pawn;
+public interface MenuItem {
+    MenuItem select();
 
-/**
- * The <tt>Promotion</tt> class.
- *
- * @author Jan Christian Gruenhage, Alex Klug
- * @version 0.1
- */
-public class Promotion extends Move {
-    private Figure replacement;
-    private Pawn pawn;
-
-    public Promotion(Player executor, Figure figure, Field origin,
-                     Field destination, boolean captures,
-                     Figure captured, Figure replacement) {
-        super(executor, figure, origin, destination, captures, captured);
-        if (replacement instanceof Pawn) {
-            throw new IllegalArgumentException("Pawns cannot get promoted to being a Pawn");
-        }
-        pawn = (Pawn) figure;
-        this.replacement = replacement;
-    }
-
-    @Override
-    public void execute(Game game) {
-        super.setFigure(replacement);
-        game.promotePawn(pawn, replacement);
-        executor.promotePawn(pawn, replacement);
-        super.execute(game);
-    }
-
-    @Override
-    protected Move cloneWith(Game clonedGame) {
-        return new Promotion((executor.getColor() == 1) ? clonedGame.getWhite() : clonedGame.getBlack(),
-                clonedGame.getField().get(figure.getPosition()), origin, destination, captures,
-                clonedGame.getField().get(captured.getPosition()), replacement.clone());
-    }
-
-    public Figure getReplacement() {
-        return replacement;
-    }
-
-    @Override
-    public String toString() {
-        return super.toString()
-                + " being promoted to "
-                + replacement.getName();
-    }
-
-    public Pawn getPawn() {
-        return pawn;
-    }
+    String getName();
 }

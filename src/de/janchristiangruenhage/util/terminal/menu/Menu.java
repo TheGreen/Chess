@@ -25,7 +25,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016 Jan Christian Grünhage; Alex Klug
+ * Copyright (c) 2016 Jan Christian Grünhage
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
  *
@@ -34,62 +34,85 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package edu.gymneureut.informatik.rattenschach.model.turns;
+package de.janchristiangruenhage.util.terminal.menu;
 
-import edu.gymneureut.informatik.rattenschach.model.Field;
-import edu.gymneureut.informatik.rattenschach.model.Game;
-import edu.gymneureut.informatik.rattenschach.model.Player;
-import edu.gymneureut.informatik.rattenschach.model.figures.Figure;
-import edu.gymneureut.informatik.rattenschach.model.figures.Pawn;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Scanner;
 
 /**
- * The <tt>Promotion</tt> class.
+ * The <tt>Menu</tt> class.
+ * Probably not the simplest Terminal Menu Implementation, but it is better than nothing.
  *
- * @author Jan Christian Gruenhage, Alex Klug
+ * @author Jan Christian Grünhage @jcgruenhage
  * @version 0.1
  */
-public class Promotion extends Move {
-    private Figure replacement;
-    private Pawn pawn;
+public class Menu implements MenuItem {
+    private Menu root;
+    private Menu parent;
+    private String name;
+    private String selectPrompt;
+    private List<MenuItem> items; //either a submenu or a menu item
 
-    public Promotion(Player executor, Figure figure, Field origin,
-                     Field destination, boolean captures,
-                     Figure captured, Figure replacement) {
-        super(executor, figure, origin, destination, captures, captured);
-        if (replacement instanceof Pawn) {
-            throw new IllegalArgumentException("Pawns cannot get promoted to being a Pawn");
+
+    public Menu(String name, String selectPrompt) {
+        this.root = this;
+        this.parent = this;
+        this.name = name;
+        this.selectPrompt = selectPrompt;
+        this.items = new LinkedList<>();
+    }
+
+    public Menu(Menu parent, String name, String selectPrompt) {
+        this.root = parent.getRoot();
+        this.parent = parent;
+        this.name = name;
+        this.selectPrompt = selectPrompt;
+        this.items = new LinkedList<>();
+    }
+
+    public MenuItem select() {
+        if (parent != this) {
+            add(parent);
+        } else {
+            if (root != this) {
+                add(root);
+            }
         }
-        pawn = (Pawn) figure;
-        this.replacement = replacement;
+        System.out.println(selectPrompt);
+        for (int i = 1; i <= items.size(); i++) {
+            System.out.println(i + ". " + items.get(i - 1).getName());
+        }
+        Scanner scanner = new Scanner(System.in);
+        int position;
+        while (true) {
+            String input = scanner.next();
+            if (input.matches("\\d*")) { //Matches digits only
+                position = Integer.parseInt(input) - 1;
+                if (position < items.size() && position >= 0) {
+                    return items.get(position);
+                } else {
+                    System.out.println("The index is out of Bounds, try again.");
+                }
+            } else {
+                System.out.println("Input is not a number, try again.");
+            }
+        }
     }
+
+    public void add(MenuItem item) {
+        if (!(item == Item.NULL)) {
+            items.add(item);
+        }
+    }
+
 
     @Override
-    public void execute(Game game) {
-        super.setFigure(replacement);
-        game.promotePawn(pawn, replacement);
-        executor.promotePawn(pawn, replacement);
-        super.execute(game);
+    public String getName() {
+        return name;
     }
 
-    @Override
-    protected Move cloneWith(Game clonedGame) {
-        return new Promotion((executor.getColor() == 1) ? clonedGame.getWhite() : clonedGame.getBlack(),
-                clonedGame.getField().get(figure.getPosition()), origin, destination, captures,
-                clonedGame.getField().get(captured.getPosition()), replacement.clone());
-    }
-
-    public Figure getReplacement() {
-        return replacement;
-    }
-
-    @Override
-    public String toString() {
-        return super.toString()
-                + " being promoted to "
-                + replacement.getName();
-    }
-
-    public Pawn getPawn() {
-        return pawn;
+    public Menu getRoot() {
+        return root;
     }
 }

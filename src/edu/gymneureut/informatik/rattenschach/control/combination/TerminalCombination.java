@@ -22,6 +22,18 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2016 Jan Christian Grünhage; Alex Klug
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
 package edu.gymneureut.informatik.rattenschach.control.combination;
 
 import edu.gymneureut.informatik.rattenschach.control.controller.Controller;
@@ -31,12 +43,10 @@ import edu.gymneureut.informatik.rattenschach.control.observer.TerminalObserver;
 import edu.gymneureut.informatik.rattenschach.model.Field;
 import edu.gymneureut.informatik.rattenschach.model.Game;
 import edu.gymneureut.informatik.rattenschach.model.figures.Figure;
-import edu.gymneureut.informatik.rattenschach.model.turns.Promotion;
 import edu.gymneureut.informatik.rattenschach.model.turns.Turn;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
 
 /**
  * The <tt>TerminalCombination</tt> class.
@@ -56,21 +66,6 @@ public class TerminalCombination implements Controller, Observer {
     @Override
     public Turn pickMove(Map<Field, Figure> field, List<Turn> turns) {
         return controller.pickMove(field, turns);
-    }
-
-    private Promotion choosePromotion(List<Promotion> promotions) {
-        System.out.print("Choose to what you want to promotePawn your Pawn to:\n");
-        for (int i = 0; i < promotions.size(); i++) {
-            System.out.println((i + 1) + ". "
-                    + TerminalObserver.getFigureName(promotions.get(i).getReplacement()));
-        }
-        String input = new Scanner(System.in).next();
-        int inputInt = Integer.parseInt(input);
-        if (inputInt < 0 || inputInt >= promotions.size()) {
-            return null;
-        } else {
-            return promotions.get(inputInt);
-        }
     }
 
     @Override
