@@ -34,6 +34,18 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2016 Jan Christian Grünhage; Alex Klug
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
 package edu.gymneureut.informatik.rattenschach.control.combination;
 
 import ch.aplu.jgamegrid.*;
@@ -62,6 +74,7 @@ public class JGGGUI extends GameGrid implements Controller, Observer, GGMouseLis
     private boolean isTurnSelected = false;
     private boolean turnActorSelected = false;
     private List<Turn> turns;
+    private Figure figure;
     private Turn turn;
 
     public JGGGUI() {
@@ -116,47 +129,126 @@ public class JGGGUI extends GameGrid implements Controller, Observer, GGMouseLis
         }
 
         //Gets Figure from the Actor
-        Figure figure = figureActor.getFigure();
+        figure = figureActor.getFigure();
 
         //Colorize the Field where the Actor is standing on
-        drawSelectedChessTile(figureActor.getLocation().getX(),
-                figureActor.getLocation().getY(), 0);
+        drawSelectedChessTile(location.getX(), location.getY(), 2);
 
         //Generates List of figure turns with the given figure and turns
         List<Turn> figureTurns = Controller.getTurnsForFigure(figure, turns);
 
         //Add Turn Actors
         addTurnActors(figureTurns);
-
-
-        throw new FeatureNotImplementedYetException();
     }
 
     private void addTurnActors(List<Turn> figureTurns) {
-        //TODO
+        for (Turn turn : figureTurns) {
+            addTurnActor(turn);
+        }
+    }
+
+    private void addTurnActor(Turn turn) {
+        if (turn instanceof Promotion) {
+            addTurnActor((Promotion) turn);
+        } else if (turn instanceof Move) {
+            addTurnActor((Move) turn);
+        } else if (turn instanceof Castling) {
+            addTurnActor((Castling) turn);
+        }
+    }
+
+    private void addTurnActor(Promotion promotion) {
+        int selectType = (promotion.getCaptures()) ? 0 : 1;
+        int x = fieldToLocation(promotion.getDestination()).getX();
+        int y = fieldToLocation(promotion.getDestination()).getY();
+        drawSelectedChessTile(x, y, selectType);
+
+        List<Actor> actors = getActorsAt(fieldToLocation(promotion.getDestination()));
+        PromotionActor actor = null;
+        for (Actor actor_ : actors) {
+            if (actor_ instanceof PromotionActor) {
+                actor = (PromotionActor) actor_;
+            }
+        }
+
+        if (actor == null) {
+            actor = new PromotionActor();
+            addActor(actor, fieldToLocation(promotion.getDestination()));
+        }
+
+        actor.addPromotion(promotion);
+    }
+
+    private void addTurnActor(Move move) {
+        int selectType = (move.getCaptures()) ? 0 : 1;
+        int x = fieldToLocation(move.getDestination()).getX();
+        int y = fieldToLocation(move.getDestination()).getY();
+        drawSelectedChessTile(x, y, selectType);
+
+        MoveActor actor = new MoveActor(move);
+        addActor(actor, fieldToLocation(move.getDestination()));
+    }
+
+    private void addTurnActor(Castling castling) {
+        int selectType = 1;
+        int x = fieldToLocation(castling.getKingDestination()).getX();
+        int y = fieldToLocation(castling.getKingDestination()).getY();
+
+        drawSelectedChessTile(x, y, selectType);
+
+        CastlingActor actor = new CastlingActor(castling);
+        addActor(actor, fieldToLocation(castling.getKingDestination()));
     }
 
     private void selectTurn(Location location) {
-        throw new FeatureNotImplementedYetException();
+        if (fieldToLocation(figure.getPosition()) == location) {
+            turnActorSelected = false;
+            return;
+        }
+
+        List<Actor> actors = getActorsAt(location);
+        actorSearch:
+        for (Actor actor : actors) {
+            if (actor instanceof MoveActor) {
+                turn = ((MoveActor) actor).getMove();
+                break actorSearch;
+            } else if (actor instanceof PromotionActor) {
+                ((PromotionActor) actor).printPromotions();
+                return;
+            } else if (actor instanceof CastlingActor) {
+                turn = ((CastlingActor) actor).getCastling();
+                break actorSearch;
+            }
+        }
+
+        //After the turn has been selected:
+        synchronized (this) {
+            isTurnSelected = true;
+            notifyAll();
+        }
     }
 
     @Override
     public Turn pickMove(Map<Field, Figure> field, List<Turn> turns) {
 //        throw new FeatureNotImplementedYetException();
         isTurnSelected = false;
+        turn = null;
         this.turns = turns;
         isMyTurn = true;
 
-        while (!isTurnSelected) {
-            try {
-                wait();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+        synchronized (this) {
+            while (!isTurnSelected) {
+                try {
+                    wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         }
 
         isMyTurn = false;
         turnActorSelected = false;
+        drawChessboard();
         return turn;
     }
 
@@ -182,14 +274,14 @@ public class JGGGUI extends GameGrid implements Controller, Observer, GGMouseLis
     }
 
     private void drawBackgroundTile(int i, int j) {
-        super.getBg().fillCell(new Location(i, j), new Color(0x65, 0x3E, 0x19));
+        drawTile(new Location(i, j), new Color(0x65, 0x3E, 0x19));
     }
 
     private void drawChessTile(int i, int j) {
         if ((i + j) % 2 == 1) {
-            super.getBg().fillCell(new Location(i, j), new Color(0xFF, 0xCE, 0x9E));
+            drawTile(new Location(i, j), new Color(0xFF, 0xCE, 0x9E));
         } else {
-            super.getBg().fillCell(new Location(i, j), new Color(0xD1, 0x8B, 0x47));
+            drawTile(new Location(i, j), new Color(0xD1, 0x8B, 0x47));
         }
     }
 
@@ -197,33 +289,38 @@ public class JGGGUI extends GameGrid implements Controller, Observer, GGMouseLis
         switch (type) {
             case 0: //Red
                 if ((i + j) % 2 == 1) {
-                    super.getBg().fillCell(new Location(i, j), new Color(0xFF, 0xB6, 0xB6));
+                    drawTile(new Location(i, j), new Color(0xFF, 0xB6, 0xB6));
                 } else {
-                    super.getBg().fillCell(new Location(i, j), new Color(0xD1, 0x69, 0x69));
+                    drawTile(new Location(i, j), new Color(0xD1, 0x69, 0x69));
                 }
                 break;
             case 1: //Green
                 if ((i + j) % 2 == 1) {
-                    super.getBg().fillCell(new Location(i, j), new Color(0xB6, 0xFF, 0xB6));
+                    drawTile(new Location(i, j), new Color(0xB6, 0xFF, 0xB6));
                 } else {
-                    super.getBg().fillCell(new Location(i, j), new Color(0x69, 0xD1, 0x69));
+                    drawTile(new Location(i, j), new Color(0x69, 0xD1, 0x69));
                 }
                 break;
             case 2: //Blue
                 if ((i + j) % 2 == 1) {
-                    super.getBg().fillCell(new Location(i, j), new Color(0xB6, 0xB6, 0xFF));
+                    drawTile(new Location(i, j), new Color(0xB6, 0xB6, 0xFF));
                 } else {
-                    super.getBg().fillCell(new Location(i, j), new Color(0x69, 0x69, 0xD1));
+                    drawTile(new Location(i, j), new Color(0x69, 0x69, 0xD1));
                 }
                 break;
             default: //Green
                 if ((i + j) % 2 == 1) {
-                    super.getBg().fillCell(new Location(i, j), new Color(0xB6, 0xFF, 0xB6));
+                    drawTile(new Location(i, j), new Color(0xB6, 0xFF, 0xB6));
                 } else {
-                    super.getBg().fillCell(new Location(i, j), new Color(0x69, 0xD1, 0x69));
+                    drawTile(new Location(i, j), new Color(0x69, 0xD1, 0x69));
                 }
                 break;
         }
+    }
+
+    private void drawTile(Location location, Color color) {
+        super.getBg().fillCell(location, color);
+        refresh();
     }
 
     private void drawBackground() {
@@ -432,12 +529,54 @@ public class JGGGUI extends GameGrid implements Controller, Observer, GGMouseLis
         }
     }
 
-    private class TurnActor extends Actor {
-        private Turn turn;
+    private class MoveActor extends Actor {
+        private Move move;
 
-        TurnActor(Turn turn) {
+        MoveActor(Move move) {
             super();
-            this.turn = turn;
+            this.move = move;
+        }
+
+        public Move getMove() {
+            return move;
+        }
+
+        public void setMove(Move move) {
+            this.move = move;
+        }
+    }
+
+    private class PromotionActor extends Actor {
+        private List<Promotion> promotions;
+
+        PromotionActor() {
+            super();
+            this.promotions = new LinkedList<>();
+        }
+
+        public void addPromotion(Promotion promotion) {
+            this.promotions.add(promotion);
+        }
+
+        public void printPromotions() {
+            throw new FeatureNotImplementedYetException();
+        }
+    }
+
+    private class CastlingActor extends Actor {
+        private Castling castling;
+
+        CastlingActor(Castling castling) {
+            super();
+            this.castling = castling;
+        }
+
+        public Castling getCastling() {
+            return castling;
+        }
+
+        public void setCastling(Castling castling) {
+            this.castling = castling;
         }
     }
 }
