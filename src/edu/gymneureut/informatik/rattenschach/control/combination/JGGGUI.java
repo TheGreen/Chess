@@ -22,11 +22,21 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2016 Jan Christian Grünhage; Alex Klug
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
 package edu.gymneureut.informatik.rattenschach.control.combination;
 
-import ch.aplu.jgamegrid.Actor;
-import ch.aplu.jgamegrid.GameGrid;
-import ch.aplu.jgamegrid.Location;
+import ch.aplu.jgamegrid.*;
 import de.janchristiangruenhage.util.exceptions.FeatureNotImplementedYetException;
 import edu.gymneureut.informatik.rattenschach.control.controller.Controller;
 import edu.gymneureut.informatik.rattenschach.control.observer.Observer;
@@ -46,11 +56,18 @@ import java.util.Map;
  * @author Jan Christian Gruenhage, Alex Klug
  * @version 0.1
  */
-public class JGGGUI extends GameGrid implements Controller, Observer {
+public class JGGGUI extends GameGrid implements Controller, Observer, GGMouseListener {
     private Game game;
+    private boolean isMyTurn = false;
+    private boolean isTurnSelected = false;
+    private boolean turnActorSelected = false;
+    private List<Turn> turns;
+    private Turn turn;
 
     public JGGGUI() {
         super(16, 12, 110, false);
+
+        addMouseListener(this, GGMouse.lPress);
 
         drawBackground();
         drawChessboard();
@@ -61,6 +78,86 @@ public class JGGGUI extends GameGrid implements Controller, Observer {
 
     public static void main(String[] args) {
         new JGGGUI().show();
+    }
+
+    @Override
+    public boolean mouseEvent(GGMouse mouse) {
+
+        //Check if it is my turn
+        if (!isMyTurn) return false;
+
+        //Check if there is no actor selected yet
+        if (!turnActorSelected) {
+            selectActor(toLocationInGrid(mouse.getX(), mouse.getY()));
+            return false;
+        } else {
+            selectTurn(toLocationInGrid(mouse.getX(), mouse.getY()));
+            return false;
+        }
+    }
+
+    private void selectActor(Location location) {
+        //Get actors at the location
+        List<Actor> actors = getActorsAt(location);
+
+        FigureActor figureActor = null;
+
+        while (!turnActorSelected) {
+            //Check that actors is not empty
+            if (actors.size() == 0) return;
+
+            //Get first actor
+            Actor actor = actors.remove(0);
+
+            if (actor instanceof FigureActor) {
+                turnActorSelected = true;
+                figureActor = (FigureActor) actor;
+            }
+        }
+
+        //Gets Figure from the Actor
+        Figure figure = figureActor.getFigure();
+
+        //Colorize the Field where the Actor is standing on
+        drawSelectedChessTile(figureActor.getLocation().getX(),
+                figureActor.getLocation().getY(), 0);
+
+        //Generates List of figure turns with the given figure and turns
+        List<Turn> figureTurns = Controller.getTurnsForFigure(figure, turns);
+
+        //Add Turn Actors
+        addTurnActors(figureTurns);
+
+
+        throw new FeatureNotImplementedYetException();
+    }
+
+    private void addTurnActors(List<Turn> figureTurns) {
+        //TODO
+    }
+
+    private void selectTurn(Location location) {
+        throw new FeatureNotImplementedYetException();
+    }
+
+    @Override
+    public Turn pickMove(Map<Field, Figure> field, List<Turn> turns) {
+//        throw new FeatureNotImplementedYetException();
+        isTurnSelected = false;
+        this.turns = turns;
+        isMyTurn = true;
+
+        while (!isTurnSelected) {
+            try {
+                wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        isMyTurn = false;
+        turnActorSelected = false;
+        return turn;
     }
 
     private void drawCaptured() {
@@ -84,6 +181,10 @@ public class JGGGUI extends GameGrid implements Controller, Observer {
         }
     }
 
+    private void drawBackgroundTile(int i, int j) {
+        super.getBg().fillCell(new Location(i, j), new Color(0x65, 0x3E, 0x19));
+    }
+
     private void drawChessTile(int i, int j) {
         if ((i + j) % 2 == 1) {
             super.getBg().fillCell(new Location(i, j), new Color(0xFF, 0xCE, 0x9E));
@@ -92,12 +193,49 @@ public class JGGGUI extends GameGrid implements Controller, Observer {
         }
     }
 
+    private void drawSelectedChessTile(int i, int j, int type) {
+        switch (type) {
+            case 0: //Red
+                if ((i + j) % 2 == 1) {
+                    super.getBg().fillCell(new Location(i, j), new Color(0xFF, 0xB6, 0xB6));
+                } else {
+                    super.getBg().fillCell(new Location(i, j), new Color(0xD1, 0x69, 0x69));
+                }
+                break;
+            case 1: //Green
+                if ((i + j) % 2 == 1) {
+                    super.getBg().fillCell(new Location(i, j), new Color(0xB6, 0xFF, 0xB6));
+                } else {
+                    super.getBg().fillCell(new Location(i, j), new Color(0x69, 0xD1, 0x69));
+                }
+                break;
+            case 2: //Blue
+                if ((i + j) % 2 == 1) {
+                    super.getBg().fillCell(new Location(i, j), new Color(0xB6, 0xB6, 0xFF));
+                } else {
+                    super.getBg().fillCell(new Location(i, j), new Color(0x69, 0x69, 0xD1));
+                }
+                break;
+            default: //Green
+                if ((i + j) % 2 == 1) {
+                    super.getBg().fillCell(new Location(i, j), new Color(0xB6, 0xFF, 0xB6));
+                } else {
+                    super.getBg().fillCell(new Location(i, j), new Color(0x69, 0xD1, 0x69));
+                }
+                break;
+        }
+    }
+
     private void drawBackground() {
         for (int i = 0; i < 16; i++) {
             for (int j = 0; j < 12; j++) {
-                super.getBg().fillCell(new Location(i, j), new Color(0x65, 0x3E, 0x19));
+                drawBackgroundTile(i, j);
             }
         }
+    }
+
+    private void drawSelectedChessTile(int i, int j) {
+        drawSelectedChessTile(i, j, 1);
     }
 
     private Location fieldToLocation(Field field) {
@@ -203,11 +341,6 @@ public class JGGGUI extends GameGrid implements Controller, Observer {
     }
 
     @Override
-    public Turn pickMove(Map<Field, Figure> field, List<Turn> turns) {
-        throw new FeatureNotImplementedYetException();
-    }
-
-    @Override
     public void hasWon() {
         //TODO popup instead
         System.out.println("You have won!");
@@ -267,7 +400,7 @@ public class JGGGUI extends GameGrid implements Controller, Observer {
         }
     }
 
-    private static class FigureActor extends Actor {
+    private class FigureActor extends Actor {
         private Figure figure;
 
         FigureActor(Figure figure) {
@@ -296,6 +429,15 @@ public class JGGGUI extends GameGrid implements Controller, Observer {
 
         public Figure getFigure() {
             return figure;
+        }
+    }
+
+    private class TurnActor extends Actor {
+        private Turn turn;
+
+        TurnActor(Turn turn) {
+            super();
+            this.turn = turn;
         }
     }
 }
