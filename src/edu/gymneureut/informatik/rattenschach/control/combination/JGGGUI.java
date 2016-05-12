@@ -10,11 +10,21 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2016 Jan Christian Grünhage; Alex Klug
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
 package edu.gymneureut.informatik.rattenschach.control.combination;
 
-import ch.aplu.jgamegrid.Actor;
-import ch.aplu.jgamegrid.GameGrid;
-import ch.aplu.jgamegrid.Location;
+import ch.aplu.jgamegrid.*;
 import de.janchristiangruenhage.util.exceptions.FeatureNotImplementedYetException;
 import edu.gymneureut.informatik.rattenschach.control.controller.Controller;
 import edu.gymneureut.informatik.rattenschach.control.observer.Observer;
@@ -59,6 +69,31 @@ public class JGGGUI extends GameGrid implements Controller, Observer, GGMouseLis
 
     public static void main(String[] args) {
         new JGGGUI(110).show();
+    }
+
+    static String getSpritePath(Figure figure, int cellsize) {
+        String size = (cellsize < 65)
+                ? "50_"
+                : (cellsize < 105)
+                ? "90_"
+                : "";
+        String figureType = (figure instanceof Bishop)
+                ? "bishop"
+                : (figure instanceof King)
+                ? "king"
+                : (figure instanceof Knight)
+                ? "knight"
+                : (figure instanceof Pawn)
+                ? "pawn"
+                : (figure instanceof Queen)
+                ? "queen"
+                : (figure instanceof Rook)
+                ? "rook"
+                : "error";
+        String color = (figure.getOwner().getColor() == 1)
+                ? "_white.png"
+                : "_black.png";
+        return "sprites/" + size + figureType + color;
     }
 
     @Override
@@ -217,7 +252,18 @@ public class JGGGUI extends GameGrid implements Controller, Observer, GGMouseLis
         isMyTurn = false;
         turnActorSelected = false;
         drawChessboard();
+        removeTurnActors();
         return turn;
+    }
+
+    private void removeTurnActors() {
+        for (Actor actor : getActors()) {
+            if (actor instanceof MoveActor
+                    || actor instanceof PromotionActor
+                    || actor instanceof CastlingActor) {
+                removeActor(actor);
+            }
+        }
     }
 
     private void drawCaptured() {
@@ -365,7 +411,6 @@ public class JGGGUI extends GameGrid implements Controller, Observer, GGMouseLis
                 fieldToLocation(castling.getRookDestination()));
     }
 
-
     private void updateUICaptured() {
         List<Figure> capturedFigures = game.getCapturedFigures();
         List<Figure> capturedWhiteFigures = new LinkedList<>();
@@ -399,7 +444,6 @@ public class JGGGUI extends GameGrid implements Controller, Observer, GGMouseLis
             }
         }
     }
-
 
     private void placeFigure(FigureActor figureActor) {
         super.addActor(figureActor, fieldToLocation(figureActor.getFigure().getPosition()));
@@ -471,31 +515,6 @@ public class JGGGUI extends GameGrid implements Controller, Observer, GGMouseLis
         FigureActor(Figure figure, int cellsize) {
             super(getSpritePath(figure, cellsize));
             this.figure = figure;
-        }
-
-        private static String getSpritePath(Figure figure, int cellsize) {
-            String size = (cellsize < 65)
-                    ? "50_"
-                    : (cellsize < 105)
-                    ? "90_"
-                    : "";
-            String figureType = (figure instanceof Bishop)
-                    ? "bishop"
-                    : (figure instanceof King)
-                    ? "king"
-                    : (figure instanceof Knight)
-                    ? "knight"
-                    : (figure instanceof Pawn)
-                    ? "pawn"
-                    : (figure instanceof Queen)
-                    ? "queen"
-                    : (figure instanceof Rook)
-                    ? "rook"
-                    : "error";
-            String color = (figure.getOwner().getColor() == 1)
-                    ? "_white.png"
-                    : "_black.png";
-            return "sprites/" + size + figureType + color;
         }
 
         public Figure getFigure() {
