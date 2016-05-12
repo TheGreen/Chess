@@ -22,6 +22,18 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2016 Jan Christian Grünhage; Alex Klug
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
 package edu.gymneureut.informatik.rattenschach.control.combination;
 
 import ch.aplu.jgamegrid.Actor;
@@ -48,9 +60,11 @@ import java.util.Map;
  */
 public class JGGGUI extends GameGrid implements Controller, Observer {
     private Game game;
+    private int cellsize;
 
-    public JGGGUI() {
-        super(16, 12, 110, false);
+    public JGGGUI(int cellsize) {
+        super(16, 12, cellsize, false);
+        this.cellsize = cellsize;
 
         drawBackground();
         drawChessboard();
@@ -60,7 +74,7 @@ public class JGGGUI extends GameGrid implements Controller, Observer {
     }
 
     public static void main(String[] args) {
-        new JGGGUI().show();
+        new JGGGUI(110).show();
     }
 
     private void drawCaptured() {
@@ -108,7 +122,7 @@ public class JGGGUI extends GameGrid implements Controller, Observer {
         super.removeAllActors();
         List<Figure> livingFigures = game.getLivingFigures();
         for (Figure figure : livingFigures) {
-            placeFigure(new FigureActor(figure));
+            placeFigure(new FigureActor(figure, cellsize));
         }
         updateUICaptured();
     }
@@ -140,7 +154,7 @@ public class JGGGUI extends GameGrid implements Controller, Observer {
             super.removeActorsAt(fieldToLocation(promotion.getDestination()));
         }
         super.removeActorsAt(fieldToLocation(promotion.getOrigin()));
-        super.addActor(new FigureActor(promotion.getReplacement()),
+        super.addActor(new FigureActor(promotion.getReplacement(), cellsize),
                 fieldToLocation(promotion.getDestination()));
     }
 
@@ -150,15 +164,15 @@ public class JGGGUI extends GameGrid implements Controller, Observer {
             updateUICaptured();
         }
         super.removeActorsAt(fieldToLocation(move.getOrigin()));
-        super.addActor(new FigureActor(move.getFigure()), fieldToLocation(move.getDestination()));
+        super.addActor(new FigureActor(move.getFigure(), cellsize), fieldToLocation(move.getDestination()));
     }
 
     private void updateUI(Castling castling) {
         super.removeActorsAt(fieldToLocation(castling.getKingOrigin()));
         super.removeActorsAt(fieldToLocation(castling.getRookOrigin()));
-        super.addActor(new FigureActor(castling.getKing()),
+        super.addActor(new FigureActor(castling.getKing(), cellsize),
                 fieldToLocation(castling.getKingDestination()));
-        super.addActor(new FigureActor(castling.getRook()),
+        super.addActor(new FigureActor(castling.getRook(), cellsize),
                 fieldToLocation(castling.getRookDestination()));
     }
 
@@ -188,7 +202,7 @@ public class JGGGUI extends GameGrid implements Controller, Observer {
             y = 2;
         }
         for (Figure figure : capturedFigures) {
-            super.addActor(new FigureActor(figure), new Location(x, y));
+            super.addActor(new FigureActor(figure, cellsize), new Location(x, y));
             y += 1;
             if (y >= 10) {
                 x += 1;
@@ -270,28 +284,34 @@ public class JGGGUI extends GameGrid implements Controller, Observer {
     private static class FigureActor extends Actor {
         private Figure figure;
 
-        FigureActor(Figure figure) {
-            super(
-                    (figure instanceof Bishop)
-                            ? (figure.getOwner().getColor() == 1)
-                            ? "sprites/bishop_white.png" : "sprites/bishop_black.png"
-                            : (figure instanceof King)
-                            ? (figure.getOwner().getColor() == 1)
-                            ? "sprites/king_white.png" : "sprites/king_black.png"
-                            : (figure instanceof Knight)
-                            ? (figure.getOwner().getColor() == 1)
-                            ? "sprites/knight_white.png" : "sprites/knight_black.png"
-                            : (figure instanceof Pawn)
-                            ? (figure.getOwner().getColor() == 1)
-                            ? "sprites/pawn_white.png" : "sprites/pawn_black.png"
-                            : (figure instanceof Queen)
-                            ? (figure.getOwner().getColor() == 1)
-                            ? "sprites/queen_white.png" : "sprites/queen_black.png"
-                            : (figure instanceof Rook)
-                            ? (figure.getOwner().getColor() == 1)
-                            ? "sprites/rook_white.png" : "sprites/rook_black.png"
-                            : "sprites/error.png");
+        FigureActor(Figure figure, int cellsize) {
+            super(getSpritePath(figure, cellsize));
             this.figure = figure;
+        }
+
+        private static String getSpritePath(Figure figure, int cellsize) {
+            String size = (cellsize < 65)
+                    ? "50_"
+                    : (cellsize < 105)
+                    ? "90_"
+                    : "";
+            String figureType = (figure instanceof Bishop)
+                    ? "bishop"
+                    : (figure instanceof King)
+                    ? "king"
+                    : (figure instanceof Knight)
+                    ? "knight"
+                    : (figure instanceof Pawn)
+                    ? "pawn"
+                    : (figure instanceof Queen)
+                    ? "queen"
+                    : (figure instanceof Rook)
+                    ? "rook"
+                    : "error";
+            String color = (figure.getOwner().getColor() == 1)
+                    ? "_white.png"
+                    : "_black.png";
+            return "sprites/" + size + figureType + color;
         }
 
         public Figure getFigure() {
