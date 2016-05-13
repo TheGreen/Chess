@@ -38,11 +38,19 @@ public class Timer {
     }
 
     public long getRemainingTimeWhite() {
-        return timeWhite - (System.nanoTime() - time);
+        if (playerWhite) {
+            return timeWhite - (System.nanoTime() - time);
+        } else {
+            return timeWhite;
+        }
     }
 
     public long getRemainingTimeBlack() {
-        return timeBlack - (System.nanoTime() - time);
+        if (!playerWhite) {
+            return timeBlack - (System.nanoTime() - time);
+        } else {
+            return timeBlack;
+        }
     }
 
     /**

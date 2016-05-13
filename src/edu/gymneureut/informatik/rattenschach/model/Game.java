@@ -47,7 +47,7 @@ public class Game implements Cloneable {
         field = new HashMap<>();
         initializeField(field);
         this.observers = observers;
-        timer = new Timer(1800000000000L, 15000000000L);
+        timer = new Timer(1800000000000L, 0);
         white = new Player(true, controllerWhite, this);
         black = new Player(false, controllerBlack, this);
         white.setOpponent(black);
@@ -164,7 +164,9 @@ public class Game implements Cloneable {
             black.getController().isStalemate();
         }
         try {
-            Thread.sleep(15000);
+            synchronized (this) {
+                wait();
+            }
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

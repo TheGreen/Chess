@@ -131,21 +131,10 @@ class Main {
 
         }
 
-        Game game;
-        for (int i = 0; i < 10000; i++) {
-            if (i % 2 == 0) {
-                game = new Game(controllerOne, controllerTwo, observers);
-                for (Observer obs : observers) {
-                    obs.startGame(game);
-                }
-                game.play();
-            } else {
-                game = new Game(controllerTwo, controllerOne, observers);
-                for (Observer obs : observers) {
-                    obs.startGame(game);
-                }
-                game.play();
-            }
+        Game game = new Game(controllerOne, controllerTwo, observers);
+        for (Observer obs : observers) {
+            obs.startGame(game);
         }
+        game.play();
     }
 }
