@@ -163,6 +163,11 @@ public class Game implements Cloneable {
             white.getController().isStalemate();
             black.getController().isStalemate();
         }
+        try {
+            Thread.sleep(15000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     private void act() {
@@ -203,6 +208,9 @@ public class Game implements Cloneable {
                     throw new IllegalStateException("Figure not a living figure" + new Field(i, j).toString());
                 }
             }
+        }
+        if (seenFigures.size() == 2) {
+            status = GameStatus.stalemate;
         }
     }
 

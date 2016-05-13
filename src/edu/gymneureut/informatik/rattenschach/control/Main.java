@@ -50,10 +50,7 @@ package edu.gymneureut.informatik.rattenschach.control;
 
 import edu.gymneureut.informatik.rattenschach.control.combination.JGGGUI;
 import edu.gymneureut.informatik.rattenschach.control.combination.TerminalCombination;
-import edu.gymneureut.informatik.rattenschach.control.controller.Controller;
-import edu.gymneureut.informatik.rattenschach.control.controller.RandomCaptureController;
-import edu.gymneureut.informatik.rattenschach.control.controller.RandomController;
-import edu.gymneureut.informatik.rattenschach.control.controller.TerminalController;
+import edu.gymneureut.informatik.rattenschach.control.controller.*;
 import edu.gymneureut.informatik.rattenschach.control.observer.Observer;
 import edu.gymneureut.informatik.rattenschach.control.observer.TerminalObserver;
 import edu.gymneureut.informatik.rattenschach.control.observer.TerminalObserverSlim;
@@ -127,6 +124,15 @@ class Main {
                 for (int i = 20; i < 150; i += 10) {
                     observers.add(new JGGGUI(i));
                 }
+                observers.add(new TerminalObserverSlim());
+                break;
+            /*
+            JGGGUI Size Test:
+            Just a test for testing new sizing options.
+            */
+            case "jgggui_draw_test":
+                controllerOne = new DrawOfferer();
+                controllerTwo = new JGGGUI(90);
                 observers.add(new TerminalObserverSlim());
                 break;
             /*
