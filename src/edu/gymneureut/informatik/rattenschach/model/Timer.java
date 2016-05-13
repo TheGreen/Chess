@@ -19,7 +19,7 @@ package edu.gymneureut.informatik.rattenschach.model;
  * @author Jan Christian Grünhage, Alex Klug
  * @version 0.1
  */
-class Timer {
+public class Timer {
     private long timeWhite;
     private long timeBlack;
     private long increment;
@@ -38,11 +38,11 @@ class Timer {
     }
 
     public long getRemainingTimeWhite() {
-        return timeWhite - (System.nanoTime() - time) + increment;
+        return timeWhite - (System.nanoTime() - time);
     }
 
     public long getRemainingTimeBlack() {
-        return timeBlack - (System.nanoTime() - time) + increment;
+        return timeBlack - (System.nanoTime() - time);
     }
 
     /**
@@ -54,24 +54,30 @@ class Timer {
     boolean switchPlayer(Player player) {
         if (player.getColor() == 1) {
             if (playerWhite) {
-                long tempTime = System.nanoTime();
-                timeWhite = timeWhite - (tempTime - time) + increment;
-                time = tempTime;
-                playerWhite = !playerWhite;
-                return timeWhite > 0;
+                return update();
             } else {
                 throw new IllegalStateException();
             }
         } else {
             if (!playerWhite) {
-                long tempTime = System.nanoTime();
-                timeBlack = timeBlack - (tempTime - time);
-                time = tempTime;
-                playerWhite = !playerWhite;
-                return timeBlack > 0;
+                return update();
             } else {
                 throw new IllegalStateException();
             }
         }
+    }
+
+    private boolean update() {
+        long tempTime = System.nanoTime();
+        if (tempTime - time > increment) {
+            if (playerWhite && tempTime - time > increment) {
+                timeWhite = timeWhite - (tempTime - time) + increment;
+            } else if (!playerWhite && tempTime - time > increment) {
+                timeBlack = timeBlack - (tempTime - time) + increment;
+            }
+        }
+        time = tempTime;
+        playerWhite = !playerWhite;
+        return timeWhite > 0;
     }
 }

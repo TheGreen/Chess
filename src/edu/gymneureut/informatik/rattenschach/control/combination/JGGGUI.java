@@ -35,6 +35,7 @@ import java.util.Map;
  */
 public class JGGGUI extends GameGrid implements Controller, Observer, GGMouseListener {
     private Game game;
+    private int turncounter;
     private int cellsize;
     private boolean isMyTurn = false;
     private boolean isTurnSelected = false;
@@ -50,9 +51,11 @@ public class JGGGUI extends GameGrid implements Controller, Observer, GGMouseLis
         addMouseListener(this, GGMouse.lClick);
         addMouseListener(this, GGMouse.rClick);
 
+
         drawBackground();
         drawChessboard();
         drawCaptured();
+        drawStaticText();
 
         this.show();
     }
@@ -91,7 +94,60 @@ public class JGGGUI extends GameGrid implements Controller, Observer, GGMouseLis
     }
 
     @Override
+    public void act() {
+        super.act();
+        if (game != null && game.getTimer() != null) {
+            drawText();
+        }
+    }
+
+    private void drawText() {
+        cleanTextArea();
+        getBg().setFont(new Font("Monospaced", Font.PLAIN, 26));
+        getBg().drawText("" + nanosecondsToReadableTime(game.getTimer().getRemainingTimeWhite()), new Point(30, 125));
+        getBg().drawText("" + nanosecondsToReadableTime(game.getTimer().getRemainingTimeBlack()), new Point(990, 125));
+        getBg().setFont(new Font("Monospaced", Font.PLAIN, 72));
+        getBg().drawText(String.valueOf(turncounter), new Point(730, 100));
+    }
+
+    private void cleanTextArea() {
+        drawBackgroundTile(0, 1);
+        drawBackgroundTile(1, 1);
+        drawBackgroundTile(2, 1);
+        drawBackgroundTile(3, 1);
+
+        drawBackgroundTile(12, 1);
+        drawBackgroundTile(13, 1);
+        drawBackgroundTile(14, 1);
+        drawBackgroundTile(15, 1);
+
+        drawBackgroundTile(9, 0);
+        drawBackgroundTile(10, 0);
+        drawBackgroundTile(11, 0);
+
+        drawBackgroundTile(9, 1);
+        drawBackgroundTile(10, 1);
+        drawBackgroundTile(11, 1);
+    }
+
+    private void drawStaticText() {
+        getBg().setFont(new Font("Monospaced", Font.PLAIN, 26));
+        getBg().drawText("Time Left White:", new Point(30, 60));
+        getBg().drawText("Time Left Black:", new Point(990, 60));
+        getBg().setFont(new Font("Monospaced", Font.PLAIN, 72));
+        getBg().drawText("Turn:", new Point(480, 100));
+    }
+
+    private String nanosecondsToReadableTime(long nanoseconds) {
+        int seconds = (int) (nanoseconds / 1000000000L);
+        int minutes = seconds / 60;
+        seconds = seconds % 60;
+        return "" + minutes + " min " + seconds + " sec";
+    }
+
+    @Override
     public boolean mouseEvent(GGMouse mouse) {
+        act();
         //normal stuff:
         if (mouse.getEvent() == GGMouse.lClick) {
             System.out.println("Left click at: " + toLocationInGrid(mouse.getX(), mouse.getY()).toString());
@@ -528,7 +584,9 @@ public class JGGGUI extends GameGrid implements Controller, Observer, GGMouseLis
 
     @Override
     public void nextTurn(Turn turn) {
+        turncounter++;
         updateUI(turn);
+        act();
         try {
             Thread.sleep(50);
         } catch (InterruptedException e) {
