@@ -279,7 +279,7 @@ public class JGGGUI extends GameGrid implements Controller, Observer, GGMouseLis
                 && turns.get(0) instanceof DrawNotification
                 && ((DrawNotification) turns.get(0)).getDrawType()
                 != DrawNotification.DrawType.offers) {
-            if (InputDialog.readBoolean()) {
+            if (new InputDialog("Accept Draw?", "Your opponent offers you a draw, do you want to accept?").readBoolean()) {
                 return turns.stream().filter(turn ->
                         turn instanceof DrawNotification
                                 && ((DrawNotification) turn).getDrawType()
