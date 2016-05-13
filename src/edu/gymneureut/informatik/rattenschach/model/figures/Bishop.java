@@ -32,7 +32,7 @@ public class Bishop extends Figure implements Cloneable {
         super(owner, position, field);
     }
 
-    private Bishop() {
+    public Bishop() {
         super();
     }
 

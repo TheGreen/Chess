@@ -10,22 +10,11 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-/*
- * The MIT License (MIT)
- *
- * Copyright (c) 2016 Jan Christian Grünhage; Alex Klug
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- */
-
 package edu.gymneureut.informatik.rattenschach.control.combination;
 
 import ch.aplu.jgamegrid.*;
-import de.janchristiangruenhage.util.exceptions.FeatureNotImplementedYetException;
+import ch.aplu.util.InputDialog;
+import ch.aplu.util.MessagePane;
 import edu.gymneureut.informatik.rattenschach.control.controller.Controller;
 import edu.gymneureut.informatik.rattenschach.control.observer.Observer;
 import edu.gymneureut.informatik.rattenschach.model.Field;
@@ -58,7 +47,8 @@ public class JGGGUI extends GameGrid implements Controller, Observer, GGMouseLis
         super(16, 12, cellsize, false);
         this.cellsize = cellsize;
 
-        addMouseListener(this, GGMouse.lPress);
+        addMouseListener(this, GGMouse.lClick);
+        addMouseListener(this, GGMouse.rClick);
 
         drawBackground();
         drawChessboard();
@@ -72,6 +62,10 @@ public class JGGGUI extends GameGrid implements Controller, Observer, GGMouseLis
     }
 
     static String getSpritePath(Figure figure, int cellsize) {
+        return getSpritePath(figure, cellsize, (figure.getOwner().getColor()));
+    }
+
+    static String getSpritePath(Figure figure, int cellsize, int colorID) {
         String size = (cellsize < 65)
                 ? "50_"
                 : (cellsize < 105)
@@ -90,7 +84,7 @@ public class JGGGUI extends GameGrid implements Controller, Observer, GGMouseLis
                 : (figure instanceof Rook)
                 ? "rook"
                 : "error";
-        String color = (figure.getOwner().getColor() == 1)
+        String color = (colorID == 1)
                 ? "_white.png"
                 : "_black.png";
         return "sprites/" + size + figureType + color;
@@ -98,7 +92,54 @@ public class JGGGUI extends GameGrid implements Controller, Observer, GGMouseLis
 
     @Override
     public boolean mouseEvent(GGMouse mouse) {
+        //normal stuff:
+        if (mouse.getEvent() == GGMouse.lClick) {
+            System.out.println("Left click at: " + toLocationInGrid(mouse.getX(), mouse.getY()).toString());
+            return handleLeftClick(mouse);
 
+        }
+
+        //right click:
+        if (mouse.getEvent() == GGMouse.rClick) {
+            System.out.println("Right click at: " + toLocationInGrid(mouse.getX(), mouse.getY()).toString());
+            return handleRightClick(mouse);
+        }
+        return false;
+    }
+
+    private boolean handleRightClick(GGMouse mouse) {
+        Location location = toLocationInGrid(mouse.getX(), mouse.getY());
+
+        List<Actor> actors = getActorsAt(location);
+        for (Actor actor : actors) {
+            if (turnActorSelected && actor instanceof PromotionActor) {
+                ((PromotionActor) actor).switchPromotions();
+            }
+            if (actor instanceof FigureActor
+                    && ((FigureActor) actor).getFigure() instanceof King) {
+                if (new InputDialog("Offer Draw", "Do you want to offer Draw?").readBoolean()) {
+                    for (Turn turn : turns) {
+                        if (turn instanceof DrawNotification
+                                && ((DrawNotification) turn).getDrawType() == DrawNotification.DrawType.offers) {
+                            this.turn = turn;
+                            synchronized (this) {
+                                isTurnSelected = true;
+                                notifyAll();
+                            }
+                        }
+                    }
+                }
+
+            }
+        }
+        return false;
+    /*
+     * TODO:
+     * Right click king opens offer draw dialogue
+     */
+    }
+
+    private boolean handleLeftClick(GGMouse mouse) {
         //Check if it is my turn
         if (!isMyTurn) return false;
 
@@ -175,7 +216,7 @@ public class JGGGUI extends GameGrid implements Controller, Observer, GGMouseLis
         }
 
         if (actor == null) {
-            actor = new PromotionActor();
+            actor = new PromotionActor(figure.getOwner().getColor());
             addActor(actor, fieldToLocation(promotion.getDestination()));
         }
 
@@ -204,24 +245,25 @@ public class JGGGUI extends GameGrid implements Controller, Observer, GGMouseLis
     }
 
     private void selectTurn(Location location) {
-        if (fieldToLocation(figure.getPosition()) == location) {
-            turnActorSelected = false;
-            return;
-        }
-
         List<Actor> actors = getActorsAt(location);
-        actorSearch:
         for (Actor actor : actors) {
             if (actor instanceof MoveActor) {
                 turn = ((MoveActor) actor).getMove();
-                break actorSearch;
+                break;
             } else if (actor instanceof PromotionActor) {
-                ((PromotionActor) actor).printPromotions();
-                return;
+                turn = ((PromotionActor) actor).getPromotion();
+                break;
             } else if (actor instanceof CastlingActor) {
                 turn = ((CastlingActor) actor).getCastling();
-                break actorSearch;
+                break;
             }
+        }
+
+        if (turn == null) {
+            turnActorSelected = false;
+            removeTurnActors();
+            drawChessboard();
+            return;
         }
 
         //After the turn has been selected:
@@ -233,6 +275,19 @@ public class JGGGUI extends GameGrid implements Controller, Observer, GGMouseLis
 
     @Override
     public Turn pickMove(Map<Field, Figure> field, List<Turn> turns) {
+        if (turns.size() == 2
+                && turns.get(0) instanceof DrawNotification
+                && ((DrawNotification) turns.get(0)).getDrawType()
+                != DrawNotification.DrawType.offers) {
+            if (new InputDialog("Accept Draw?", "Your opponent offers you a draw, do you want to accept?").readBoolean()) {
+                return turns.stream().filter(turn ->
+                        turn instanceof DrawNotification
+                                && ((DrawNotification) turn).getDrawType()
+                                == DrawNotification.DrawType.accepts)
+                        .findFirst().get();
+            }
+        }
+
 //        throw new FeatureNotImplementedYetException();
         isTurnSelected = false;
         turn = null;
@@ -377,10 +432,6 @@ public class JGGGUI extends GameGrid implements Controller, Observer, GGMouseLis
             System.out.println("TODO:Missing Implementation at JGGGUI.updateUI(Turn turn)");
             updateUI();
 
-        } else if (turn instanceof Notification) {
-            //TODO: Missing Implementation
-            System.out.println("TODO:Missing Implementation at JGGGUI.updateUI(Turn turn)");
-            updateUI();
         }
     }
 
@@ -451,46 +502,22 @@ public class JGGGUI extends GameGrid implements Controller, Observer, GGMouseLis
 
     @Override
     public void hasWon() {
-        //TODO popup instead
-        System.out.println("You have won!");
-        try {
-            Thread.sleep(10000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        new MessagePane("You have won!");
     }
 
     @Override
     public void hasLost() {
-        //TODO popup instead
-        System.out.println("You have lost..");
-        try {
-            Thread.sleep(10000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        new MessagePane("You have lost..");
     }
 
     @Override
     public void isStalemate() {
-        //TODO popup instead
-        System.out.println("Game is stalemate.");
-        try {
-            Thread.sleep(10000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        new MessagePane("Game is stalemate.");
     }
 
     @Override
     public void isDraw() {
-        //TODO popup instead
-        System.out.println("Game is draw.");
-        try {
-            Thread.sleep(10000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        new MessagePane("Game is draw.");
     }
 
     @Override
@@ -533,17 +560,16 @@ public class JGGGUI extends GameGrid implements Controller, Observer, GGMouseLis
         public Move getMove() {
             return move;
         }
-
-        public void setMove(Move move) {
-            this.move = move;
-        }
     }
 
     private class PromotionActor extends Actor {
         private List<Promotion> promotions;
 
-        PromotionActor() {
-            super();
+        PromotionActor(int color) {
+            super(getSpritePath(new Queen(), cellsize, color),
+                    getSpritePath(new Rook(), cellsize, color),
+                    getSpritePath(new Knight(), cellsize, color),
+                    getSpritePath(new Bishop(), cellsize, color));
             this.promotions = new LinkedList<>();
         }
 
@@ -551,8 +577,14 @@ public class JGGGUI extends GameGrid implements Controller, Observer, GGMouseLis
             this.promotions.add(promotion);
         }
 
-        public void printPromotions() {
-            throw new FeatureNotImplementedYetException();
+        public void switchPromotions() {
+            promotions.add(promotions.remove(0));
+            showNextSprite();
+            refresh();
+        }
+
+        public Promotion getPromotion() {
+            return promotions.get(0);
         }
     }
 
@@ -566,10 +598,6 @@ public class JGGGUI extends GameGrid implements Controller, Observer, GGMouseLis
 
         public Castling getCastling() {
             return castling;
-        }
-
-        public void setCastling(Castling castling) {
-            this.castling = castling;
         }
     }
 }
