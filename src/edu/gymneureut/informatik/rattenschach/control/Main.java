@@ -104,7 +104,7 @@ class Main {
             */
             case "jgggui":
                 controllerOne = new RandomCaptureController();
-                controllerTwo = new JGGGUI(110);
+                controllerTwo = new JGGGUI(90);
                 observers.add((JGGGUI) controllerTwo);
                 break;
             /*
@@ -114,7 +114,7 @@ class Main {
             case "jgggui_benchmark":
                 controllerOne = new RandomCaptureController();
                 controllerTwo = new RandomCaptureController();
-                observers.add(new JGGGUI(110));
+                observers.add(new JGGGUI(90));
                 observers.add(new TerminalObserverSlim());
                 break;
             /*
@@ -137,7 +137,7 @@ class Main {
                 controllerOne = new RandomController();
                 controllerTwo = new TerminalController();
                 observers.add(new TerminalObserverSlim());
-                observers.add(new JGGGUI(110));
+                observers.add(new JGGGUI(90));
                 break;
             /*
             Test:

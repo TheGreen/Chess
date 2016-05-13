@@ -10,18 +10,6 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-/*
- * The MIT License (MIT)
- *
- * Copyright (c) 2016 Jan Christian Grünhage; Alex Klug
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- */
-
 package edu.gymneureut.informatik.rattenschach.control.combination;
 
 import ch.aplu.jgamegrid.*;
@@ -204,24 +192,24 @@ public class JGGGUI extends GameGrid implements Controller, Observer, GGMouseLis
     }
 
     private void selectTurn(Location location) {
-        if (fieldToLocation(figure.getPosition()) == location) {
-            turnActorSelected = false;
-            return;
-        }
-
         List<Actor> actors = getActorsAt(location);
-        actorSearch:
         for (Actor actor : actors) {
             if (actor instanceof MoveActor) {
                 turn = ((MoveActor) actor).getMove();
-                break actorSearch;
+                break;
             } else if (actor instanceof PromotionActor) {
                 ((PromotionActor) actor).printPromotions();
                 return;
             } else if (actor instanceof CastlingActor) {
                 turn = ((CastlingActor) actor).getCastling();
-                break actorSearch;
+                break;
             }
+        }
+
+        if (turn == null) {
+            turnActorSelected = false;
+            drawChessboard();
+            return;
         }
 
         //After the turn has been selected:
