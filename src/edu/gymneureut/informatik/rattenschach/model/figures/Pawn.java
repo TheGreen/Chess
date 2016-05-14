@@ -113,11 +113,17 @@ public class Pawn extends Figure implements Cloneable {
 
     @Override
     public Figure clone() {
-        return cloneTo(new Pawn());
+        Pawn pawn = (Pawn) cloneTo(new Pawn());
+        pawn.setDirection(direction);
+        return pawn;
     }
 
     @Override
     public String getName() {
         return "Pawn";
+    }
+
+    public void setDirection(int direction) {
+        this.direction = direction;
     }
 }
