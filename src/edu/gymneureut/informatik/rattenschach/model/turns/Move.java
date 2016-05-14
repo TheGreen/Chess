@@ -67,8 +67,7 @@ public class Move extends Turn {
     }
 
     public boolean isLegal(Game game) {
-        return !((getCaptures() && getCapturedFigure() instanceof King)
-                || testMove(game).getCurrentPlayer().getOpponent().isAbleToCaptureKing());
+        return !(testMove(game).getCurrentPlayer().getOpponent().isAbleToCaptureKing());
     }
 
     Move cloneWith(Game clonedGame) {
