@@ -19,7 +19,8 @@ import edu.gymneureut.informatik.rattenschach.model.turns.Notification;
 import edu.gymneureut.informatik.rattenschach.model.turns.Turn;
 
 /**
- * The <tt>TerminalObserver</tt> class.
+ * The <tt>TerminalObserver</tt> observer,
+ * that is used for observing a game in terminal.
  *
  * @author Jan Christian Gruenhage, Alex Klug
  * @version 0.1

@@ -21,7 +21,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * The <tt>Figure</tt> class.
+ * The abstract <tt>Figure</tt> class.
+ * Provides access to methods useful for most figures and a common supertype.
  *
  * @author Jan Christian Gruenhage, Alex Klug
  * @version 0.1

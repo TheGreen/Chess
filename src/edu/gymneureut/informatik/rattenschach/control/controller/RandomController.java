@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * The <tt>RandomController</tt> class.
+ * The <tt>RandomController</tt> controller, that always chooses a move randomly.
  *
  * @author Jan Christian Gruenhage, Alex Klug
  * @version 0.1

@@ -29,6 +29,7 @@ import java.util.Map;
 
 /**
  * The <tt>JGameGridGraphicalUserInterface</tt> class.
+ * It provides the ability to control and observe a chess game in a graphical user interface.
  *
  * @author Jan Christian Gruenhage, Alex Klug
  * @version 0.1
@@ -44,9 +45,12 @@ public class JGGGUI extends GameGrid implements Controller, Observer, GGMouseLis
     private Figure figure;
     private Turn turn;
 
+
+
     public JGGGUI(int cellsize) {
         super(16, 12, cellsize, false);
         this.cellsize = cellsize;
+        this.setTitle("Rattenschach");
 
         addMouseListener(this, GGMouse.lClick);
         addMouseListener(this, GGMouse.rClick);
@@ -58,6 +62,10 @@ public class JGGGUI extends GameGrid implements Controller, Observer, GGMouseLis
         drawStaticText();
 
         this.show();
+    }
+
+    public JGGGUI() {
+        this(80);
     }
 
     public static void main(String[] args) {

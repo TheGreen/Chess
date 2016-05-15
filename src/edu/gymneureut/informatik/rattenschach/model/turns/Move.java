@@ -20,6 +20,10 @@ import edu.gymneureut.informatik.rattenschach.model.figures.King;
 
 /**
  * The <tt>Move</tt> class.
+ * Implements a standard move in Chess. This class is a "stupid" class,
+ * only providing the bare logic of moving figures and the simple check of the move leading to
+ * an illegal situation, where the opponent is able to capture the king.
+ * If a figure is able to move from one point to another is not a Part of this class.
  *
  * @author Jan Christian Gruenhage, Alex Klug
  * @version 0.1

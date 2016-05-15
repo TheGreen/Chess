@@ -24,6 +24,8 @@ import java.util.LinkedList;
 
 /**
  * The <tt>Main</tt> class.
+ * Add game modes by adding cases to the switch statement.
+ * Such a case in this statement has to set both controllers and should add at least one controller.
  *
  * @author Jan Christian Gruenhage, Alex Klug
  * @version 0.1
@@ -34,101 +36,126 @@ class Main {
         Controller controllerTwo;
         if (args.length == 0) {
             args = new String[1];
-            args[0] = "default";
+            args[0] = "jgggui";
         }
 
         LinkedList<Observer> observers = new LinkedList<>();
 
         switch (args[0]) {
-            /*
-            Benchmark:
-            Lets two random controllers play against each other.
-            capture: if the random controller can capture something, it does that
-             */
-            case "benchmark":
-                controllerOne = new RandomController();
-                controllerTwo = new RandomController();
-                observers.add(new TerminalObserver());
-                break;
-            case "benchmark_capture":
-                controllerOne = new RandomCaptureController();
-                controllerTwo = new RandomCaptureController();
-                observers.add(new TerminalObserver());
-                break;
-            /*
-            JGGGUI:
-                    ****WORK IN PROGRESS****
-
-            Play vs a random capture controller in a GUI
-
-                    ****WORK IN PROGRESS****
-            */
-            case "jgggui":
-                controllerOne = new RandomCaptureController();
-                controllerTwo = new JGGGUI(80);
+//            Template for new Game mode
+//            case "":
+//                controllerOne = new ;
+//                controllerTwo = ;
+//                observers.add();
+//                break;
+            case "first":
+                controllerOne = new AlwaysFirst();
+                controllerTwo = new JGGGUI();
                 observers.add((JGGGUI) controllerTwo);
                 break;
-            /*
-            JGGGUI Benchmark:
-            Two random capture controllers in a GUI
-            */
-            case "jgggui_benchmark":
+            case "terminal":
                 controllerOne = new RandomCaptureController();
-                controllerTwo = new RandomCaptureController();
-                observers.add(new JGGGUI(80));
-                observers.add(new TerminalObserverSlim());
-                break;
-            /*
-            JGGGUI Size Test:
-            Just a test for testing new sizing options.
-            */
-            case "jgggui_sizetest":
-                controllerOne = new RandomCaptureController();
-                controllerTwo = new RandomCaptureController();
-                for (int i = 20; i < 150; i += 10) {
-                    observers.add(new JGGGUI(i));
-                }
-                observers.add(new TerminalObserverSlim());
-                break;
-            /*
-            JGGGUI Size Test:
-            Just a test for testing new sizing options.
-            */
-            case "jgggui_draw_test":
-                controllerOne = new DrawOfferer();
-                controllerTwo = new JGGGUI(80);
-                observers.add(new TerminalObserverSlim());
-                break;
-            /*
-            JGGGUI Terminal Test:
-            Two random capture controllers in a GUI
-            */
-            case "jgggui_terminal_test":
-                controllerOne = new RandomController();
-                controllerTwo = new TerminalController();
-                observers.add(new TerminalObserverSlim());
-                observers.add(new JGGGUI(80));
-                break;
-            /*
-            Test:
-            Play vs a random controller in Terminal1
-
-             */
-            case "test":
-                controllerOne = new RandomController();
                 controllerTwo = new TerminalCombination();
-                observers.add((Observer) controllerTwo);
+                observers.add((TerminalCombination) controllerTwo);
                 break;
-            /*
-            Default:
-            Play vs a random capture controller in Terminal
-             */
+            case "dual":
+                controllerOne = new JGGGUI();
+                controllerTwo = controllerOne;
+                observers.add((JGGGUI) controllerOne);
+                break;
             default:
                 controllerOne = new RandomCaptureController();
-                controllerTwo = new TerminalCombination();
-                observers.add((Observer) controllerTwo);
+                controllerTwo = new JGGGUI();
+                observers.add((JGGGUI) controllerTwo);
                 break;
-
+//            /*
+//            Benchmark:
+//            Lets two random controllers play against each other.
+//            capture: if the random controller can capture something, it does that
+//             */
+//            case "benchmark":
+//                controllerOne = new RandomController();
+//                controllerTwo = new RandomController();
+//                observers.add(new TerminalObserver());
+//                break;
+//            case "benchmark_capture":
+//                controllerOne = new RandomCaptureController();
+//                controllerTwo = new RandomCaptureController();
+//                observers.add(new TerminalObserver());
+//                break;
+//            /*
+//            JGGGUI:
+//                    ****WORK IN PROGRESS****
+//
+//            Play vs a random capture controller in a GUI
+//
+//                    ****WORK IN PROGRESS****
+//            */
+//            case "jgggui":
+//                controllerOne = new RandomCaptureController();
+//                controllerTwo = new JGGGUI(80);
+//                observers.add((JGGGUI) controllerTwo);
+//                break;
+//            /*
+//            JGGGUI Benchmark:
+//            Two random capture controllers in a GUI
+//            */
+//            case "jgggui_benchmark":
+//                controllerOne = new RandomCaptureController();
+//                controllerTwo = new RandomCaptureController();
+//                observers.add(new JGGGUI(80));
+//                observers.add(new TerminalObserverSlim());
+//                break;
+//            /*
+//            JGGGUI Size Test:
+//            Just a test for testing new sizing options.
+//            */
+//            case "jgggui_sizetest":
+//                controllerOne = new RandomCaptureController();
+//                controllerTwo = new RandomCaptureController();
+//                for (int i = 20; i < 150; i += 10) {
+//                    observers.add(new JGGGUI(i));
+//                }
+//                observers.add(new TerminalObserverSlim());
+//                break;
+//            /*
+//            JGGGUI Size Test:
+//            Just a test for testing new sizing options.
+//            */
+//            case "jgggui_draw_test":
+//                controllerOne = new DrawOfferer();
+//                controllerTwo = new JGGGUI(80);
+//                observers.add(new TerminalObserverSlim());
+//                break;
+//            /*
+//            JGGGUI Terminal Test:
+//            Two random capture controllers in a GUI
+//            */
+//            case "jgggui_terminal_test":
+//                controllerOne = new RandomController();
+//                controllerTwo = new TerminalController();
+//                observers.add(new TerminalObserverSlim());
+//                observers.add(new JGGGUI(80));
+//                break;
+//            /*
+//            Test:
+//            Play vs a random controller in Terminal1
+//
+//             */
+//            case "test":
+//                controllerOne = new RandomController();
+//                controllerTwo = new TerminalCombination();
+//                observers.add((Observer) controllerTwo);
+//                break;
+//            /*
+//            Default:
+//            Play vs a random capture controller in Terminal
+//             */
+//            default:
+//                controllerOne = new RandomCaptureController();
+//                controllerTwo = new TerminalCombination();
+//                observers.add((Observer) controllerTwo);
+//                break;
         }
 
         Game game = new Game(controllerOne, controllerTwo, observers);

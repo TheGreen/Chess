@@ -24,6 +24,7 @@ import java.util.List;
 
 /**
  * The <tt>Castling</tt> class.
+ * Implements the move Castling from Chess
  *
  * @author Jan Christian Gruenhage, Alex Klug
  * @version 0.1

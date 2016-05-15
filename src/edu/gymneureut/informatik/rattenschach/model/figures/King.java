@@ -22,6 +22,7 @@ import java.util.Map;
 
 /**
  * The <tt>King</tt> class.
+ * Implements the figure King from the game chess.
  *
  * @author Jan Christian Gruenhage, Alex Klug
  * @version 0.1

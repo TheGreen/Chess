@@ -22,6 +22,7 @@ import java.util.Map;
 
 /**
  * The <tt>Rook</tt> class.
+ * Implements the figure Rook from the game chess.
  *
  * @author Jan Christian Gruenhage, Alex Klug
  * @version 0.1

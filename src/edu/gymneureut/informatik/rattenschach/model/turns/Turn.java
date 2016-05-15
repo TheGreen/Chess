@@ -17,6 +17,7 @@ import edu.gymneureut.informatik.rattenschach.model.Player;
 
 /**
  * The abstract <tt>Turn</tt> class.
+ * A common supertype of all different Turns.
  *
  * @author Jan Christian Gruenhage, Alex Klug
  * @version 0.1

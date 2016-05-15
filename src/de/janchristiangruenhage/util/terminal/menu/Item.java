@@ -25,7 +25,10 @@
 package de.janchristiangruenhage.util.terminal.menu;
 
 /**
- * Created by jcgruenhage on 5/11/16.
+ * The <tt>Item</tt> Class, providing the end-point of a menu with a given value to it.
+ *
+ * @author Jan Christian Grünhage
+ * @version 0.1
  */
 public class Item<T> implements MenuItem {
     public static Item NULL;

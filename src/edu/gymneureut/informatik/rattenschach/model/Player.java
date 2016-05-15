@@ -21,6 +21,7 @@ import java.util.List;
 
 /**
  * The <tt>Player</tt> class.
+ * Implements one of two players in the game chess.
  *
  * @author Jan Christian Gruenhage, Alex Klug
  * @version 0.1

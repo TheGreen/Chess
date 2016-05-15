@@ -23,6 +23,7 @@ import java.util.Map;
 
 /**
  * The <tt>Pawn</tt> class.
+ * Implements the figure Pawn from the game chess.
  *
  * @author Jan Christian Gruenhage, Alex Klug
  * @version 0.1

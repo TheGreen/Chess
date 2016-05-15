@@ -23,7 +23,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * The <tt>RandomCaptureController</tt> class.
+ * The <tt>RandomCaptureController</tt> controller, that makes random moves,
+ * but these random moves get limited to capturing moves, if at least on capturing move is possible.
  *
  * @author Jan Christian Gruenhage, Alex Klug
  * @version 0.1

@@ -22,6 +22,7 @@ import java.util.Map;
 
 /**
  * The <tt>Bishop</tt> class.
+ * Implements the figure Bishop from the game chess.
  *
  * @author Jan Christian Gruenhage, Alex Klug
  * @version 0.1

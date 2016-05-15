@@ -16,8 +16,11 @@ import edu.gymneureut.informatik.rattenschach.model.Game;
 import edu.gymneureut.informatik.rattenschach.model.Player;
 
 /**
- * The <tt>DrawNotification
- * </tt> class.
+ * The <tt>DrawNotification</tt> class.
+ * Notifies the Game, that a player offers, accepts or denies draw.
+ * The class Player should provide, that only those Players,
+ * who are offered Draw can accept a Draw. Anyway, this class still throws an Exception if
+ * a Player that should not be able to accept or deny a Draw does so.
  *
  * @author Jan Christian Gruenhage, Alex Klug
  * @version 0.1
@@ -35,8 +38,14 @@ public class DrawNotification extends Notification {
         if (drawType == DrawType.offers) {
             game.setStatus(Game.GameStatus.drawOffered);
         } else if (drawType == DrawType.accepts) {
+            if (game.getStatus() != Game.GameStatus.drawOffered) {
+                throw new IllegalStateException();
+            }
             game.setStatus(Game.GameStatus.draw);
         } else if (drawType == DrawType.denies) {
+            if (game.getStatus() != Game.GameStatus.drawOffered) {
+                throw new IllegalStateException();
+            }
             game.setStatus(Game.GameStatus.running);
         }
     }
@@ -47,10 +56,10 @@ public class DrawNotification extends Notification {
 
     @Override
     public String toString() {
-        String player = (executor.getColor() == 1) ? "White" : "Black";
+        String player = (executor.getColor() == 1) ? "White " : "Black ";
         String action = (drawType == DrawType.offers) ? "offers"
                 : (drawType == DrawType.accepts) ? "accepts" : "denies";
-        return player + action + "Draw";
+        return player + action + " Draw.";
     }
 
     public enum DrawType {

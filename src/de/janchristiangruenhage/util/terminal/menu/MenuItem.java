@@ -36,8 +36,23 @@
 
 package de.janchristiangruenhage.util.terminal.menu;
 
+/**
+ * The <tt>MenuItem</tt> interface, an Interface for having a type that both the Menu and Item are a part of
+ * for simplifying the menu implementation.
+ *
+ * @author Jan Christian Grünhage
+ * @version 0.1
+ */
 public interface MenuItem {
+    /**
+     * Select this menu item.
+     * @return this menu item
+     */
     MenuItem select();
 
+    /**
+     * get the name of the menu item.
+     * @return
+     */
     String getName();
 }

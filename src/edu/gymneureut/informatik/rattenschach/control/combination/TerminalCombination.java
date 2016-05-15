@@ -26,6 +26,7 @@ import java.util.Map;
 
 /**
  * The <tt>TerminalCombination</tt> class.
+ * Provides the ability to control and observe a game via terminal.
  *
  * @author Jan Christian Gruenhage, Alex Klug
  * @version 0.1

@@ -24,5 +24,13 @@
 
 package de.janchristiangruenhage.util.exceptions;
 
+/**
+ * The <tt>FeatureNotImplementedYetException</tt>.
+ * Rather self-explanatory name, should not appear in any finished product at all,
+ * works as a reminder only during testing, to support a "TO DO" comment.
+ *
+ * @author Jan Christian Grünhage
+ * @version 0.1
+ */
 public class FeatureNotImplementedYetException extends RuntimeException {
 }

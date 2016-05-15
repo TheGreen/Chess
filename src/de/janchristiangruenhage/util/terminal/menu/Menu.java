@@ -42,9 +42,11 @@ import java.util.Scanner;
 
 /**
  * The <tt>Menu</tt> class.
- * Probably not the simplest Terminal Menu Implementation, but it is better than nothing.
+ * Probably not the simplest Terminal Menu Implementation,
+ * but it is better than nothing. This Class is providing the main menu and
+ * sub menus, the class Item provides the end points.
  *
- * @author Jan Christian Grünhage @jcgruenhage
+ * @author Jan Christian Grünhage
  * @version 0.1
  */
 public class Menu implements MenuItem {

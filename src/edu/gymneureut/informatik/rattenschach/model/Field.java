@@ -14,6 +14,7 @@ package edu.gymneureut.informatik.rattenschach.model;
 
 /**
  * The <tt>Field</tt> class.
+ * This is a location on the Chess board, defined by it's file and rank.
  *
  * @author Jan Christian Gruenhage, Alex Klug
  * @version 0.1

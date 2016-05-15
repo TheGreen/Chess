@@ -14,6 +14,13 @@ package edu.gymneureut.informatik.rattenschach.control.observer;
 import edu.gymneureut.informatik.rattenschach.model.Game;
 import edu.gymneureut.informatik.rattenschach.model.turns.Turn;
 
+/**
+ * The <tt>TerminalObserverSlim</tt> observer, a slim version of the TerminalObserver class.
+ * Works just the same, but without printing the chess board every time.
+ *
+ * @author Jan Christian Grünhage, Alex Klug
+ * @version 0.1
+ */
 public class TerminalObserverSlim implements Observer {
     @Override
     public void startGame(Game game) {

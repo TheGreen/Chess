@@ -20,6 +20,7 @@ import edu.gymneureut.informatik.rattenschach.model.figures.Pawn;
 
 /**
  * The <tt>Promotion</tt> class.
+ * Implements a Promotion of a Pawn, this extends the normal move.
  *
  * @author Jan Christian Gruenhage, Alex Klug
  * @version 0.1

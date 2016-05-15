@@ -17,6 +17,7 @@ import edu.gymneureut.informatik.rattenschach.model.Player;
 
 /**
  * The <tt>Notification</tt> class.
+ * Notifies the game about the loss or win of a Player, or the case of a stalemate.
  *
  * @author Jan Christian Gruenhage, Alex Klug
  * @version 0.1

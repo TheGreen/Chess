@@ -25,6 +25,9 @@ import java.util.Map;
 
 /**
  * The <tt>Game</tt> class.
+ * This provides the general Game itself. This does not provide any move logic,
+ * it just represents the current state and calls the Players by turns
+ * for them to provide what they do in this turn.
  *
  * @author Jan Christian Gruenhage, Alex Klug
  * @version 0.1
@@ -135,7 +138,7 @@ public class Game implements Cloneable {
         return clonedCapturedFigures;
     }
 
-    GameStatus getStatus() {
+    public GameStatus getStatus() {
         return status;
     }
 

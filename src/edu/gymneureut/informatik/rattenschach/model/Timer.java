@@ -13,8 +13,9 @@
 package edu.gymneureut.informatik.rattenschach.model;
 
 /**
- * The Class <tt>Timer</tt>.
- * Is a simple Controller inside the Terminal.
+ * The Class <tt>Timer</tt>, providing a timer for the game chess.
+ * This class measures the time a Player is using
+ * and if he has used up all his time, he has lost.
  *
  * @author Jan Christian Grünhage, Alex Klug
  * @version 0.1

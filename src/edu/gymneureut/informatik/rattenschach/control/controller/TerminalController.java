@@ -24,8 +24,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * The Class <tt>TerminalController</tt>.
- * Is a simple Controller inside the Terminal.
+ * The <tt>TerminalController</tt> controller,
+ * that allows the user to the game via terminal.
  *
  * @author Jan Christian Grünhage, Alex Klug
  * @version 0.1
@@ -44,6 +44,17 @@ public class TerminalController implements Controller {
         return ((Turn) ((Item) item).getContent());
     }
 
+
+    /**
+     * Generates a menu of possible Turns according to the given list.
+     * Instead of just giving a list of all possible turns,
+     * they are sorted into sub-menus according to the figures executing them.
+     *
+     * The Menu is generated using a small Menu framework written to be reusable later.
+     *
+     * @param turns list of turns
+     * @return the Menu
+     */
     private Menu generateMenu(List<Turn> turns) {
         //Generate basic menu
         Menu menu = new Menu("Select Figure", "Select your Figure:");
@@ -55,17 +66,33 @@ public class TerminalController implements Controller {
 
         //Generate a submenu for each figure
         for (Figure figure : figures) {
-            Menu figureMenu;
-            figureMenu = new Menu(menu, figure.toString(), "Select your Destination:");
+            Menu figureMenu = new Menu(menu, figure.toString(), "Select your Destination:");
             menu.add(figureMenu);
             List<Turn> turnsForFigure = Controller.getTurnsForFigure(figure, turns);
             for (Turn turn : turnsForFigure) {
                 figureMenu.add(new Item<>(turn.toString(), turn));
             }
         }
+
+        //Generate a submenu for all figures
+        Menu figureMenu = new Menu(menu, "All figures", "Select your Destination:");
+        menu.add(figureMenu);
+        for (Figure figure : figures) {
+            List<Turn> turnsForFigure = Controller.getTurnsForFigure(figure, turns);
+            for (Turn turn : turnsForFigure) {
+                figureMenu.add(new Item<>(turn.toString(), turn));
+            }
+        }
+
         return menu;
     }
 
+    /**
+     * Get's a list of figures out of a list of Turns
+     *
+     * @param turns the turns
+     * @return the figures
+     */
     private List<Figure> getFigures(List<Turn> turns) {
         List<Figure> figures = new LinkedList<>();
         for (Turn turn : turns) {
