@@ -17,9 +17,9 @@ import de.janchristiangruenhage.util.terminal.menu.Menu;
 import de.janchristiangruenhage.util.terminal.menu.MenuItem;
 import edu.gymneureut.informatik.rattenschach.model.Field;
 import edu.gymneureut.informatik.rattenschach.model.figures.Figure;
-import edu.gymneureut.informatik.rattenschach.model.turns.*;
+import edu.gymneureut.informatik.rattenschach.model.turns.DrawNotification;
+import edu.gymneureut.informatik.rattenschach.model.turns.Turn;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -62,7 +62,7 @@ public class TerminalController implements Controller {
         menu.add(offerDraw);
 
         //Generate List of Figures for sub menues
-        List<Figure> figures = getFigures(turns);
+        List<Figure> figures = Controller.getFigures(turns);
 
         //Generate a submenu for each figure
         for (Figure figure : figures) {
@@ -87,38 +87,6 @@ public class TerminalController implements Controller {
         return menu;
     }
 
-    /**
-     * Get's a list of figures out of a list of Turns
-     *
-     * @param turns the turns
-     * @return the figures
-     */
-    private List<Figure> getFigures(List<Turn> turns) {
-        List<Figure> figures = new LinkedList<>();
-        for (Turn turn : turns) {
-            if (turn instanceof Promotion) {
-                Figure figure = ((Promotion) turn).getPawn();
-                if (!figures.contains(figure)) {
-                    figures.add(figure);
-                }
-            } else if (turn instanceof Move) {
-                Figure figure = ((Move) turn).getFigure();
-                if (!figures.contains(figure)) {
-                    figures.add(figure);
-                }
-            } else if (turn instanceof Castling) {
-                Figure figure = ((Castling) turn).getKing();
-                if (!figures.contains(figure)) {
-                    figures.add(figure);
-                }
-                figure = ((Castling) turn).getRook();
-                if (!figures.contains(figure)) {
-                    figures.add(figure);
-                }
-            }
-        }
-        return figures;
-    }
 
     private Item<DrawNotification> drawPossible(List<Turn> turns) {
         for (Turn turn : turns) {

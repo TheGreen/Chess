@@ -14,10 +14,11 @@ package edu.gymneureut.informatik.rattenschach.control;
 
 import edu.gymneureut.informatik.rattenschach.control.combination.JGGGUI;
 import edu.gymneureut.informatik.rattenschach.control.combination.TerminalCombination;
-import edu.gymneureut.informatik.rattenschach.control.controller.*;
+import edu.gymneureut.informatik.rattenschach.control.controller.AlwaysFirst;
+import edu.gymneureut.informatik.rattenschach.control.controller.Cheater;
+import edu.gymneureut.informatik.rattenschach.control.controller.Controller;
+import edu.gymneureut.informatik.rattenschach.control.controller.RandomCaptureController;
 import edu.gymneureut.informatik.rattenschach.control.observer.Observer;
-import edu.gymneureut.informatik.rattenschach.control.observer.TerminalObserver;
-import edu.gymneureut.informatik.rattenschach.control.observer.TerminalObserverSlim;
 import edu.gymneureut.informatik.rattenschach.model.Game;
 
 import java.util.LinkedList;
@@ -48,26 +49,57 @@ class Main {
 //                controllerTwo = ;
 //                observers.add();
 //                break;
+            /*
+            A special challenge just for you.
+             */
+            case "cheater":
+                controllerOne = new Cheater();
+                controllerTwo = new JGGGUI();
+                observers.add((JGGGUI) controllerTwo);
+                break;
+            /*
+            Learn here first.
+             */
+            case "observe_cheater":
+                controllerOne = new RandomCaptureController();
+                controllerTwo = new Cheater();
+                observers.add(new JGGGUI());
+                break;
+            /*
+            Originally just a test case, but fun to look at.
+             */
             case "first":
                 controllerOne = new AlwaysFirst();
                 controllerTwo = new JGGGUI();
                 observers.add((JGGGUI) controllerTwo);
                 break;
+            /*
+            Play in the Terminal
+             */
             case "terminal":
                 controllerOne = new RandomCaptureController();
                 controllerTwo = new TerminalCombination();
                 observers.add((TerminalCombination) controllerTwo);
                 break;
+            /*
+             1v1 in GUI
+             */
             case "dual":
                 controllerOne = new JGGGUI();
                 controllerTwo = controllerOne;
                 observers.add((JGGGUI) controllerOne);
                 break;
+            /*
+            1vAI in GUI
+             */
             default:
                 controllerOne = new RandomCaptureController();
                 controllerTwo = new JGGGUI();
                 observers.add((JGGGUI) controllerTwo);
                 break;
+
+//            The following commented-out code are mostly old test cases we used for finding bugs.
+
 //            /*
 //            Benchmark:
 //            Lets two random controllers play against each other.

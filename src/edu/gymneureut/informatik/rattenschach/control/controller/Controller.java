@@ -31,6 +31,39 @@ import java.util.Map;
  */
 public interface Controller {
 
+    /**
+     * Get's a list of figures out of a list of Turns
+     *
+     * @param turns the turns
+     * @return the figures
+     */
+    static List<Figure> getFigures(List<Turn> turns) {
+        List<Figure> figures = new LinkedList<>();
+        for (Turn turn : turns) {
+            if (turn instanceof Promotion) {
+                Figure figure = ((Promotion) turn).getPawn();
+                if (!figures.contains(figure)) {
+                    figures.add(figure);
+                }
+            } else if (turn instanceof Move) {
+                Figure figure = ((Move) turn).getFigure();
+                if (!figures.contains(figure)) {
+                    figures.add(figure);
+                }
+            } else if (turn instanceof Castling) {
+                Figure figure = ((Castling) turn).getKing();
+                if (!figures.contains(figure)) {
+                    figures.add(figure);
+                }
+                figure = ((Castling) turn).getRook();
+                if (!figures.contains(figure)) {
+                    figures.add(figure);
+                }
+            }
+        }
+        return figures;
+    }
+
     static List<Turn> getTurnsForFigure(Figure figure, List<Turn> turns) {
         List<Turn> turnsForFigure = new LinkedList<>();
         for (Turn turn : turns) {
