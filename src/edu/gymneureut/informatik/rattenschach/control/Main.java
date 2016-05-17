@@ -43,12 +43,50 @@ class Main {
         LinkedList<Observer> observers = new LinkedList<>();
 
         switch (args[0]) {
+
+
 //            Template for new Game mode
 //            case "":
 //                controllerOne = new ;
 //                controllerTwo = ;
 //                observers.add();
 //                break;
+
+            /*
+            Normal Game cases:
+             */
+
+            /*
+            1vAI in GUI
+             */
+            default:
+                controllerOne = new RandomCaptureController();
+                controllerTwo = new JGGGUI();
+                observers.add((JGGGUI) controllerTwo);
+                break;
+            /*
+            Play in the Terminal
+             */
+            case "terminal":
+                controllerOne = new RandomCaptureController();
+                controllerTwo = new TerminalCombination();
+                observers.add((TerminalCombination) controllerTwo);
+                break;
+            /*
+             1v1 in GUI
+             */
+            case "dual":
+                controllerOne = new JGGGUI();
+                controllerTwo = controllerOne;
+                observers.add((JGGGUI) controllerOne);
+                break;
+
+
+
+            /*
+            Test/Showcases:
+             */
+
             /*
             A special challenge just for you.
              */
@@ -73,30 +111,7 @@ class Main {
                 controllerTwo = new JGGGUI();
                 observers.add((JGGGUI) controllerTwo);
                 break;
-            /*
-            Play in the Terminal
-             */
-            case "terminal":
-                controllerOne = new RandomCaptureController();
-                controllerTwo = new TerminalCombination();
-                observers.add((TerminalCombination) controllerTwo);
-                break;
-            /*
-             1v1 in GUI
-             */
-            case "dual":
-                controllerOne = new JGGGUI();
-                controllerTwo = controllerOne;
-                observers.add((JGGGUI) controllerOne);
-                break;
-            /*
-            1vAI in GUI
-             */
-            default:
-                controllerOne = new RandomCaptureController();
-                controllerTwo = new JGGGUI();
-                observers.add((JGGGUI) controllerTwo);
-                break;
+
 
 //            The following commented-out code are mostly old test cases we used for finding bugs.
 
