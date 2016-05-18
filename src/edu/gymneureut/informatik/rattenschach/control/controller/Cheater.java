@@ -44,14 +44,11 @@ public class Cheater implements Controller {
                 capturingMoves.add((Move) turn);
             }
         }
-        if (capturingMoves.size() > 0) {
-            return capturingMoves.get((int) (Math.random() * (double) capturingMoves.size()));
-        }
         for (Figure figure : Controller.getFigures(turns)) {
             if (figure instanceof Pawn) {
-                return new Promotion(figure.getOwner(), figure, figure.getPosition(),
+                turns.add(new Promotion(figure.getOwner(), figure, figure.getPosition(),
                         figure.getPosition(), false, Figure.EMPTY, new Queen(
-                        figure.getOwner(), figure.getPosition(), field));
+                        figure.getOwner(), figure.getPosition(), field)));
             }
         }
         return controller.pickMove(field, turns);
