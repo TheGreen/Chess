@@ -4,11 +4,9 @@ import edu.gymneureut.informatik.rattenschach.model.Field;
 import edu.gymneureut.informatik.rattenschach.model.figures.Figure;
 import edu.gymneureut.informatik.rattenschach.model.figures.Pawn;
 import edu.gymneureut.informatik.rattenschach.model.figures.Queen;
-import edu.gymneureut.informatik.rattenschach.model.turns.Move;
 import edu.gymneureut.informatik.rattenschach.model.turns.Promotion;
 import edu.gymneureut.informatik.rattenschach.model.turns.Turn;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -37,12 +35,6 @@ public class Cheater implements Controller {
             Thread.sleep(1000);
         } catch (InterruptedException e) {
             e.printStackTrace();
-        }
-        List<Move> capturingMoves = new LinkedList<>();
-        for (Turn turn : turns) {
-            if (turn instanceof Move && ((Move) turn).getCaptures()) {
-                capturingMoves.add((Move) turn);
-            }
         }
         for (Figure figure : Controller.getFigures(turns)) {
             if (figure instanceof Pawn) {
