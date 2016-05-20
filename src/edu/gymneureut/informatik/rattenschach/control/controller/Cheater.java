@@ -26,7 +26,15 @@ import java.util.Map;
  * @version 0.1
  */
 public class Cheater implements Controller {
-    private Controller controller = new RandomCaptureController();
+    private Controller controller;
+
+    public Cheater(Controller controller) {
+        this.controller = controller;
+    }
+
+    public Cheater() {
+        this.controller = new RandomCaptureController();
+    }
 
 
     @Override
