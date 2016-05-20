@@ -111,6 +111,22 @@ class Main {
                 controllerTwo = new JGGGUI();
                 observers.add((JGGGUI) controllerTwo);
                 break;
+            /*
+            Two RandomCaptureControllers going at each other.
+             */
+            case "benchmark":
+                controllerOne = new RandomCaptureController();
+                controllerTwo = new RandomCaptureController();
+                observers.add(new JGGGUI());
+                break;
+            /*
+            Two Cheaters going at each other.
+             */
+            case "cheater_benchmark":
+                controllerOne = new Cheater();
+                controllerTwo = new Cheater();
+                observers.add(new JGGGUI());
+                break;
 
 
 //            The following commented-out code are mostly old test cases we used for finding bugs.
