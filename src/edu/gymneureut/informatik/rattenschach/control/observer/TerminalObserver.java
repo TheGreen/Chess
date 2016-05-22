@@ -1,15 +1,26 @@
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2016 Jan Christian Grünhage; Alex Klug
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
 package edu.gymneureut.informatik.rattenschach.control.observer;
 
-import edu.gymneureut.informatik.rattenschach.model.Field;
 import edu.gymneureut.informatik.rattenschach.model.Game;
-import edu.gymneureut.informatik.rattenschach.model.figures.*;
 import edu.gymneureut.informatik.rattenschach.model.turns.DrawNotification;
 import edu.gymneureut.informatik.rattenschach.model.turns.Move;
 import edu.gymneureut.informatik.rattenschach.model.turns.Notification;
 import edu.gymneureut.informatik.rattenschach.model.turns.Turn;
 
 /**
- * The <tt>TerminalObserver</tt> class.
+ * The <tt>TerminalObserver</tt> observer,
+ * that is used for observing a game in terminal.
  *
  * @author Jan Christian Gruenhage, Alex Klug
  * @version 0.1
@@ -17,42 +28,6 @@ import edu.gymneureut.informatik.rattenschach.model.turns.Turn;
 public class TerminalObserver implements Observer {
     private Game game;
     private int counter = 0;
-
-    private static String getShortFigureName(Figure figure) {
-        if (figure instanceof Bishop) {
-            return "B" + ((figure.getOwner().getColor() == 0) ? "b" : "w");
-        } else if (figure instanceof King) {
-            return "K" + ((figure.getOwner().getColor() == 0) ? "b" : "w");
-        } else if (figure instanceof Knight) {
-            return "N" + ((figure.getOwner().getColor() == 0) ? "b" : "w");
-        } else if (figure instanceof Pawn) {
-            return "P" + ((figure.getOwner().getColor() == 0) ? "b" : "w");
-        } else if (figure instanceof Queen) {
-            return "Q" + ((figure.getOwner().getColor() == 0) ? "b" : "w");
-        } else if (figure instanceof Rook) {
-            return "R" + ((figure.getOwner().getColor() == 0) ? "b" : "w");
-        } else {
-            return "  ";
-        }
-    }
-
-    public static String getFigureName(Figure figure) {
-        if (figure instanceof Bishop) {
-            return "Bishop";
-        } else if (figure instanceof King) {
-            return "King";
-        } else if (figure instanceof Knight) {
-            return "Knight";
-        } else if (figure instanceof Pawn) {
-            return "Pawn";
-        } else if (figure instanceof Queen) {
-            return "Queen";
-        } else if (figure instanceof Rook) {
-            return "Rook";
-        } else {
-            return "";
-        }
-    }
 
     @Override
     public void startGame(Game game) {
@@ -75,27 +50,16 @@ public class TerminalObserver implements Observer {
     }
 
     private void printField() {
-        for (int i = 8; i >= 1; i--) {
-            System.out.println("  -----------------------------------------");
-            System.out.print(Field.Rank.getName(i) + " |");
-            for (int j = 1; j <= 8; j++) {
-                System.out.print(" "
-                        + getShortFigureName(game.getField().get(new Field(j, i)))
-                        + " |");
-            }
-            System.out.print("\n");
-        }
-        System.out.println("  -----------------------------------------");
-        System.out.println("     A    B    C    D    E    F    G    H  ");
+        System.out.println(game.toString());
     }
 
     private void printTurn(Turn turn) {
         counter += 1;
         if (turn instanceof Move) {
             Move move = (Move) turn;
-            System.out.println(getFigureName(move.getFigure())
-                    + " from " + move.getOrigin().getName()
-                    + " to " + move.getDestination().getName() + "; Turn " + counter);
+            System.out.println(move.getFigure().getName()
+                    + " from " + move.getOrigin().toString()
+                    + " to " + move.getDestination().toString() + "; Turn " + counter);
         } else if (turn instanceof DrawNotification) {
             DrawNotification notification = (DrawNotification) turn;
             if (notification.getDrawType() == DrawNotification.DrawType.offers) {

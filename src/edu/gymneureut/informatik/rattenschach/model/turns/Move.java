@@ -1,12 +1,29 @@
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2016 Jan Christian Grünhage; Alex Klug
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
 package edu.gymneureut.informatik.rattenschach.model.turns;
 
 import edu.gymneureut.informatik.rattenschach.model.Field;
 import edu.gymneureut.informatik.rattenschach.model.Game;
+import edu.gymneureut.informatik.rattenschach.model.Player;
 import edu.gymneureut.informatik.rattenschach.model.figures.Figure;
 import edu.gymneureut.informatik.rattenschach.model.figures.King;
 
 /**
  * The <tt>Move</tt> class.
+ * Implements a standard move in Chess. This class is a "stupid" class,
+ * only providing the bare logic of moving figures and the simple check of the move leading to
+ * an illegal situation, where the opponent is able to capture the king.
+ * If a figure is able to move from one point to another is not a Part of this class.
  *
  * @author Jan Christian Gruenhage, Alex Klug
  * @version 0.1
@@ -18,8 +35,8 @@ public class Move extends Turn {
     final Figure captured;
     Figure figure;
 
-    public Move(Figure figure, Field origin, Field destination, boolean captures, Figure captured) {
-        super(figure.getOwner());
+    public Move(Player executor, Figure figure, Field origin, Field destination, boolean captures, Figure captured) {
+        super(executor);
         this.figure = figure;
         this.origin = origin;
         this.destination = destination;
@@ -47,19 +64,19 @@ public class Move extends Turn {
         }
     }
 
-    public Game testMove(Game game) {
+    private Game testMove(Game game) {
         Game clonedGame = game.clone();
         cloneWith(clonedGame).execute(clonedGame);
         return clonedGame;
     }
 
     public boolean isLegal(Game game) {
-        return !testMove(game).getCurrentPlayer().getOpponent().isAbleToCaptureKing();
+        return !(testMove(game).getCurrentPlayer().getOpponent().isAbleToCaptureKing());
     }
 
     Move cloneWith(Game clonedGame) {
-        return new Move(clonedGame.getField().get(figure.getPosition()),
-                origin, destination, captures,
+        return new Move((executor.getColor() == 1) ? clonedGame.getWhite() : clonedGame.getBlack(),
+                clonedGame.getField().get(figure.getPosition()), origin, destination, captures,
                 clonedGame.getField().get(captured.getPosition()));
     }
 
@@ -91,9 +108,9 @@ public class Move extends Turn {
     public String toString() {
         return "" + figure.getName()
                 + " from "
-                + origin.getName()
+                + origin.toString()
                 + " to "
-                + destination.getName()
+                + destination.toString()
                 + ((captures) ? " capturing " + captured.getName() : "");
     }
 }
